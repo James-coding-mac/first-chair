@@ -23,10 +23,11 @@ A personal ski resort companion web app. v2 is built, deployed and in use:
 Done (v2):
 1. ✅ Real piste map — Leaflet + OpenSnowMap tiles over OpenStreetMap, recentred per resort. (The old tappable-lift queue-time notes were dropped in the process, by decision.)
 2. ✅ Multi-resort — Whistler Blackcomb, Tignes–Val d'Isère, Three Valleys with a header switcher. The French run/restaurant lists were seeded from memory and still need checking/extending against the official maps — same "written from memory" caveat as the WB starter data.
+4. ✅ localStorage export/restore — Backup card at the bottom of the Log tab (exports every `fc_` key to a JSON file, restores with guards).
 
 Still open:
-3. Keep the deploy target GitHub Pages — static files only, no server, no accounts. Data stays local to the device for now (multi-user/sync is a possible future phase).
-4. Consider a localStorage export/backup button once data matters.
+3. Deploy stays GitHub Pages — static files only, no server, no accounts. Data stays local to the device for now (multi-user/sync is a possible future phase).
+- French run/restaurant data still needs James's review against the official maps.
 
 ## Deploy / workflow
 - Repo: https://github.com/james-coding-mac/first-chair (public). Working copy lives at `~/Downloads/Skiing App`.
