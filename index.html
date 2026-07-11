@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#16283C">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<title>First Chair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Leaflet (real piste map). Loads from CDN; needs a data connection. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --snow:#F2F6F9; --panel:#FFFFFF; --ink:#16283C; --ink2:#4C6076;
+  --line:#D8E3EC; --glacier:#3D7FB8; --p2p:#C0392B;
+  --green:#2E7D4F; --blue:#2B6CB0; --red:#C0392B; --black:#14181D; --gold:#E0A93C;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Inter',system-ui,sans-serif;background:var(--snow);color:var(--ink);
+  font-size:15px;line-height:1.45;
+  padding-bottom:calc(70px + env(safe-area-inset-bottom));
+}
+header{
+  background:var(--ink);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+}
+header h1{font-family:'Barlow Condensed';font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;line-height:1}
+/* resort switcher sits where the subtitle used to */
+.rsel{display:inline-flex;align-items:center;gap:3px}
+.rsel i{color:#9FB6CC;font-style:normal;font-size:11px;pointer-events:none}
+#resortsel{
+  font-family:'Barlow Condensed';font-weight:500;font-size:15px;letter-spacing:.10em;text-transform:uppercase;
+  color:#9FB6CC;background:transparent;border:0;padding:0;cursor:pointer;
+  -webkit-appearance:none;appearance:none;max-width:52vw;text-overflow:ellipsis;
+}
+#resortsel:focus{outline:none}
+#resortsel option{color:#16283C}
+main{max-width:640px;margin:0 auto;padding:16px}
+section{display:none}
+section.active{display:block}
+h2{font-family:'Barlow Condensed';font-weight:600;font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:18px 2px 8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.muted{color:var(--ink2);font-size:13px}
+
+/* chips + inputs */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{
+  font-family:'Barlow Condensed';font-weight:600;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink2);
+  padding:5px 12px;border-radius:999px;cursor:pointer;
+}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+input[type=text],input[type=date],textarea,select{
+  width:100%;font:inherit;color:var(--ink);background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;padding:9px 11px;
+}
+textarea{resize:vertical;min-height:56px}
+button.primary{
+  font-family:'Barlow Condensed';font-weight:700;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--glacier);color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;width:100%;
+}
+
+/* map */
+#map{
+  height:62vh;min-height:340px;
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  background:linear-gradient(#DCEAF5,#F6FAFD 70%);
+}
+#map .mapoff{
+  display:flex;align-items:center;justify-content:center;height:100%;
+  padding:24px;text-align:center;color:var(--ink2);font-size:14px;
+}
+.leaflet-container{font-family:inherit;background:#DCEAF5}
+
+/* run + eat rows */
+.row{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.rowhead{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer}
+.diff{font-size:13px;width:30px;flex-shrink:0;text-align:center;font-weight:600}
+.diff.green{color:var(--green)} .diff.blue{color:var(--blue)} .diff.red{color:var(--red)}
+.diff.black,.diff.dblack{color:var(--black)}
+.rowhead .nm{font-weight:600;flex:1}
+.rowhead .meta{font-size:12px;color:var(--ink2)}
+.fav{font-size:18px;color:var(--line);cursor:pointer;flex-shrink:0}
+.fav.on{color:var(--gold)}
+.rowbody{display:none;padding:0 13px 13px;border-top:1px dashed var(--line)}
+.row.open .rowbody{display:block}
+.rowbody p{margin:9px 0 7px;font-size:13.5px}
+.stars{font-size:20px;letter-spacing:3px;cursor:pointer;color:var(--line)}
+.stars .lit{color:var(--gold)}
+
+/* log */
+.logentry{position:relative}
+.logentry .del{position:absolute;top:10px;right:12px;color:var(--ink2);font-size:13px;cursor:pointer}
+.logentry .rtag{font-family:'Barlow Condensed';font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:11px;color:var(--ink2)}
+.cond{font-family:'Barlow Condensed';font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:14px;color:var(--glacier)}
+
+/* bottom nav */
+nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:30;
+  background:var(--panel);border-top:1px solid var(--line);
+  display:flex;padding-bottom:env(safe-area-inset-bottom);
+}
+nav button{
+  flex:1;background:none;border:0;padding:9px 0 7px;cursor:pointer;color:var(--ink2);
+  font-family:'Barlow Condensed';font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;
+}
+nav button .ic{display:block;font-size:19px;margin-bottom:1px}
+nav button.on{color:var(--ink)}
+nav button.on .ic{color:var(--glacier)}
+.formrow{margin-bottom:9px}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>First Chair</h1>
+  <span class="rsel"><select id="resortsel" aria-label="Choose resort"></select><i>▾</i></span>
+</header>
+
+<main>
+
+<!-- ============ MAP ============ -->
+<section id="tab-map" class="active">
+  <div id="map"></div>
+  <p class="muted" id="mapnote" style="margin-top:8px">
+    Live pistes &amp; lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom.
+    Needs a data signal — the other tabs work offline.
+  </p>
+</section>
+
+<!-- ============ RUNS ============ -->
+<section id="tab-runs">
+  <input type="text" id="runsearch" placeholder="Search runs…">
+  <div class="chips" id="mtnchips"></div>
+  <div class="chips" id="diffchips"></div>
+  <div id="runlist"></div>
+  <p class="muted" id="runsnote" style="margin-top:12px"></p>
+</section>
+
+<!-- ============ EAT ============ -->
+<section id="tab-eat">
+  <div class="chips" id="eatchips">
+    <button class="chip on" data-v="all">All</button>
+    <button class="chip" data-v="mtn">On Mountain</button>
+    <button class="chip" data-v="vil">Village / Base</button>
+  </div>
+  <div id="eatlist"></div>
+</section>
+
+<!-- ============ LOG ============ -->
+<section id="tab-log">
+  <div class="card">
+    <div class="formrow"><label>Date</label><input type="date" id="logdate"></div>
+    <div class="formrow"><label>Conditions</label>
+      <select id="logcond">
+        <option>Powder</option><option>Packed powder</option><option>Groomers</option>
+        <option>Spring slush</option><option>Icy</option><option>Whiteout</option><option>Bluebird</option>
+      </select>
+    </div>
+    <div class="formrow"><label>Notes — runs done, who with, standout moments</label><textarea id="lognotes"></textarea></div>
+    <button class="primary" id="logadd">Log the day</button>
+  </div>
+  <h2>Past days</h2>
+  <div id="loglist"></div>
+</section>
+
+</main>
+
+<nav>
+  <button data-t="map" class="on"><span class="ic">⛰</span>Map</button>
+  <button data-t="runs"><span class="ic">⛷</span>Runs</button>
+  <button data-t="eat"><span class="ic">🍴</span>Eat</button>
+  <button data-t="log"><span class="ic">✎</span>Log</button>
+</nav>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* =========================================================
+   DATA — edit these lists freely. This is YOUR guide.
+   Each resort has: mountains, runs, eats.
+   diffSystem "na" = green/blue/black/dblack (North America)
+   diffSystem "eu" = green/blue/red/black   (the Alps)
+   run.mtn must match one of the resort's mountain ids.
+   ========================================================= */
+const RESORTS = {
+
+  /* ---------- WHISTLER BLACKCOMB ---------- */
+  wb: {
+    name: "Whistler Blackcomb",
+    diffSystem: "na",
+    map: { center:[50.09,-122.92], zoom:12 },
+    mountains: [ {id:"W", name:"Whistler"}, {id:"B", name:"Blackcomb"} ],
+    runs: [
+      {name:"Peak to Creek", mtn:"W", diff:"blue", lift:"Peak Express", zone:"Peak → Creekside", note:"~11 km top to bottom, one of the longest runs anywhere. Legs will know about it."},
+      {name:"Dave Murray Downhill", mtn:"W", diff:"black", lift:"Big Red / Creekside", zone:"Creekside", note:"The 2010 Olympic downhill course. Fast, sustained."},
+      {name:"Franz's Run", mtn:"W", diff:"blue", lift:"Big Red Express", zone:"Creekside", note:"Classic long cruiser down to Creekside."},
+      {name:"Whiskey Jack", mtn:"W", diff:"green", lift:"Emerald 6", zone:"Mid-mountain", note:"Main green artery back towards the village side."},
+      {name:"Ego Bowl", mtn:"W", diff:"green", lift:"Emerald 6", zone:"Emerald zone", note:"Wide, confidence-building — lives up to the name."},
+      {name:"Upper Olympic", mtn:"W", diff:"green", lift:"Garbanzo Express", zone:"Mid-mountain", note:"Mellow way down through mid-mountain."},
+      {name:"Harmony Ridge", mtn:"W", diff:"blue", lift:"Harmony 6", zone:"Harmony", note:"Ridge line with huge views over the valley."},
+      {name:"Low Roll", mtn:"W", diff:"blue", lift:"Harmony 6", zone:"Harmony", note:"Rolling blue in the Harmony bowls."},
+      {name:"Symphony Amphitheatre", mtn:"W", diff:"blue", lift:"Symphony Express", zone:"Symphony", note:"Mellow alpine bowl skiing — great intro to off-piste feel."},
+      {name:"The Saddle", mtn:"W", diff:"black", lift:"Peak Express", zone:"Peak", note:"Classic steep entry off the Peak into Glacier Bowl."},
+      {name:"West Bowl", mtn:"W", diff:"black", lift:"Peak Express", zone:"Peak", note:"Big open bowl skier's right off the Peak."},
+      {name:"The Cirque", mtn:"W", diff:"dblack", lift:"Peak Express", zone:"Peak", note:"Committing entry, experts only."},
+      {name:"Highway 86", mtn:"W", diff:"blue", lift:"Peak Express", zone:"Peak → West", note:"Traverse-y blue that opens up the west side."},
+      {name:"Bear Paw", mtn:"W", diff:"green", lift:"Village Gondola", zone:"Upper mountain", note:"Gentle option from the top zone."},
+      {name:"Blackcomb Glacier", mtn:"B", diff:"blue", lift:"Glacier Express + hike", zone:"Glacier", note:"Short bootpack, then a huge glacier descent. A must-do on a clear day."},
+      {name:"Cruiser", mtn:"B", diff:"blue", lift:"Excelerator", zone:"Mid-mountain", note:"Does what it says. Fast groomer laps."},
+      {name:"Springboard", mtn:"B", diff:"blue", lift:"Jersey Cream", zone:"Jersey Cream", note:"Rolling blue with playful terrain."},
+      {name:"Panorama", mtn:"B", diff:"blue", lift:"7th Heaven", zone:"7th Heaven", note:"Alpine cruiser with the best views on Blackcomb."},
+      {name:"Cloud Nine", mtn:"B", diff:"blue", lift:"7th Heaven", zone:"7th Heaven", note:"Sunny-side classic."},
+      {name:"Xhiggy's Meadow", mtn:"B", diff:"blue", lift:"7th Heaven", zone:"7th Heaven", note:"Open meadow skiing off the ridge."},
+      {name:"Green Line", mtn:"B", diff:"green", lift:"Various", zone:"Top to bottom", note:"The long easy way down the whole mountain."},
+      {name:"Ridge Runner", mtn:"B", diff:"blue", lift:"Crystal Ridge", zone:"Crystal", note:"Crystal zone cruiser past the hut."},
+      {name:"Rock'n'Roll", mtn:"B", diff:"blue", lift:"Crystal Ridge", zone:"Crystal", note:"Rolling terrain, fun at speed."},
+      {name:"Couloir Extreme", mtn:"B", diff:"dblack", lift:"Glacier Express", zone:"Glacier", note:"The famous one. Steep, sustained, no bail-out."},
+      {name:"Pakalolo", mtn:"B", diff:"dblack", lift:"Glacier Express", zone:"Glacier", note:"Tight, steep chute — experts only."},
+      {name:"Spanky's Ladder bowls", mtn:"B", diff:"dblack", lift:"Glacier Express + hike", zone:"Garnet / Ruby / Diamond / Sapphire", note:"Bootpack over the ladder into four expert bowls."},
+    ],
+    eats: [
+      {name:"Roundhouse Lodge", loc:"mtn", area:"Top of Whistler Village Gondola", desc:"The big one — food court style, plus Steeps Grill for a sit-down. Rammed 12:00–13:00; eat early or late."},
+      {name:"Harmony Hut", loc:"mtn", area:"Top of Harmony, Whistler", desc:"Small warming hut with soup and views."},
+      {name:"Chic Pea", loc:"mtn", area:"Top of Garbanzo, Whistler", desc:"Cinnamon buns and pizza in a cabin. Underrated."},
+      {name:"Raven's Nest", loc:"mtn", area:"Creekside mid, Whistler", desc:"Small, vegetarian-leaning, usually calmer than the Roundhouse."},
+      {name:"Rendezvous Lodge", loc:"mtn", area:"Top of Blackcomb Gondola", desc:"Blackcomb's main lodge — includes Christine's for a proper sit-down lunch (book ahead)."},
+      {name:"Glacier Creek Lodge", loc:"mtn", area:"Base of Glacier Express, Blackcomb", desc:"Big, bright, good between glacier laps."},
+      {name:"Crystal Hut", loc:"mtn", area:"Top of Crystal Ridge, Blackcomb", desc:"THE waffles. Log cabin, wood stove, queue by 11:30 — go at 10:30 or after 13:30."},
+      {name:"Horstman Hut", loc:"mtn", area:"Top of 7th Heaven, Blackcomb", desc:"Highest hut on Blackcomb, goulash and sun deck."},
+      {name:"Dusty's Bar & BBQ", loc:"vil", area:"Creekside base", desc:"Original Whistler après. BBQ and beers where the lifts started in '65."},
+      {name:"GLC (Garibaldi Lift Co.)", loc:"vil", area:"Whistler village base", desc:"Prime après spot right above the gondola — deck fills the second lifts close."},
+      {name:"Longhorn Saloon", loc:"vil", area:"Whistler village base", desc:"The rowdy one. Ski-boot dancing by 16:00."},
+      {name:"Merlin's", loc:"vil", area:"Blackcomb base", desc:"Blackcomb-side après, nachos the size of a chairlift."},
+    ],
+  },
+
+  /* ---------- TIGNES · VAL D'ISÈRE (ESPACE KILLY) ----------
+     Starter data written from memory — check against the official
+     piste map and edit freely. */
+  ek: {
+    name: "Tignes · Val d'Isère",
+    diffSystem: "eu",
+    map: { center:[45.458,6.945], zoom:12 },
+    mountains: [ {id:"V", name:"Val d'Isère"}, {id:"T", name:"Tignes"} ],
+    runs: [
+      {name:"La Face de Bellevarde", mtn:"V", diff:"black", lift:"Olympique / Bellevarde", zone:"Bellevarde", note:"The 1992 Olympic downhill. Steep top pitch straight above town — a rite of passage."},
+      {name:"OK", mtn:"V", diff:"red", lift:"Bellevarde", zone:"Bellevarde", note:"'Oh Kay' — long red back to town off Bellevarde. Skis forever; gets busy at close."},
+      {name:"Diebold", mtn:"V", diff:"red", lift:"Bellevarde", zone:"Bellevarde", note:"Sustained red on the Bellevarde flank."},
+      {name:"Grand Pré", mtn:"V", diff:"green", lift:"Solaise Express", zone:"Solaise", note:"Gentle beginner zone up on Solaise (not a valley run) — sunny and mellow."},
+      {name:"Cugnai", mtn:"V", diff:"red", lift:"Cugnai", zone:"Solaise", note:"Wide red off the back of Solaise."},
+      {name:"Piste M / Madeleine", mtn:"V", diff:"blue", lift:"Solaise", zone:"Solaise", note:"Cruisy blue across the Solaise plateau."},
+      {name:"Santons", mtn:"V", diff:"blue", lift:"Fornet", zone:"Le Fornet", note:"Quiet blue over the Fornet side, links to the glacier."},
+      {name:"Grande Motte Glacier", mtn:"T", diff:"red", lift:"Grande Motte funicular", zone:"Val Claret", note:"Glacier skiing to ~3456 m. Open early and late season; can be windy up top."},
+      {name:"Double M", mtn:"T", diff:"red", lift:"Grande Motte", zone:"Val Claret", note:"Long red off the glacier back towards Val Claret."},
+      {name:"Génépy", mtn:"T", diff:"green", lift:"Tignes le Lac", zone:"Le Lac", note:"Broad, gentle green by the lake — good warm-up."},
+      {name:"Trolles", mtn:"T", diff:"red", lift:"Tovière", zone:"Tovière", note:"Red off Tovière, the link towards the Val d'Isère side."},
+      {name:"H", mtn:"T", diff:"black", lift:"Aiguille Percée / Tovière", zone:"Tovière", note:"Steep black down the Tovière face."},
+    ],
+    eats: [
+      {name:"La Fruitière", loc:"mtn", area:"La Folie Douce, Bellevarde (Val d'Isère)", desc:"Farmhouse-chic long lunch mid-mountain, above the infamous Folie Douce party."},
+      {name:"L'Ouillette", loc:"mtn", area:"Solaise (Val d'Isère)", desc:"By the Solaise lake with a big sunny terrace."},
+      {name:"Le Panoramic", loc:"mtn", area:"Top of Grande Motte funicular (Tignes)", desc:"At ~3032 m — huge glacier views, book for the sit-down side."},
+      {name:"Lo Soli", loc:"mtn", area:"Tovière (Tignes)", desc:"Tucked mid-mountain spot, calmer than the Val Claret crowd."},
+      {name:"La Folie Douce", loc:"vil", area:"Top of La Daille gondola (Val d'Isère)", desc:"Cabaret on snow — afternoon party, not really lunch. Ski down after."},
+      {name:"Cocorico", loc:"vil", area:"Val d'Isère base", desc:"Rowdy slope-side après right in town."},
+      {name:"Loop Bar", loc:"vil", area:"Tignes le Lac", desc:"Tignes-side après by the lake."},
+    ],
+  },
+
+  /* ---------- THREE VALLEYS ----------
+     Starter data written from memory — check against the official
+     piste map and edit freely. */
+  t3v: {
+    name: "Three Valleys",
+    diffSystem: "eu",
+    map: { center:[45.37,6.60], zoom:11 },
+    mountains: [ {id:"C", name:"Courchevel"}, {id:"M", name:"Méribel"}, {id:"L", name:"Les Menuires"}, {id:"VT", name:"Val Thorens"} ],
+    runs: [
+      {name:"Combe de la Saulire", mtn:"C", diff:"red", lift:"Saulire cable car", zone:"Saulire", note:"Classic long red off the Saulire summit; the gateway between Courchevel and Méribel."},
+      {name:"Jean Blanc", mtn:"C", diff:"black", lift:"Suisses", zone:"Courchevel 1850", note:"Steep, tree-lined black back towards 1850."},
+      {name:"Les Suisses", mtn:"C", diff:"black", lift:"Suisses", zone:"Courchevel 1850", note:"Sustained black, holds bumps late in the day."},
+      {name:"Verdons", mtn:"C", diff:"blue", lift:"Verdons gondola", zone:"Courchevel", note:"Wide motorway blue above 1850 — busy but forgiving."},
+      {name:"Pralong", mtn:"C", diff:"red", lift:"Pralong", zone:"Courchevel", note:"Wide red near the altiport, good for opening the legs at speed."},
+      {name:"Combe Tougnète", mtn:"M", diff:"red", lift:"Tougnète gondola", zone:"Méribel", note:"Long red down the Tougnète face into Méribel."},
+      {name:"Roc de Fer", mtn:"M", diff:"black", lift:"Olympic / Tougnète", zone:"Méribel", note:"The 1992 women's Olympic downhill. Tough and exposed."},
+      {name:"Doron", mtn:"M", diff:"green", lift:"Various", zone:"Méribel valley", note:"Gentle green along the valley floor between villages."},
+      {name:"Aigle", mtn:"M", diff:"blue", lift:"Saulire Express", zone:"Méribel", note:"Cruisy blue back towards Méribel centre."},
+      {name:"La Masse", mtn:"L", diff:"red", lift:"Masse gondola", zone:"Les Menuires", note:"North-facing Pointe de la Masse — holds the best snow in the valley."},
+      {name:"Reberty", mtn:"L", diff:"blue", lift:"Reberty", zone:"Les Menuires", note:"Sunny blue linking the Reberty lifts and lunch spots."},
+      {name:"Cascades", mtn:"VT", diff:"blue", lift:"Orelle / Rosaël", zone:"Val Thorens → Orelle", note:"Long, scenic run over towards the Orelle fourth valley."},
+      {name:"Boismint", mtn:"VT", diff:"red", lift:"Boismint", zone:"Val Thorens", note:"Broad red on the sunny side of Val Thorens."},
+      {name:"Col", mtn:"VT", diff:"red", lift:"Cime Caron", zone:"Val Thorens", note:"High, snow-sure red off the Caron ridge; some of the best altitude skiing in the Alps."},
+      {name:"Pluviomètre", mtn:"VT", diff:"red", lift:"Plein Sud", zone:"Val Thorens", note:"Rolling red back towards the resort — fun at speed."},
+    ],
+    eats: [
+      {name:"Le Chalet de Pierres", loc:"mtn", area:"Verdons piste, Courchevel 1850", desc:"Legendary sun terrace. Big scene, big prices — the see-and-be-seen lunch."},
+      {name:"Bel Air", loc:"mtn", area:"Above Courchevel 1650", desc:"Cosy chalet with a sunny deck, more relaxed than the 1850 spots."},
+      {name:"Les Pierres Plates", loc:"mtn", area:"Top of Saulire (Méribel side)", desc:"Panoramic self-service at the Three Valleys crossroads."},
+      {name:"Le Clos Bernard", loc:"mtn", area:"In the trees, Méribel", desc:"Forest chalet reached on skis or foot — atmospheric long lunch."},
+      {name:"Les Chalets du Thorens", loc:"vil", area:"Val Thorens", desc:"Vast sun deck plus a club inside — epic altitude après."},
+      {name:"Chalet des 2 Ours", loc:"mtn", area:"Boismint side, Val Thorens", desc:"Sunny breakfast-and-lunch spot away from the crowds."},
+      {name:"La Ferme de Reberty", loc:"vil", area:"Reberty, Les Menuires", desc:"Slope-side farmhouse — lunch that rolls into live-music après."},
+    ],
+  },
+
+};
+
+/* difficulty grade tables per system (order = easy → hard) */
+const DIFF = {
+  na: [
+    {v:"green",  sym:"●",  label:"Green"},
+    {v:"blue",   sym:"■",  label:"Blue"},
+    {v:"black",  sym:"◆",  label:"Black"},
+    {v:"dblack", sym:"◆◆", label:"Dbl"},
+  ],
+  eu: [
+    {v:"green", sym:"●",  label:"Green"},
+    {v:"blue",  sym:"■",  label:"Blue"},
+    {v:"red",   sym:"◆",  label:"Red"},
+    {v:"black", sym:"◆◆", label:"Black"},
+  ],
+};
+
+/* =========================================================
+   STORAGE  (per-resort, keyed by resort id)
+   ========================================================= */
+const store = {
+  get(k, fb){ try{ return JSON.parse(localStorage.getItem(k)) ?? fb }catch(e){ return fb } },
+  set(k, v){ localStorage.setItem(k, JSON.stringify(v)) }
+};
+
+/* --- one-time migration from v1 (single-resort, name-keyed) to v2 (per-resort) --- */
+if(store.get("fc_schema", 1) < 2){
+  const favsV1 = store.get("fc_favs", null);         // was an array of run names
+  const notesV1 = store.get("fc_notes", null);        // was { runName: note }
+  const ratingsV1 = store.get("fc_ratings", null);    // was { eatName: rating }
+  const eatnotesV1 = store.get("fc_eatnotes", null);  // was { eatName: note }
+  if(Array.isArray(favsV1))              store.set("fc_favs", { wb: favsV1 });
+  if(notesV1 && !Array.isArray(notesV1)) store.set("fc_notes", { wb: notesV1 });
+  if(ratingsV1)                          store.set("fc_ratings", { wb: ratingsV1 });
+  if(eatnotesV1)                         store.set("fc_eatnotes", { wb: eatnotesV1 });
+  const logV1 = store.get("fc_log", []);              // tag existing days as Whistler Blackcomb
+  logV1.forEach(e=>{ if(!e.resort) e.resort = "wb"; });
+  store.set("fc_log", logV1);
+  store.set("fc_schema", 2);
+}
+
+let favs     = store.get("fc_favs", {});      // { resortId: [names] }
+let notes    = store.get("fc_notes", {});     // { resortId: { runName: note } }
+let ratings  = store.get("fc_ratings", {});   // { resortId: { eatName: 1–5 } }
+let eatnotes = store.get("fc_eatnotes", {});  // { resortId: { eatName: note } }
+let daylog   = store.get("fc_log", []);       // one global timeline, entries tagged with resort
+
+let resortId = store.get("fc_resort", "wb");
+if(!RESORTS[resortId]) resortId = "wb";
+let R = RESORTS[resortId];
+
+/* make sure the active resort has a bucket in every per-resort store */
+function ensureStores(){
+  favs[resortId]     = favs[resortId]     || [];
+  notes[resortId]    = notes[resortId]    || {};
+  ratings[resortId]  = ratings[resortId]  || {};
+  eatnotes[resortId] = eatnotes[resortId] || {};
+}
+ensureStores();
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function diffSym(v){ const d = DIFF[R.diffSystem].find(x=>x.v===v); return d ? d.sym : "●"; }
+function mtnName(id){ const m = R.mountains.find(x=>x.id===id); return m ? m.name : id; }
+
+/* =========================================================
+   MAP  (Leaflet + OpenSnowMap pistes overlay)
+   ========================================================= */
+let map, mapReady = false;
+function initMap(){
+  const el = document.getElementById("map");
+  if(!window.L){
+    el.innerHTML = `<div class="mapoff">The piste map needs a data connection.<br>Runs, eats and your log still work offline.</div>`;
+    return;
+  }
+  map = L.map(el, { zoomControl:true, attributionControl:true }).setView(R.map.center, R.map.zoom);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom:18, attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  L.tileLayer("https://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png", {
+    maxZoom:18, attribution:'Pistes &copy; <a href="https://www.opensnowmap.org">OpenSnowMap</a>'
+  }).addTo(map);
+  mapReady = true;
+}
+function recenterMap(){ if(mapReady) map.setView(R.map.center, R.map.zoom); }
+
+/* =========================================================
+   RUNS
+   ========================================================= */
+let fMtn="all", fDiff="all";
+
+function renderRuns(){
+  const q = document.getElementById("runsearch").value.toLowerCase();
+  const el = document.getElementById("runlist");
+  el.innerHTML = "";
+  R.runs.forEach(r=>{
+    if(fMtn==="fav" && !favs[resortId].includes(r.name)) return;
+    if(fMtn!=="all" && fMtn!=="fav" && r.mtn!==fMtn) return;
+    if(fDiff!=="all" && r.diff!==fDiff) return;
+    if(q && !(r.name+r.zone+r.lift).toLowerCase().includes(q)) return;
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      `<div class="rowhead">
+        <span class="diff ${r.diff}">${diffSym(r.diff)}</span>
+        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))} · ${esc(r.zone)}</div></span>
+        <span class="fav ${favs[resortId].includes(r.name)?"on":""}">★</span>
+      </div>
+      <div class="rowbody">
+        <p><strong>Lift:</strong> ${esc(r.lift)}</p>
+        <p>${esc(r.note)}</p>
+        <label>My notes</label>
+        <textarea placeholder="Conditions, lines, reminders…">${esc(notes[resortId][r.name]||"")}</textarea>
+      </div>`;
+    row.querySelector(".rowhead").addEventListener("click", e=>{
+      if(e.target.classList.contains("fav")) return;
+      row.classList.toggle("open");
+    });
+    row.querySelector(".fav").addEventListener("click", ()=>{
+      const list = favs[resortId];
+      favs[resortId] = list.includes(r.name) ? list.filter(f=>f!==r.name) : [...list, r.name];
+      store.set("fc_favs", favs); renderRuns();
+    });
+    row.querySelector("textarea").addEventListener("input", e=>{
+      notes[resortId][r.name] = e.target.value; store.set("fc_notes", notes);
+    });
+    el.appendChild(row);
+  });
+  if(!el.children.length) el.innerHTML = `<p class="muted" style="padding:10px 4px">Nothing matches — clear a filter.</p>`;
+}
+
+/* =========================================================
+   EAT
+   ========================================================= */
+let fEat="all";
+function renderEats(){
+  const el = document.getElementById("eatlist");
+  el.innerHTML = "";
+  R.eats.forEach(e=>{
+    if(fEat!=="all" && e.loc!==fEat) return;
+    const rt = ratings[resortId][e.name]||0;
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      `<div class="rowhead">
+        <span class="nm">${esc(e.name)}<div class="meta">${esc(e.area)}</div></span>
+        <span class="stars">${[1,2,3,4,5].map(n=>`<span data-n="${n}" class="${n<=rt?"lit":""}">★</span>`).join("")}</span>
+      </div>
+      <div class="rowbody">
+        <p>${esc(e.desc)}</p>
+        <label>My notes</label>
+        <textarea placeholder="What to order, when to go…">${esc(eatnotes[resortId][e.name]||"")}</textarea>
+      </div>`;
+    row.querySelector(".rowhead").addEventListener("click", ev=>{
+      if(ev.target.dataset.n) return;
+      row.classList.toggle("open");
+    });
+    row.querySelectorAll(".stars span").forEach(st=>{
+      st.addEventListener("click", ()=>{
+        const n = +st.dataset.n;
+        ratings[resortId][e.name] = ratings[resortId][e.name]===n ? 0 : n;
+        store.set("fc_ratings", ratings); renderEats();
+      });
+    });
+    row.querySelector("textarea").addEventListener("input", ev=>{
+      eatnotes[resortId][e.name] = ev.target.value; store.set("fc_eatnotes", eatnotes);
+    });
+    el.appendChild(row);
+  });
+  if(!el.children.length) el.innerHTML = `<p class="muted" style="padding:10px 4px">Nothing matches — clear a filter.</p>`;
+}
+
+/* =========================================================
+   LOG  (one global timeline, entries tagged with resort)
+   ========================================================= */
+function renderLog(){
+  const el = document.getElementById("loglist");
+  el.innerHTML = "";
+  if(!daylog.length){ el.innerHTML = `<p class="muted" style="padding:6px 4px">No days logged yet. First chair awaits.</p>`; return; }
+  [...daylog].sort((a,b)=>b.date.localeCompare(a.date)).forEach(entry=>{
+    const d = new Date(entry.date+"T12:00");
+    const nice = d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+    const rName = RESORTS[entry.resort] ? RESORTS[entry.resort].name : "";
+    const card = document.createElement("div");
+    card.className = "card logentry";
+    card.innerHTML = `<strong>${nice}</strong> <span class="cond">· ${esc(entry.cond)}</span>
+      ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
+      ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
+      <span class="del" data-id="${entry.id}">delete</span>`;
+    card.querySelector(".del").addEventListener("click", ()=>{
+      if(!confirm("Delete this day?")) return;
+      daylog = daylog.filter(x=>x.id!==entry.id);
+      store.set("fc_log", daylog); renderLog();
+    });
+    el.appendChild(card);
+  });
+}
+document.getElementById("logadd").addEventListener("click", ()=>{
+  const date = document.getElementById("logdate").value;
+  if(!date){ alert("Pick a date first."); return; }
+  daylog.push({
+    id: Date.now(),
+    date,
+    resort: resortId,
+    cond: document.getElementById("logcond").value,
+    notes: document.getElementById("lognotes").value.trim()
+  });
+  store.set("fc_log", daylog);
+  document.getElementById("lognotes").value = "";
+  renderLog();
+});
+
+/* =========================================================
+   CHIPS  (mountain + difficulty chips rebuild per resort)
+   ========================================================= */
+function bindChipGroup(id, cb){
+  document.querySelectorAll("#"+id+" .chip").forEach(c=>{
+    c.addEventListener("click", ()=>{
+      document.querySelectorAll("#"+id+" .chip").forEach(x=>x.classList.remove("on"));
+      c.classList.add("on"); cb(c.dataset.v);
+    });
+  });
+}
+function buildMtnChips(){
+  let h = `<button class="chip on" data-v="all">All</button>`;
+  R.mountains.forEach(m=> h += `<button class="chip" data-v="${m.id}">${esc(m.name)}</button>`);
+  h += `<button class="chip" data-v="fav">★ Favourites</button>`;
+  document.getElementById("mtnchips").innerHTML = h;
+  bindChipGroup("mtnchips", v=>{ fMtn=v; renderRuns(); });
+}
+function buildDiffChips(){
+  let h = `<button class="chip on" data-v="all">Any</button>`;
+  DIFF[R.diffSystem].forEach(d=> h += `<button class="chip" data-v="${d.v}">${d.sym} ${d.label}</button>`);
+  document.getElementById("diffchips").innerHTML = h;
+  bindChipGroup("diffchips", v=>{ fDiff=v; renderRuns(); });
+}
+bindChipGroup("eatchips", v=>{ fEat=v; renderEats(); });
+
+/* =========================================================
+   RESORT SWITCHER
+   ========================================================= */
+function buildResortSelect(){
+  const sel = document.getElementById("resortsel");
+  sel.innerHTML = Object.entries(RESORTS)
+    .map(([id,r])=>`<option value="${id}"${id===resortId?" selected":""}>${esc(r.name)}</option>`).join("");
+  sel.addEventListener("change", ()=> switchResort(sel.value));
+}
+function switchResort(id){
+  if(!RESORTS[id]) return;
+  resortId = id; R = RESORTS[id];
+  store.set("fc_resort", id);
+  ensureStores();
+  fMtn="all"; fDiff="all";
+  document.getElementById("runsearch").value = "";
+  document.getElementById("runsnote").textContent =
+    "Starter data written from memory — check names against the official trail map and edit the run list at the top of index.html.";
+  buildMtnChips(); buildDiffChips();
+  renderRuns(); renderEats(); renderLog();
+  recenterMap();
+}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    document.querySelectorAll("main section").forEach(s=>s.classList.remove("active"));
+    document.getElementById("tab-"+b.dataset.t).classList.add("active");
+    window.scrollTo(0,0);
+    // Leaflet mis-sizes when it was created in a hidden tab — nudge it on show
+    if(b.dataset.t==="map" && mapReady) setTimeout(()=>map.invalidateSize(), 0);
+  });
+});
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+document.getElementById("logdate").value = new Date().toISOString().slice(0,10);
+document.getElementById("runsnote").textContent =
+  "Starter data written from memory — check names against the official trail map and edit the run list at the top of index.html.";
+buildResortSelect();
+initMap();
+buildMtnChips();
+buildDiffChips();
+renderRuns();
+renderEats();
+renderLog();
+</script>
+</body>
+</html>
