@@ -84,6 +84,21 @@ button.secondary{
 }
 .leaflet-container{font-family:inherit;background:#DCEAF5}
 
+/* weather */
+.wx{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px}
+.wx.loading{color:var(--ink2);font-size:13px}
+.wx .now{display:flex;align-items:center;gap:12px}
+.wx .now .emoji{font-size:30px;line-height:1}
+.wx .now .temp{font-family:'Barlow Condensed';font-weight:700;font-size:30px;letter-spacing:.02em}
+.wx .now .desc{font-size:13px;color:var(--ink2)}
+.wx .fc{display:flex;gap:8px;margin-top:10px}
+.wx .fc .d{flex:1;text-align:center;background:var(--snow);border-radius:10px;padding:7px 4px}
+.wx .fc .d .dow{font-family:'Barlow Condensed';font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.wx .fc .d .de{font-size:18px;margin:2px 0}
+.wx .fc .d .snow{font-size:12px;font-weight:600;color:var(--glacier)}
+.wx .fc .d .tmax{font-size:12px;color:var(--ink2)}
+.wx .stamp{font-size:11px;color:var(--ink2);margin-top:8px}
+
 /* run + eat rows */
 .row{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
 .rowhead{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer}
@@ -134,6 +149,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 
 <!-- ============ MAP ============ -->
 <section id="tab-map" class="active">
+  <div id="weather" class="wx loading">Loading weather…</div>
   <div id="map"></div>
   <p class="muted" id="mapnote" style="margin-top:8px">
     Live pistes &amp; lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom.
@@ -414,6 +430,68 @@ function initMap(){
 function recenterMap(){ if(mapReady) map.setView(R.map.center, R.map.zoom); }
 
 /* =========================================================
+   WEATHER  (Open-Meteo — free, no key; cached for offline)
+   ========================================================= */
+const WMO = {
+  0:["Clear","☀️"],1:["Mainly clear","🌤"],2:["Partly cloudy","⛅"],3:["Overcast","☁️"],
+  45:["Fog","🌫"],48:["Rime fog","🌫"],
+  51:["Light drizzle","🌦"],53:["Drizzle","🌦"],55:["Heavy drizzle","🌦"],
+  56:["Freezing drizzle","🌧"],57:["Freezing drizzle","🌧"],
+  61:["Light rain","🌧"],63:["Rain","🌧"],65:["Heavy rain","🌧"],
+  66:["Freezing rain","🌧"],67:["Freezing rain","🌧"],
+  71:["Light snow","🌨"],73:["Snow","🌨"],75:["Heavy snow","❄️"],77:["Snow grains","🌨"],
+  80:["Rain showers","🌦"],81:["Rain showers","🌦"],82:["Heavy showers","🌧"],
+  85:["Snow showers","🌨"],86:["Snow showers","❄️"],
+  95:["Thunderstorm","⛈"],96:["Thunderstorm","⛈"],99:["Thunderstorm","⛈"]
+};
+function wmo(c){ return WMO[c] || ["—","🌡"]; }
+let wxCache = store.get("fc_weather", {});   // { resortId: { data, at } }
+
+function renderWeather(){
+  const el = document.getElementById("weather");
+  const cached = wxCache[resortId];
+  if(cached) paintWeather(cached.data, cached.at, false);
+  else { el.className = "wx loading"; el.textContent = "Loading weather…"; }
+  const forId = resortId;
+  const [lat,lon] = R.map.center;
+  const url = "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+
+    "&current=temperature_2m,wind_speed_10m,weather_code"+
+    "&daily=weather_code,temperature_2m_max,snowfall_sum&forecast_days=3&timezone=auto&wind_speed_unit=kmh";
+  fetch(url).then(r=>r.json()).then(data=>{
+    if(!data || !data.current) throw new Error("bad payload");
+    wxCache[forId] = { data, at: Date.now() };
+    store.set("fc_weather", wxCache);
+    if(resortId===forId) paintWeather(data, wxCache[forId].at, false);
+  }).catch(()=>{
+    if(resortId!==forId) return;
+    if(cached) paintWeather(cached.data, cached.at, true);
+    else { el.className = "wx loading"; el.textContent = "Weather needs a data signal — it'll load next time you're online."; }
+  });
+}
+function paintWeather(data, at, stale){
+  const el = document.getElementById("weather");
+  const cur = data.current, d = data.daily;
+  const [ct,ce] = wmo(cur.weather_code);
+  const days = d.time.map((t,i)=>{
+    const dow = i===0 ? "Today" : new Date(t+"T12:00").toLocaleDateString("en-GB",{weekday:"short"});
+    const de = wmo(d.weather_code[i])[1];
+    const snow = d.snowfall_sum[i] || 0;
+    const tmax = Math.round(d.temperature_2m_max[i]);
+    const snowTxt = snow>0 ? "❄ "+(snow<1?snow.toFixed(1):Math.round(snow))+"cm" : "—";
+    return `<div class="d"><div class="dow">${dow}</div><div class="de">${de}</div>`+
+           `<div class="snow">${snowTxt}</div><div class="tmax">${tmax}°</div></div>`;
+  }).join("");
+  const when = new Date(at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  const stamp = (stale ? "Offline · last updated " : "Updated ") + when;
+  el.className = "wx";
+  el.innerHTML =
+    `<div class="now"><span class="emoji">${ce}</span>`+
+    `<div><span class="temp">${Math.round(cur.temperature_2m)}°</span>`+
+    `<div class="desc">${ct} · wind ${Math.round(cur.wind_speed_10m)} km/h</div></div></div>`+
+    `<div class="fc">${days}</div><div class="stamp">${stamp}</div>`;
+}
+
+/* =========================================================
    RUNS
    ========================================================= */
 let fMtn="all", fDiff="all";
@@ -636,7 +714,7 @@ function switchResort(id){
     "Starter data written from memory — check names against the official trail map and edit the run list at the top of index.html.";
   buildMtnChips(); buildDiffChips();
   renderRuns(); renderEats(); renderLog();
-  recenterMap();
+  recenterMap(); renderWeather();
 }
 
 /* =========================================================
@@ -667,6 +745,7 @@ buildDiffChips();
 renderRuns();
 renderEats();
 renderLog();
+renderWeather();
 
 /* register the service worker so the app shell works offline */
 if("serviceWorker" in navigator){
