@@ -11,6 +11,9 @@ A personal ski resort companion web app. v2 is built, deployed and in use:
 - Real piste map (Leaflet + OpenSnowMap tiles over OpenStreetMap), recentred per resort — needs a data signal; the other tabs work offline
 - Searchable/filterable run directory with per-resort favourites and notes, restaurant directory with star ratings and notes, and a day log (one timeline, entries tagged by resort)
 - All user data persists in `localStorage` (keys prefixed `fc_`), namespaced per resort since v2 (migration guarded by `fc_schema`)
+- Weather: current conditions + 3-day snowfall per resort (Open-Meteo, free/no key), cached for offline
+- GPS: "Locate me" dot on the map, plus a Track-run session (distance/time/top speed/approx descent) you can save to the log — foreground/screen-on only
+- Installable PWA with an offline app shell (service worker `sw.js` + `manifest.json`); viewed map tiles are cached so previously seen areas render offline
 - Deployed via GitHub Pages; used on iPhone via Safari "Add to Home Screen"
 
 ## Design language (keep consistent)
@@ -24,6 +27,11 @@ Done (v2):
 1. ✅ Real piste map — Leaflet + OpenSnowMap tiles over OpenStreetMap, recentred per resort. (The old tappable-lift queue-time notes were dropped in the process, by decision.)
 2. ✅ Multi-resort — Whistler Blackcomb, Tignes–Val d'Isère, Three Valleys with a header switcher. The French run/restaurant lists were seeded from memory and still need checking/extending against the official maps — same "written from memory" caveat as the WB starter data.
 4. ✅ localStorage export/restore — Backup card at the bottom of the Log tab (exports every `fc_` key to a JSON file, restores with guards).
+
+Done (v3):
+5. ✅ Installable offline PWA — `manifest.json` + `sw.js` (precache shell, network-first navigation, capped tile cache).
+6. ✅ Weather + 3-day snowfall per resort via Open-Meteo, cached in `fc_weather` for offline.
+7. ✅ GPS locate + run tracking (distance/time/top speed/approx descent) → save summary to the log.
 
 Still open:
 3. Deploy stays GitHub Pages — static files only, no server, no accounts. Data stays local to the device for now (multi-user/sync is a possible future phase).
