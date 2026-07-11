@@ -65,6 +65,10 @@ button.primary{
   font-family:'Barlow Condensed';font-weight:700;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
   background:var(--glacier);color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;width:100%;
 }
+button.secondary{
+  font-family:'Barlow Condensed';font-weight:700;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;width:100%;
+}
 
 /* map */
 #map{
@@ -169,6 +173,14 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
   </div>
   <h2>Past days</h2>
   <div id="loglist"></div>
+
+  <h2>Backup</h2>
+  <div class="card">
+    <p class="muted" style="margin-bottom:10px">Your favourites, notes, ratings and day log live only on this device. Export a backup now and then — it saves a file you can keep in Files/iCloud and restore later or on a new phone.</p>
+    <button class="primary" id="exportbtn">Export backup</button>
+    <button class="secondary" id="importbtn" style="margin-top:8px">Restore from backup…</button>
+    <input type="file" id="importfile" accept="application/json,.json" hidden>
+  </div>
 </section>
 
 </main>
@@ -523,6 +535,57 @@ document.getElementById("logadd").addEventListener("click", ()=>{
   store.set("fc_log", daylog);
   document.getElementById("lognotes").value = "";
   renderLog();
+});
+
+/* =========================================================
+   BACKUP — export/restore every fc_ key
+   ========================================================= */
+function collectFcKeys(){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.indexOf("fc_")===0) keys.push(k);
+  }
+  return keys;
+}
+function exportBackup(){
+  const data = {};
+  collectFcKeys().forEach(k=> data[k] = localStorage.getItem(k)); // raw JSON strings
+  const payload = { app:"First Chair", schema:2, exported:new Date().toISOString(), data };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "first-chair-backup-" + new Date().toISOString().slice(0,10) + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function importBackup(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let payload;
+    try{ payload = JSON.parse(reader.result); }
+    catch(e){ alert("That file isn't valid JSON — pick a First Chair backup file."); return; }
+    const data = payload && payload.data;
+    const keys = data && typeof data==="object" ? Object.keys(data).filter(k=>k.indexOf("fc_")===0) : [];
+    if(!keys.length){ alert("No First Chair data found in that file."); return; }
+    if(!confirm("Restore this backup? It replaces the First Chair data currently on this device ("+keys.length+" items).")) return;
+    collectFcKeys().forEach(k=> localStorage.removeItem(k));
+    keys.forEach(k=>{
+      const v = data[k];
+      localStorage.setItem(k, typeof v==="string" ? v : JSON.stringify(v));
+    });
+    alert("Backup restored. Reloading…");
+    location.reload();
+  };
+  reader.onerror = ()=> alert("Couldn't read that file.");
+  reader.readAsText(file);
+}
+document.getElementById("exportbtn").addEventListener("click", exportBackup);
+document.getElementById("importbtn").addEventListener("click", ()=> document.getElementById("importfile").click());
+document.getElementById("importfile").addEventListener("change", e=>{
+  if(e.target.files && e.target.files[0]) importBackup(e.target.files[0]);
+  e.target.value = "";
 });
 
 /* =========================================================
