@@ -4,11 +4,13 @@
 James — engineering student, first app project. I know Whistler Blackcomb (worked a season there), Tignes–Val d'Isère, and the Three Valleys well. Treat me as a capable beginner: explain decisions, challenge weak ideas, give concrete recommendations rather than option lists, and ask clarifying questions before big changes.
 
 ## What this is
-A personal ski resort companion web app. v1 is built and working:
+A personal ski resort companion web app. v2 is built, deployed and in use:
 - Single self-contained `index.html` (no build step, no framework) + `icon.png`
-- Vanilla JS, CSS in the file, data in plain JS arrays at the top of the script
-- Features: stylised tappable SVG map of Whistler Blackcomb (lifts with queue-time notes), searchable/filterable run directory with favourites and personal notes, restaurant directory with star ratings and notes, and a day log
-- All user data persists in `localStorage` (keys prefixed `fc_`)
+- Vanilla JS, CSS in the file, data in a `RESORTS` object at the top of the script
+- Multi-resort: Whistler Blackcomb (NA grades), Tignes–Val d'Isère and the Three Valleys (EU grades), chosen via a header switcher
+- Real piste map (Leaflet + OpenSnowMap tiles over OpenStreetMap), recentred per resort — needs a data signal; the other tabs work offline
+- Searchable/filterable run directory with per-resort favourites and notes, restaurant directory with star ratings and notes, and a day log (one timeline, entries tagged by resort)
+- All user data persists in `localStorage` (keys prefixed `fc_`), namespaced per resort since v2 (migration guarded by `fc_schema`)
 - Deployed via GitHub Pages; used on iPhone via Safari "Add to Home Screen"
 
 ## Design language (keep consistent)
@@ -17,11 +19,20 @@ A personal ski resort companion web app. v1 is built and working:
 - North American difficulty markers: ● green ■ blue ◆ black ◆◆ double black (French resorts use green/blue/red/black — handle both)
 - Mobile-first, bottom tab bar, max-width 640px on desktop
 
-## Agreed next steps (v2)
-1. Replace the hand-drawn SVG map with a real piste map. Preferred approach: Leaflet + OpenSnowMap overlay tiles (openstreetmap-based, shows actual pistes/lifts, free and legal). Do NOT copy official resort piste map artwork — it's copyrighted.
-2. Multi-resort support: add Tignes–Val d'Isère (Espace Killy) and the Three Valleys alongside Whistler Blackcomb, with a resort switcher. Curated run/restaurant lists stay per-resort; James will correct and extend them since he knows the mountains.
+## Status & next steps
+Done (v2):
+1. ✅ Real piste map — Leaflet + OpenSnowMap tiles over OpenStreetMap, recentred per resort. (The old tappable-lift queue-time notes were dropped in the process, by decision.)
+2. ✅ Multi-resort — Whistler Blackcomb, Tignes–Val d'Isère, Three Valleys with a header switcher. The French run/restaurant lists were seeded from memory and still need checking/extending against the official maps — same "written from memory" caveat as the WB starter data.
+
+Still open:
 3. Keep the deploy target GitHub Pages — static files only, no server, no accounts. Data stays local to the device for now (multi-user/sync is a possible future phase).
 4. Consider a localStorage export/backup button once data matters.
+
+## Deploy / workflow
+- Repo: https://github.com/james-coding-mac/first-chair (public). Working copy lives at `~/Downloads/Skiing App`.
+- Loop: edit `index.html` on the Mac → `git push` → GitHub Pages rebuilds → refresh on iPhone. Live at https://james-coding-mac.github.io/first-chair/
+- Auth is HTTPS + a Personal Access Token in the macOS keychain (set up once). Push from a real interactive Terminal, not an automated shell.
+- Pages serves branch `main`, folder `/ (root)`.
 
 ## Hard constraints
 - Must remain deployable as static files on GitHub Pages
