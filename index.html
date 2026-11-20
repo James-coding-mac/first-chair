@@ -105,7 +105,7 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 #status-card .st-name{font-weight:600;min-width:9em}#status-card .st-val{font-variant-numeric:tabular-nums}
 #status-card .st-pistes{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
 #status-card .st-note{margin-top:6px;font-size:12px}
-.sosbtn{flex:0 0 auto!important;color:#C0392B!important;border:1.5px solid #C0392B!important;font-weight:700}
+.trkbtns .sosbtn{flex:0 0 72px!important;width:72px;color:#C0392B!important;border:1.5px solid #C0392B!important;font-weight:700}
 .sos .sos-coords{font:600 22px/1.3 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em;user-select:all}
 .sos .sos-call{display:block;text-align:center;background:#C0392B;color:#fff;border-radius:12px;padding:14px;margin:12px 0 8px;
   font:700 22px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-decoration:none}
@@ -114,6 +114,7 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 #season-stats .ss-v{font:700 26px 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}
 #season-stats .ss-k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .sharebtn{margin-top:8px}
+.sun-lit{color:#B7791F;font-weight:600}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -178,6 +179,14 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <div id="route-chips" class="chips" aria-label="Maximum route difficulty"></div>
   </div>
   <div id="status-card" class="card" hidden></div>
+  <div id="sun-card" class="card" hidden>
+    <div class="st-head"><span class="label">☀ Sun on slopes</span><span class="muted" id="sun-times"></span></div>
+    <input type="range" id="sun-time" min="0" max="1439" step="5" aria-label="Time of day" style="width:100%;margin:8px 0">
+    <p id="sun-summary"></p>
+    <p class="muted" id="sun-tip"></p>
+    <button class="secondary" id="sun-toggle">Show sunny pistes on map</button>
+    <p class="muted" style="margin-top:8px;font-size:11.5px">Uses slope direction and steepness from elevation data; ignores shadows cast by surrounding peaks and cloud.</p>
+  </div>
   <div id="route-result" class="card" hidden>
     <div id="route-details" role="status" aria-live="polite"></div>
     <button id="route-clear" class="secondary">Clear route</button>
@@ -252,6 +261,7 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
 <script src="track.js"></script>
 <script src="route.js"></script>
 <script src="stats.js"></script>
+<script src="sun.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -631,6 +641,77 @@ function drawSkied(data){
   L.geoJSON({ type:"FeatureCollection", features:data.features.filter(f=>f.properties.k==="piste" && names.has(f.properties.n)) },
     { style:()=>({ color:"#E0A93C", weight:7, opacity:.55 }), interactive:false }).addTo(skiedGroup);
 }
+
+/* ---------- sun on slopes ---------- */
+let sunGroup = null, sunShown = false, sunAspects = {};   // resortId -> [{f, aspect, slope}]
+async function pisteAspects(){
+  if(sunAspects[resortId]) return sunAspects[resortId];
+  const fc = vecData[resortId] || await fetch(R.mapData).then(r=>r.json()).then(d=>(vecData[resortId]=d));
+  const { graph } = await loadRouteGraph(R.graphData);
+  const nodes = graph.nodes;
+  const ele = (lat, lon) => {
+    let best = null, bd = Infinity; const k = Math.cos(lat*Math.PI/180);
+    for(const n of nodes){ const d = (n[0]-lat)**2 + ((n[1]-lon)*k)**2; if(d < bd){ bd = d; best = n; } }
+    return bd < 0.0035**2 ? best[2] : null;   // within ~400 m
+  };
+  const out = [];
+  fc.features.forEach(f=>{
+    if(f.properties.k !== "piste" || f.geometry.type !== "LineString") return;
+    const c = f.geometry.coordinates, a = [c[0][1], c[0][0]], b = [c[c.length-1][1], c[c.length-1][0]];
+    const ea = ele(...a), eb = ele(...b);
+    const r = ea===null || eb===null ? { aspect:null, slope:null } : FCSun.lineAspect(a, b, ea, eb);
+    out.push({ f, aspect: r.aspect, slope: r.slope });
+  });
+  return (sunAspects[resortId] = out);
+}
+function sunDate(){
+  const v = Number(document.getElementById("sun-time").value), d = new Date();
+  d.setHours(Math.floor(v/60), v%60, 0, 0); return d;
+}
+async function renderSun(){
+  if(!R.mapData || !R.graphData) return;
+  const at = R.base ? R.base.at : R.map.center, d = sunDate();
+  const sun = FCSun.position(d, ...at), hhmm = d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  let list;
+  try{ list = await pisteAspects(); }catch(e){ document.getElementById("sun-summary").textContent = "Needs the offline map and route data (open the app once with signal)."; return; }
+  const named = list.filter(x=>x.f.properties.n), lit = named.filter(x=>FCSun.isLit(sun, x.aspect, x.slope));
+  const litNames = new Set(lit.map(x=>x.f.properties.n)), litSet = new Set(list.filter(x=>FCSun.isLit(sun, x.aspect, x.slope) && x.f.properties.n).map(x=>x.f));
+  document.getElementById("sun-summary").innerHTML = sun.altitude <= 2
+    ? `<strong>${esc(hhmm)}</strong>: sun below the mountains' horizon.`
+    : `<strong>${esc(hhmm)}</strong>: sun in the ${esc(FCSun.compass(sun.azimuth))} at ${Math.round(sun.altitude)}° · <span class="sun-lit">${litNames.size} named pistes in sun</span>`;
+  // which way-facing slopes are best lit right now
+  const byDir = {};
+  named.filter(x=>x.aspect!==null).forEach(x=>{ const c = FCSun.compass(x.aspect); byDir[c] = byDir[c] || [0,0]; byDir[c][1]++; if(FCSun.isLit(sun,x.aspect,x.slope)) byDir[c][0]++; });
+  const good = Object.entries(byDir).filter(([,v])=>v[1]>=5 && v[0]/v[1]>=0.8)
+    .sort((a,b)=>b[1][0]/b[1][1]-a[1][0]/a[1][1] || b[1][1]-a[1][1]).slice(0,3).map(([k])=>k);
+  document.getElementById("sun-tip").textContent = sun.altitude <= 2 ? "" :
+    good.length ? `Best now: ${good.join(", ")}-facing slopes.` : "Low sun: only the most sun-facing slopes are lit.";
+  if(!mapReady) return;
+  if(!sunGroup) sunGroup = L.layerGroup();
+  sunGroup.clearLayers();
+  if(sunShown){
+    L.geoJSON({ type:"FeatureCollection", features: list.map(x=>x.f) }, {
+      style: f => litSet.has(f) ? { color:"#F6C343", weight:8, opacity:.6 } : { color:"#16283C", weight:3, opacity:.12 },
+      interactive:false }).addTo(sunGroup);
+    if(!map.hasLayer(sunGroup)) sunGroup.addTo(map);
+  } else if(map.hasLayer(sunGroup)) map.removeLayer(sunGroup);
+}
+function setupSun(){
+  const card = document.getElementById("sun-card");
+  card.hidden = !(R.mapData && R.graphData);
+  if(card.hidden){ sunShown = false; if(sunGroup && mapReady && map.hasLayer(sunGroup)) map.removeLayer(sunGroup); return; }
+  const at = R.base ? R.base.at : R.map.center, now = new Date(), t = FCSun.times(now, ...at), slider = document.getElementById("sun-time");
+  const fmt = d => d ? d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}) : "—";
+  document.getElementById("sun-times").textContent = `☀ ${fmt(t.sunrise)} – ${fmt(t.sunset)}`;
+  if(t.sunrise && t.sunset){ slider.min = t.sunrise.getHours()*60 + t.sunrise.getMinutes(); slider.max = t.sunset.getHours()*60 + t.sunset.getMinutes(); }
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  slider.value = Math.min(Number(slider.max), Math.max(Number(slider.min), nowMin));
+  renderSun();
+}
+document.getElementById("sun-time").addEventListener("input", renderSun);
+document.getElementById("sun-toggle").addEventListener("click", e=>{
+  sunShown = !sunShown; e.target.textContent = sunShown ? "Hide sunny pistes" : "Show sunny pistes on map"; renderSun();
+});
 
 function showVectors(){
   document.getElementById("mapnote").textContent = R.mapData ? MAPNOTE_OFFLINE : MAPNOTE_ONLINE;
@@ -1479,7 +1560,7 @@ function switchResort(id){
   setRunsNote();
   buildMtnChips(); buildDiffChips();
   renderRuns(); renderEats(); renderLog();
-  setupRouting(); recenterMap(); renderWeather(); loadStatus();
+  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun();
 }
 
 /* =========================================================
@@ -1512,6 +1593,7 @@ renderEats();
 renderLog();
 renderWeather();
 loadStatus();
+setupSun();
 restoreTracking();
 
 /* register the service worker so the app shell works offline */
