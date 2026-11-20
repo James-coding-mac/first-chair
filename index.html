@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Leaflet (real piste map). Loads from CDN; needs a data connection. -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
 :root{
   --snow:#F2F6F9; --panel:#FFFFFF; --ink:#16283C; --ink2:#4C6076;
@@ -169,10 +169,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 <section id="tab-map" class="active">
   <div id="weather" class="wx loading">Loading weather…</div>
   <div id="map"></div>
-  <p class="muted" id="mapnote" style="margin-top:8px">
-    Live pistes &amp; lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom.
-    Needs a data signal — the other tabs work offline.
-  </p>
+  <p class="muted" id="mapnote" style="margin-top:8px"></p>
   <div class="card" id="tracker">
     <div class="trkbtns">
       <button class="secondary" id="locbtn">📍 Locate me</button>
@@ -237,7 +234,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
   <button data-t="log"><span class="ic">✎</span>Log</button>
 </nav>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <!-- Paradiski runs/lifts/restaurants, generated from OpenStreetMap by tools/build_paradiski.py -->
 <script src="data/build/paradiski.js"></script>
 <script>
@@ -451,25 +448,92 @@ function setRunsNote(){
 }
 
 /* =========================================================
-   MAP  (Leaflet + OpenSnowMap pistes overlay)
+   MAP  (Leaflet: OSM tiles + OpenSnowMap overlay online;
+         resorts with R.mapData also get bundled piste/lift vectors that work offline)
    ========================================================= */
-let map, mapReady = false;
+let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0;
+const EATS_MIN_ZOOM = 15;   // restaurant dots only when zoomed in, to keep the map readable
+const MAPNOTE_ONLINE  = "Live pistes & lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom. Needs a data signal — the other tabs work offline.";
+const MAPNOTE_OFFLINE = "Pistes, lifts and restaurants are drawn from bundled OpenStreetMap data and work with no signal. The background map needs signal (areas you've viewed are cached). Tap a line for its name. Unverified: check the official piste map.";
+
 function initMap(){
   const el = document.getElementById("map");
   if(!window.L){
-    el.innerHTML = `<div class="mapoff">The piste map needs a data connection.<br>Runs, eats and your log still work offline.</div>`;
+    el.innerHTML = `<div class="mapoff">The map library hasn't been saved on this phone yet.<br>Open the app once with signal and it will work offline after that.<br>Runs, eats and your log work offline now.</div>`;
+    document.getElementById("mapnote").textContent = "";   // the message in the map box says it all
     return;
   }
-  map = L.map(el, { zoomControl:true, attributionControl:true }).setView(R.map.center, R.map.zoom);
+  map = L.map(el, { zoomControl:true, attributionControl:true, preferCanvas:true }).setView(R.map.center, R.map.zoom);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom:18, attribution:'&copy; OpenStreetMap contributors'
   }).addTo(map);
-  L.tileLayer("https://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png", {
+  const snow = L.tileLayer("https://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png", {
     maxZoom:18, attribution:'Pistes &copy; <a href="https://www.opensnowmap.org">OpenSnowMap</a>'
   }).addTo(map);
+  vecGroup = L.layerGroup().addTo(map);
+  eatGroup = L.layerGroup().addTo(map);   // the layers menu switches this on/off; zoom fills/empties it
+  layersCtl = L.control.layers(null, { "OpenSnowMap (online)": snow }, { collapsed:true }).addTo(map);
+  map.on("zoomend", syncEatLayer);
   mapReady = true;
+  showVectors();
 }
-function recenterMap(){ if(mapReady) map.setView(R.map.center, R.map.zoom); }
+function recenterMap(){ if(mapReady){ map.setView(R.map.center, R.map.zoom); showVectors(); } }
+
+/* bundled vectors for the active resort (fetched once, then served by the service worker offline) */
+const vecData = {};   // resortId -> GeoJSON
+const GRADE_COLOUR = { green:"#2E7D4F", blue:"#2B6CB0", red:"#C0392B", black:"#14181D", offpiste:"#E0A93C", unknown:"#8796A5" };
+function gradeLabel(g){
+  if(g==="offpiste") return "Off-piste route (not patrolled; check the BERA)";
+  const d = DIFF.eu.find(x=>x.v===g);
+  return d ? d.label+" piste" : "Piste (grade not in OSM)";
+}
+function vecStyle(f){
+  if(f.properties.k==="lift") return { color:"#16283C", weight:1.6, opacity:.9 };
+  const c = GRADE_COLOUR[f.properties.g] || GRADE_COLOUR.unknown;
+  if(f.geometry.type==="Polygon") return { color:c, weight:1, opacity:.5, fillColor:c, fillOpacity:.12 };
+  return f.properties.g==="offpiste"
+    ? { color:c, weight:2.5, opacity:.95, dashArray:"6 5" }
+    : { color:c, weight:2.5, opacity:.9 };
+}
+function vecPopup(f){
+  const p = f.properties;
+  if(p.k==="lift") return `<strong>${esc(p.n || "Unnamed lift")}</strong><br>${esc(p.t)}`;
+  return `<strong>${esc(p.n || "Unnamed piste")}</strong><br>${esc(gradeLabel(p.g))}`;
+}
+function syncEatLayer(){
+  if(!mapReady) return;
+  const show = map.getZoom() >= EATS_MIN_ZOOM;
+  if(show && !eatGroup.getLayers().length) eatMarkers.forEach(m=>eatGroup.addLayer(m));
+  if(!show) eatGroup.clearLayers();
+}
+function showVectors(){
+  document.getElementById("mapnote").textContent = R.mapData ? MAPNOTE_OFFLINE : MAPNOTE_ONLINE;
+  if(!mapReady) return;
+  const gen = ++vecGen;   // a newer call wins; stops a slow fetch drawing twice after quick resort switches
+  vecGroup.clearLayers(); eatGroup.clearLayers(); eatMarkers = [];
+  // the layers menu only offers the offline layers on resorts that have them
+  layersCtl.removeLayer(vecGroup); layersCtl.removeLayer(eatGroup);
+  if(!R.mapData) return;
+  layersCtl.addOverlay(vecGroup, "Pistes & lifts (offline)");
+  layersCtl.addOverlay(eatGroup, "Restaurants (zoom in)");
+  const forId = resortId;
+  const draw = data => {
+    if(gen!==vecGen) return;
+    L.geoJSON(data, { style:vecStyle, onEachFeature:(f,l)=>l.bindPopup(vecPopup(f)),
+      attribution:'Pistes &amp; lifts &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (ODbL)' }).addTo(vecGroup);
+    eatMarkers = (R.eats||[]).filter(e=>e.at).map(e=>
+      L.circleMarker(e.at, { radius:5, color:"#fff", weight:1.5, fillColor:e.loc==="mtn"?"#C0392B":"#4C6076", fillOpacity:1 })
+        .bindPopup(`<strong>${esc(e.name)}</strong><br>${esc(e.area)}`));
+    if(R.base) L.circleMarker(R.base.at, { radius:8, color:"#fff", weight:2, fillColor:"#16283C", fillOpacity:1 })
+      .bindPopup(`<strong>Base: ${esc(R.base.name)}</strong>`).addTo(vecGroup);
+    syncEatLayer();
+  };
+  if(vecData[forId]) return draw(vecData[forId]);
+  fetch(R.mapData).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(data=>{ vecData[forId] = data; draw(data); })
+    .catch(()=>{ if(gen===vecGen) document.getElementById("mapnote").textContent =
+      "Couldn't load the offline piste layer. Open the app once with signal so it can be saved."; });
+}
 
 /* =========================================================
    WEATHER  (Open-Meteo — free, no key; cached for offline)

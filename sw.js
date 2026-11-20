@@ -1,6 +1,6 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v2";
+const VERSION = "v3";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
 const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
 const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)
@@ -9,12 +9,23 @@ const TILE_MAX = 500;                      // cap so the tile cache can't grow f
 const SHELL_FILES = [
   "./", "./index.html", "./manifest.json",
   "./icon.png", "./icon-192.png", "./icon-512.png",
-  "./data/build/paradiski.js"
+  "./data/build/paradiski.js", "./data/build/paradiski-map.geojson"
+];
+// Map library from the CDN, saved at install so the map works in airplane mode. Best effort:
+// if the CDN is down the install still succeeds and these get cached on first normal use.
+const CDN_FILES = [
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+  "https://unpkg.com/leaflet@1.9.4/dist/images/layers.png",
+  "https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png"
 ];
 
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).then(() => self.skipWaiting())
+    // cache:"reload" skips the browser's HTTP cache, so a stale copy can't get pinned into this version
+    caches.open(SHELL).then(c => c.addAll(SHELL_FILES.map(u => new Request(u, { cache:"reload" }))))
+      .then(() => caches.open(RUNTIME).then(c => c.addAll(CDN_FILES)).catch(() => {}))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -25,6 +36,14 @@ self.addEventListener("activate", event => {
     )).then(() => self.clients.claim())
   );
 });
+
+// Cross-origin hosts we're willing to cache (docs/SECURITY.md: same-origin + allow-listed only)
+function isAllowedCdn(url){
+  return url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com" ||
+         (url.hostname === "unpkg.com" && url.pathname.startsWith("/leaflet@1.9.4/"));
+}
+// opaque = a no-cors response (tiles, font CSS): its status can't be read, so it's accepted as-is
+function cacheable(res){ return res && (res.ok || res.type === "opaque"); }
 
 function isTile(url){
   return url.hostname.includes("opensnowmap.org") ||
@@ -64,8 +83,7 @@ self.addEventListener("fetch", event => {
         if(hit) return hit;
         try{
           const res = await fetch(req);
-          cache.put(req, res.clone());
-          trimCache(TILES, TILE_MAX);
+          if(cacheable(res)){ cache.put(req, res.clone()); trimCache(TILES, TILE_MAX); }
           return res;
         }catch(e){ return hit || Response.error(); }
       })
@@ -77,20 +95,24 @@ self.addEventListener("fetch", event => {
   if(url.origin === self.location.origin){
     event.respondWith(
       caches.match(req).then(hit => hit || fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(SHELL).then(c => c.put(req, copy));
+        if(res.ok){ const copy = res.clone(); caches.open(SHELL).then(c => c.put(req, copy)); }
         return res;
       }))
     );
     return;
   }
 
-  // Cross-origin (Google Fonts, Leaflet CDN): stale-while-revalidate.
+  // Anything else cross-origin and not allow-listed: leave it to the browser, never cache it.
+  if(!isAllowedCdn(url)) return;
+
+  // Google Fonts, Leaflet CDN: stale-while-revalidate.
   event.respondWith(
     caches.open(RUNTIME).then(async cache => {
-      const hit = await cache.match(req);
-      const network = fetch(req).then(res => { cache.put(req, res.clone()); return res; })
-                                .catch(() => hit);
+      let hit = await cache.match(req);
+      // Leaflet is loaded with SRI (a cors request); an old opaque copy would fail the check, so skip it
+      if(hit && hit.type === "opaque" && req.mode === "cors") hit = undefined;
+      const network = fetch(req).then(res => { if(cacheable(res)) cache.put(req, res.clone()); return res; })
+                                .catch(() => hit || Response.error());
       return hit || network;
     })
   );

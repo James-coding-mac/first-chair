@@ -21,5 +21,7 @@
 - Map tile cache (`fc-tiles-v1`) and the Leaflet/fonts cache (`fc-runtime-v1`) have fixed names, so bumping the app VERSION doesn't wipe them or strand the map offline. (Step 1)
 - **Known risk:** favourites/notes/ratings are keyed on run/restaurant *names*. A rebuild after OSM edits can rename a generated name (e.g. a `(village)` or `#2` suffix) and hide notes saved on it. `build_paradiski.py` prints a WARNING listing any names that disappeared. Don't rebuild during the trip without reading it. (OSM ids aren't more stable: ways get split.) (Step 1 review)
 
+- No bulk/offline prefetch of map tiles: OSM's tile usage policy forbids it. Offline map = our bundled OSM vectors over already-viewed cached tiles. If James wants a full offline background later, it needs a source whose licence allows offline use (e.g. self-generated tiles). (Step 2)
+
 ## Pending: needs James
 - (none)

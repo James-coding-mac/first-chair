@@ -19,6 +19,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw", "paradiski-overpass.json")
 OUT = os.path.join(ROOT, "data", "build", "paradiski.js")
+MAP_OUT = os.path.join(ROOT, "data", "build", "paradiski-map.geojson")   # offline map layer (Step 2)
 
 # OSM ski-area outlines (landuse=winter_sports) -> app sector ids. Names must match OSM exactly.
 SECTORS = {"La Plagne": "LP", "Les Arcs / Peisey-Vallandry": "LA"}
@@ -40,6 +41,7 @@ RESERVED = {"__proto__", "constructor", "prototype", "hasOwnProperty", "isProtot
             "propertyIsEnumerable", "toString", "toLocaleString", "valueOf", "__defineGetter__",
             "__defineSetter__", "__lookupGetter__", "__lookupSetter__"}
 SAME_PLACE_M = 50    # same-named restaurants closer than this are one place mapped twice
+SIMPLIFY_M = 4       # map lines: drop points that bend the line by less than this
 SPLIT_M = 400        # same-named piste segments further apart than this are different runs
 NEAR_SKI_M = 300     # a restaurant must be this close to a piste or lift to be listed
 VILLAGE_M = 350      # ...and counts as "village" if this close to a village/hamlet point
@@ -85,6 +87,49 @@ def centroid(pts):
 
 def path_len(pts):
     return sum(haversine(pts[i], pts[i + 1]) for i in range(len(pts) - 1))
+
+
+def simplify(pts, tol_m):
+    """Douglas-Peucker on a local flat projection; keeps first/last point.
+    Closed rings (first == last) are split at the point farthest from the start and each half
+    simplified, otherwise every distance is measured from a zero-length line and the ring collapses."""
+    if len(pts) < 3:
+        return pts
+    if pts[0] == pts[-1]:
+        far = max(range(1, len(pts) - 1), key=lambda i: haversine(pts[0], pts[i]))
+        return simplify(pts[:far + 1], tol_m)[:-1] + simplify(pts[far:], tol_m)
+    k = math.cos(math.radians(pts[0][0]))
+    xy = [(p[1] * 111320 * k, p[0] * 110540) for p in pts]
+    keep = [False] * len(pts)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(pts) - 1)]
+    while stack:
+        a, b = stack.pop()
+        (ax, ay), (bx, by) = xy[a], xy[b]
+        dx, dy = bx - ax, by - ay
+        norm = math.hypot(dx, dy) or 1e-9
+        best, idx = 0, None
+        for i in range(a + 1, b):
+            d = abs(dy * (xy[i][0] - ax) - dx * (xy[i][1] - ay)) / norm
+            if d > best:
+                best, idx = d, i
+        if idx is not None and best > tol_m:
+            keep[idx] = True
+            stack += [(a, idx), (idx, b)]
+    return [p for p, kp in zip(pts, keep) if kp]
+
+
+def feature(pts, props, area=False):
+    coords = [[round(p[1], 5), round(p[0], 5)] for p in simplify(pts, SIMPLIFY_M)]
+    if len({tuple(c) for c in coords}) < 2:
+        return None   # collapsed to a point: nothing to draw
+    if area and len(coords) >= 4:
+        if coords[0] != coords[-1]:
+            coords.append(coords[0])
+        geometry = {"type": "Polygon", "coordinates": [coords]}
+    else:
+        geometry = {"type": "LineString", "coordinates": coords}
+    return {"type": "Feature", "properties": props, "geometry": geometry}
 
 
 def r5(p):
@@ -162,6 +207,7 @@ def main():
     # --- lifts ---
     ski_pts = Grid()
     lifts, dropped_lifts = [], 0
+    map_lifts, map_pistes = [], []
     for e in els:
         t = tags(e)
         kind = t.get("aerialway")
@@ -173,6 +219,9 @@ def main():
             continue
         for p in pts:
             ski_pts.add(p)
+        f = feature(pts, {"k": "lift", "n": t.get("name", ""), "t": LIFT_TYPES[kind]})
+        if f:
+            map_lifts.append(f)
         if not t.get("name"):
             dropped_lifts += 1
             continue
@@ -201,13 +250,17 @@ def main():
         for p in pts:
             ski_pts.add(p)
         name = (t.get("piste:name") or t.get("name") or "").strip()
-        if not name:
-            unnamed += 1
-            continue
         g = t.get("piste:difficulty")
         backcountry = t.get("piste:grooming") == "backcountry"
         grade = "offpiste" if (g in OFFPISTE_GRADES or backcountry) else GRADE.get(g)
         is_area = t.get("area") == "yes" or (pts[0] == pts[-1] and len(pts) > 3)
+        # the map gets every segment, named or not (unnamed ones are the links between runs)
+        f = feature(pts, {"k": "piste", "g": grade or "unknown", "n": name}, area=is_area)
+        if f:
+            map_pistes.append(f)
+        if not name:
+            unnamed += 1
+            continue
         segs[(sid, name)].append({
             "id": e["id"], "pts": pts, "grade": grade, "area": is_area,
             "len": 0 if is_area else path_len(pts),
@@ -353,6 +406,7 @@ def main():
         "name": "Paradiski",
         "diffSystem": "eu_off",
         "map": {"center": r5(base_pt), "zoom": 13},
+        "mapData": "data/build/paradiski-map.geojson",
         "base": {"name": BASE_NAME, "at": r5(base_pt), "osm": "%s/%d" % (base[0]["type"], base[0]["id"])},
         "mountains": [{"id": "LP", "name": "La Plagne"}, {"id": "LA", "name": "Les Arcs / Peisey"}],
         "dataNote": "Generated from OpenStreetMap (© OSM contributors, ODbL). NOT yet checked against "
@@ -375,6 +429,14 @@ def main():
     with open(OUT, "wb") as f:
         f.write(body.encode("utf-8", "replace"))   # a broken character in OSM becomes "?" instead of a crash
 
+    # areas first so lines draw on top of them; lifts last so they sit above pistes
+    map_pistes.sort(key=lambda f: f["geometry"]["type"] != "Polygon")
+    geo = {"type": "FeatureCollection",
+           "attribution": "© OpenStreetMap contributors, ODbL",
+           "features": map_pistes + map_lifts}
+    with open(MAP_OUT, "wb") as f:
+        f.write(json.dumps(geo, ensure_ascii=False, separators=(",", ":")).encode("utf-8", "replace"))
+
     grades = collections.Counter(r["diff"] for r in runs)
     print("base %s: %s" % (BASE_NAME, r5(base_pt)))
     print("runs %d %s | unnamed segments skipped %d, outside Paradiski %d"
@@ -384,6 +446,8 @@ def main():
           % (len(eats), sum(e["loc"] == "mtn" for e in eats), sum(e["loc"] == "vil" for e in eats),
              NEAR_SKI_M, far_from_ski))
     print("wrote %s (%.0f KB)" % (os.path.relpath(OUT, ROOT), os.path.getsize(OUT) / 1024))
+    print("wrote %s (%.0f KB): %d piste segments, %d lifts"
+          % (os.path.relpath(MAP_OUT, ROOT), os.path.getsize(MAP_OUT) / 1024, len(map_pistes), len(map_lifts)))
     print("If this changed the file, bump VERSION in sw.js so phones fetch the new data.")
     if gone:
         print("WARNING: %d names from the previous build are gone; any notes/favourites saved on them "
