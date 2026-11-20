@@ -233,7 +233,7 @@ def parse_lumi(static_raw, dynamic_raw):
             st = [r['state'] for r in p['pistes'] if r['level'] == c]
             p['summary']['pistes'][c] = [st.count('open'), len(st)]
         rs = raw_states[sid]
-        p['season'] = True if 'OPEN' in rs else False if rs and all(s in ('OUT_OF_PERIOD', 'CLOSED') for s in rs) else None
+        p['season'] = True if 'OPEN' in rs else False if rs and all(s == 'OUT_OF_PERIOD' for s in rs) else None
     return out
 
 
@@ -481,7 +481,7 @@ def collect(catalog, previous, fetch, now, graph=None):
             out['unmatched'][kind].extend(unmatched)
             for name, r in matches.items():
                 # aliases (Vanoise Express) may name a lift in the other sector
-                owner = sector_of.get(name, sector) if kind == 'lifts' else sector
+                owner = sector_of.get(name, sector) if kind == 'lifts' and LIFT_ALIASES.get(normalize(r['name'], True)) == name else sector
                 found[(owner, name)] = r
         info = out['lift_info' if kind == 'lifts' else 'piste_info']
         for item in catalog[field]:

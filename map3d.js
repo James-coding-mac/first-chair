@@ -6,13 +6,14 @@
   const SRI_CSS = "sha256-V2sIX92Uh6ZaGSFTKMHghsB85b9toJtmazgG09AI2uk=";
   const SRI_JS = "sha256-vpYzxNhw4m+zfxz+XFp3GBZnEUAD6hYgeseFDY2ordE=";
 
-  let loadPromise = null;
+  let loadPromise = null, assetsFailed = false;
   let mapInstance = null;
   let currentContainer = null;
   let isOpenFlag = false;
+  let generation = 0, cancelLoad = null;
 
   async function ensureMapLibre() {
-    if (window.maplibregl) return;
+    if (window.maplibregl && !assetsFailed) return;
     if (loadPromise) return loadPromise;
     loadPromise = new Promise((resolve, reject) => {
       const link = document.createElement('link');
@@ -20,16 +21,26 @@
       link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
       link.integrity = SRI_CSS;
       link.crossOrigin = 'anonymous';
-      document.head.appendChild(link);
+
 
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js';
       script.integrity = SRI_JS;
       script.crossOrigin = 'anonymous';
-      script.onload = resolve;
-      script.onerror = () => reject(new Error('Failed to load MapLibre GL JS'));
+      let cssReady = false, jsReady = false;
+      const ready = () => { if(cssReady && jsReady){ assetsFailed = false; resolve(); } };
+      const fail = () => {
+        assetsFailed = true;
+        link.remove(); script.remove();
+        reject(new Error('Failed to load MapLibre GL assets'));
+      };
+      link.onload = () => { cssReady = true; ready(); };
+      link.onerror = fail;
+      script.onload = () => { jsReady = true; ready(); };
+      script.onerror = fail;
+      document.head.appendChild(link);
       document.head.appendChild(script);
-    });
+    }).catch(error => { loadPromise = null; throw error; });
     return loadPromise;
   }
 
@@ -53,60 +64,79 @@
 
   window.FC3D = {
     async open(container, opts) {
-      await ensureMapLibre();
-      if (maplibregl.supported && !maplibregl.supported()) throw new Error('WebGL not supported');
-      if (isOpenFlag) this.close();
+      this.close();
+      const gen = generation;
+      let instance = null;
+      try {
+        await ensureMapLibre();
+        if(gen !== generation) return;
+        if (maplibregl.supported && !maplibregl.supported()) throw new Error('WebGL not supported');
 
-      currentContainer = container;
-      const [lat, lon] = opts.center;
+        currentContainer = container;
+        const [lat, lon] = opts.center;
 
-      mapInstance = new maplibregl.Map({
-        container,
-        style: baseStyle,
-        center: [lon, lat],
-        zoom: opts.zoom,
-        pitch: 62,
-        bearing: -20,
-        maxPitch: 80,
-        antialias: true
-      });
+        instance = new maplibregl.Map({
+          container,
+          style: baseStyle,
+          center: [lon, lat],
+          zoom: opts.zoom,
+          pitch: 62,
+          bearing: -20,
+          maxPitch: 80,
+          antialias: true
+        });
 
-      mapInstance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
+        mapInstance = instance;
+        instance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
 
-      // wait for the style + terrain to be ready (MapLibre has no map.load() promise)
-      await new Promise((resolve, reject) => {
-        mapInstance.once('load', resolve);
-        mapInstance.once('error', e => reject(new Error((e && e.error && e.error.message) || 'Map failed to load')));
-      });
-
-      if (opts.geojson) {
-        mapInstance.addSource('pistes', { type: 'geojson', data: opts.geojson });
-        mapInstance.addLayer({ id: 'piste-fill', type: 'fill', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'Polygon'], ['==', ['get', 'k'], 'piste']], paint: { 'fill-color': gradeMatch, 'fill-opacity': 0.15 } });
-        mapInstance.addLayer({ id: 'piste-line', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'piste'], ['!=', ['get', 'g'], 'offpiste']], paint: { 'line-color': gradeMatch, 'line-width': widthInterp } });
-        mapInstance.addLayer({ id: 'piste-offpiste', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'piste'], ['==', ['get', 'g'], 'offpiste']], paint: { 'line-color': '#E0A93C', 'line-width': widthInterp, 'line-dasharray': [2, 2] } });
-        mapInstance.addLayer({ id: 'lift-line', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'lift']], paint: { 'line-color': '#16283C', 'line-width': 2 } });
-
-        ['piste-line', 'piste-offpiste', 'lift-line'].forEach(id => {
-          mapInstance.on('mouseenter', id, () => mapInstance.getCanvas().style.cursor = 'pointer');
-          mapInstance.on('mouseleave', id, () => mapInstance.getCanvas().style.cursor = '');
-          mapInstance.on('click', id, (e) => {
-            const p = e.features[0].properties;
-            const name = p.n || 'Unnamed';
-            const g = p.k === 'lift' ? 'lift' : (p.g || 'unknown');
-            new maplibregl.Popup().setLngLat(e.lngLat).setHTML(`<strong>${opts.esc(name)}</strong><br>${gradeLabels[g] || 'Unknown'}`).addTo(mapInstance);
+        // wait for the style + terrain to be ready (MapLibre has no map.load() promise)
+        await new Promise((resolve, reject) => {
+          cancelLoad = resolve;
+          instance.once('load', resolve);
+          instance.on('error', e => {
+            if(gen === generation && isOpenFlag) this.close();
+            reject(new Error((e && e.error && e.error.message) || 'Map failed to load'));
           });
         });
-      }
 
-      if (opts.path && opts.path.length > 1) {
-        mapInstance.addSource('path', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: opts.path.map(p => [p[1], p[0]]) } } });
-        mapInstance.addLayer({ id: 'path-line', type: 'line', source: 'path', paint: { 'line-color': '#C0392B', 'line-width': 4 } });
-      }
+        if(gen !== generation) return;
+        cancelLoad = null;
 
-      isOpenFlag = true;
+        if (opts.geojson) {
+          instance.addSource('pistes', { type: 'geojson', data: opts.geojson });
+          instance.addLayer({ id: 'piste-fill', type: 'fill', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'Polygon'], ['==', ['get', 'k'], 'piste']], paint: { 'fill-color': gradeMatch, 'fill-opacity': 0.15 } });
+          instance.addLayer({ id: 'piste-line', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'piste'], ['!=', ['get', 'g'], 'offpiste']], paint: { 'line-color': gradeMatch, 'line-width': widthInterp } });
+          instance.addLayer({ id: 'piste-offpiste', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'piste'], ['==', ['get', 'g'], 'offpiste']], paint: { 'line-color': '#E0A93C', 'line-width': widthInterp, 'line-dasharray': [2, 2] } });
+          instance.addLayer({ id: 'lift-line', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'lift']], paint: { 'line-color': '#16283C', 'line-width': 2 } });
+
+          ['piste-line', 'piste-offpiste', 'lift-line'].forEach(id => {
+            instance.on('mouseenter', id, () => instance.getCanvas().style.cursor = 'pointer');
+            instance.on('mouseleave', id, () => instance.getCanvas().style.cursor = '');
+            instance.on('click', id, (e) => {
+              const p = e.features[0].properties;
+              const name = p.n || 'Unnamed';
+              const g = p.k === 'lift' ? 'lift' : (p.g || 'unknown');
+              new maplibregl.Popup().setLngLat(e.lngLat).setHTML(`<strong>${opts.esc(name)}</strong><br>${gradeLabels[g] || 'Unknown'}`).addTo(instance);
+            });
+          });
+        }
+
+        if (opts.path && opts.path.length > 1) {
+          instance.addSource('path', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: opts.path.map(p => [p[1], p[0]]) } } });
+          instance.addLayer({ id: 'path-line', type: 'line', source: 'path', paint: { 'line-color': '#C0392B', 'line-width': 4 } });
+        }
+
+        isOpenFlag = true;
+      } catch(error) {
+        if(gen !== generation) return;
+        this.close();
+        throw error;
+      }
     },
 
     close() {
+      generation++;
+      if(cancelLoad){ cancelLoad(); cancelLoad = null; }
       if (mapInstance) {
         try { mapInstance.remove(); } catch (_) {}
         mapInstance = null;

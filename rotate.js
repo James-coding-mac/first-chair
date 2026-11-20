@@ -25,6 +25,13 @@
       if(!this._size || this._sizeChanged){ this._size = L.point(D, D); this._sizeChanged = false; }
       return this._size.clone();
     };
+    const origFitBounds = map.fitBounds;
+    map.fitBounds = function(bounds, options){
+      const o = Object.assign({}, options), margin = L.point((D-W)/2, (D-H)/2);
+      o.paddingTopLeft = L.point(o.paddingTopLeft || o.padding || [0,0]).add(margin);
+      o.paddingBottomRight = L.point(o.paddingBottomRight || o.padding || [0,0]).add(margin);
+      return origFitBounds.call(this, bounds, o);
+    };
     const origInvalidate = map.invalidateSize;
     map.invalidateSize = function(o){ layout(); return origInvalidate.call(this, o); };
     // screen point (relative to the visible container) -> rotor point

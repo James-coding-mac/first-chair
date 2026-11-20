@@ -250,6 +250,26 @@ class Lumiplan(unittest.TestCase):
             self.assertEqual(p[sid]['summary']['lifts_open'], 0)
             self.assertTrue(all(r['closes'] is None or len(r['closes']) == 5 for r in p[sid]['lifts']))
 
+    def test_closed_is_not_out_of_season(self):
+        for state, expected in [('CLOSED', None), ('OUT_OF_PERIOD', False), ('OPEN', True)]:
+            dyn = json.loads(read('lumi_dynamic.json'))
+            for item in dyn['items']:
+                item['openingStatus'] = state
+            parsed = s.parse_lumi(read('lumi_static.json'), json.dumps(dyn))
+            for sector in parsed.values():
+                self.assertIs(sector['season'], expected)
+
+    def test_same_name_sector_ownership(self):
+        parsed = {sid: s.result(season=True) for sid in ('LP', 'LA')}
+        for sid, state, closes in [('LP', 'open', '16:00'), ('LA', 'closed', '16:30')]:
+            parsed[sid]['lifts'] = [{'name': 'Arpette', 'state': state, 'closes': closes}]
+        cat = {'lifts': [{'name': 'Arpette', 'mtn': sid} for sid in parsed], 'runs': []}
+        with patch.object(s, 'parse_lumi', return_value=parsed):
+            out = s.collect(cat, None, fetch, NOW)
+        self.assertEqual(out['lifts'], {'LP|Arpette': 'open', 'LA|Arpette': 'closed'})
+        self.assertEqual(out['lift_info']['LP|Arpette']['closes'], '16:00')
+        self.assertEqual(out['lift_info']['LA|Arpette']['closes'], '16:30')
+
     def test_synthetic_open_day(self):
         """Hand-edited copy of the dynamic feed: the first 10 lifts open, one with real hours and a message."""
         static = json.loads(read('lumi_static.json'))

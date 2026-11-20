@@ -32,6 +32,13 @@
       options: { maxNativeZoom: 14, minZoom: 11, maxZoom: 18, opacity: opts.opacity || 0.5, attribution: 'Steepness from AWS Terrain Tiles' },
       createTile(coords, done){
         const tile = document.createElement('canvas'); tile.width = tile.height = 256;
+        const unavailable = error => {
+          const ctx = tile.getContext('2d');
+          ctx.fillStyle = '#E5E7EB'; ctx.fillRect(0, 0, 256, 256);
+          ctx.strokeStyle = '#9CA3AF'; ctx.lineWidth = 2; ctx.beginPath();
+          for(let x = -256; x < 256; x += 16){ ctx.moveTo(x, 0); ctx.lineTo(x + 256, 256); }
+          ctx.stroke(); done(error, tile);
+        };
         const img = new Image(); img.crossOrigin = 'anonymous';
         img.onload = () => {
           try{
@@ -46,9 +53,9 @@
               out.data[p*4] = rgb[0]; out.data[p*4+1] = rgb[1]; out.data[p*4+2] = rgb[2]; out.data[p*4+3] = 255;
             }
             ctx.putImageData(out, 0, 0); done(null, tile);
-          }catch(e){ done(e, tile); }
+          }catch(e){ unavailable(e); }
         };
-        img.onerror = () => done(new Error('terrain tile unavailable'), tile);
+        img.onerror = () => unavailable(new Error('terrain tile unavailable'));
         img.src = DEM.replace('{z}', coords.z).replace('{x}', coords.x).replace('{y}', coords.y);
         return tile;
       }

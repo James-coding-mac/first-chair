@@ -567,7 +567,7 @@ function initMap(){
     layersCtl.addOverlay(steep, "Steepness 30°+ (avalanche terrain)");
     const legend = L.control({ position:"bottomleft" });
     legend.onAdd = ()=>{ const d = L.DomUtil.create("div", "steep-legend");
-      d.innerHTML = '<span style="background:#F1C40F"></span>30–35° <span style="background:#E67E22"></span>35–40° <span style="background:#C0392B"></span>40–45° <span style="background:#7B4FB8"></span>45°+';
+      d.innerHTML = '<span style="background:#F1C40F"></span>30–35° <span style="background:#E67E22"></span>35–40° <span style="background:#C0392B"></span>40–45° <span style="background:#7B4FB8"></span>45°+<br>grey hatch = no data (needs signal)';
       return d; };
     map.on("overlayadd", e=>{ if(e.layer===steep) legend.addTo(map); });
     map.on("overlayremove", e=>{ if(e.layer===steep) legend.remove(); });
@@ -673,7 +673,7 @@ function gradeLabel(g){
 let statusData = null, statusFor = null;
 const STATUS_FRESH_MS = 3*3600*1000;   // older than this: shown, but not used to block routes
 function statusAgeMs(){ const t = statusData && Date.parse(statusData.fetched_at); return Number.isFinite(t) ? Date.now()-t : Infinity; }
-function statusLive(){ return !!statusData && statusData.season_open===true; }
+function statusLive(){ return !!statusData && statusData.season_open!==false; }
 function statusFresh(){ return statusLive() && statusAgeMs() < STATUS_FRESH_MS; }
 function liftStatus(m, n){ return (statusData && statusData.lifts && statusData.lifts[m+"|"+n]) || "unknown"; }
 function liftInfo(m, n){ return (statusData && statusData.lift_info && statusData.lift_info[m+"|"+n]) || {}; }
@@ -710,6 +710,7 @@ function renderStatusCard(){
   };
   const head = statusData.season_open===false
     ? "Season not open yet: everything shows closed."
+    : statusData.season_open==null ? "Lifts reported closed. " + (statusFresh() ? "Routes avoid closed lifts and pistes." : "Status may be out of date, so routes ignore it.")
     : statusFresh() ? "Live from the resort’s lift system. Routes avoid closed lifts and pistes."
     : "Status may be out of date, so routes ignore it.";
   el.innerHTML = `<div class="st-head"><span class="label">Lifts &amp; pistes</span><span class="muted">as of ${Number.isFinite(age)?esc(ageText(age)):"—"}</span></div>`+
@@ -763,7 +764,7 @@ function routeClosures(graph){
     const kind = graph.kinds[e[2]];
     if(kind==="lift" && e[7].length>=2){
       const k = liftAt[coordKey(e[7][0], e[7][1])];
-      if(k && statusData.lifts[k]==="closed") blocked.add(i);
+      if(k && ["closed","scheduled"].includes(statusData.lifts[k])) blocked.add(i);
     } else if(kind==="piste"){
       const sts = runSt[graph.names[e[4]]];
       if(sts && sts.every(s=>s==="closed")) blocked.add(i);   // only if every run with that name is closed
@@ -805,7 +806,7 @@ function syncEatLayer(){
 function baseRunName(n){ return String(n).replace(/\s*(\([^)]*\))?\s*(#\d+)?\s*$/, ""); }
 function skiedNames(resort){
   const out = new Set();
-  daylog.forEach(e=>{ if(e.resort===resort && Array.isArray(e.track?.runs)) e.track.runs.forEach(r=>(Array.isArray(r.pistes)?r.pistes:[]).forEach(n=>out.add(String(n)))); });
+  daylog.forEach(e=>{ if(e.resort===resort && Array.isArray(e.track?.runs)) e.track.runs.filter(r=>r && typeof r==="object" && !Array.isArray(r)).forEach(r=>(Array.isArray(r.pistes)?r.pistes:[]).forEach(n=>out.add(String(n)))); });
   return out;
 }
 function pisteLines(resort){
@@ -1040,7 +1041,7 @@ function replayDay(entry){
   if(entry.resort && entry.resort!==resortId && RESORTS[entry.resort]){ document.getElementById("resortsel").value = entry.resort; switchResort(entry.resort); }
   document.querySelector('nav button[data-t="map"]').click();
   if(!mapReady) return;
-  const path = entry.track.path.filter(p=>Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Number.isFinite(p[3]));
+  const path = (Array.isArray(entry.track?.path) ? entry.track.path : []).filter(p=>Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Number.isFinite(p[3]));
   if(path.length < 2) return;
   const layer = L.layerGroup().addTo(map), ll = path.map(p=>[p[0],p[1]]);
   L.polyline(ll, { color:"#16283C", weight:3, opacity:.25 }).addTo(layer);
@@ -1049,7 +1050,7 @@ function replayDay(entry){
   map.fitBounds(ll, { padding:[24,24] });
   const card = document.getElementById("replay-card"), label = document.getElementById("replay-label");
   card.hidden = false;
-  const speed = 120, total = path[path.length-1][3], start = new Date(entry.id || Date.parse(entry.date+"T09:00"));
+  const speed = 120, total = path[path.length-1][3], start = new Date(typeof entry.track.t0==="number" && Number.isFinite(new Date(entry.track.t0).valueOf()) ? entry.track.t0 : typeof entry.id==="number" && Number.isFinite(new Date(entry.id).valueOf()) ? entry.id : Date.parse(entry.date+"T09:00"));
   let i = 0, t = 0, prev = performance.now();
   replay = { layer, raf:0, paused:false };
   const step = now=>{
@@ -1289,6 +1290,10 @@ function liftKeyByCoord(){
   (R.lifts||[]).forEach(l=>{ const k = l.mtn+"|"+l.name; at[coordKey(...l.bottom)] = k; at[coordKey(...l.top)] = k; });
   return at;
 }
+function parisMinutes(){
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone:"Europe/Paris", hourCycle:"h23", hour:"2-digit", minute:"2-digit" }).formatToParts(new Date());
+  return Number(parts.find(p=>p.type==="hour").value)*60 + Number(parts.find(p=>p.type==="minute").value);
+}
 function hhmm(min){ min = ((Math.round(min) % 1440) + 1440) % 1440; return String(Math.floor(min/60)).padStart(2,"0")+":"+String(min%60).padStart(2,"0"); }
 async function lastLiftHome(){
   const body = document.getElementById("home-body");
@@ -1319,13 +1324,14 @@ async function lastLiftHome(){
       } else lastName = null;
       t += e[6];
     }
-    const now = new Date(), nowMin = now.getHours()*60 + now.getMinutes(), mins = Math.round(res.time/60);
+    const nowMin = parisMinutes(), mins = Math.round(res.time/60);
     const via = lifts.length ? ` via ${lifts.slice(0,4).map(esc).join(" → ")}${lifts.length>4?" …":""}` : " (no lifts needed)";
     if(!crit){ body.innerHTML = `<p><strong>${mins} min</strong> home${via}.</p><p class="muted">No closing times known for these lifts${statusData?.season_open===false?" (season not open)":""}.</p>`; return; }
     const spare = deadline - nowMin;
+    const stale = statusAgeMs() > 24*3600*1000 ? `<p>Closing times from ${esc(Number.isFinite(Date.parse(statusData?.fetched_at)) ? new Date(statusData.fetched_at).toLocaleDateString("en-GB", {timeZone:"Europe/Paris"}) : "unknown date")} — may have changed</p>` : "";
     body.innerHTML = `<p class="home-big ${spare<15?"late":spare<45?"soon":""}">${spare<0?"Too late: you needed to leave by":"Leave by"} ${esc(hhmm(deadline))}</p>`+
       `<p>${spare<0?`You'd miss <strong>${esc(crit.name)}</strong> (closes ${esc(crit.closes)}). Check alternatives or a taxi/bus.`:`${Math.floor(spare/60)?Math.floor(spare/60)+" h ":""}${spare%60} min spare · <strong>${esc(crit.name)}</strong> closes ${esc(crit.closes)} and is the tightest.`}</p>`+
-      `<p class="muted">${mins} min home${via}. Scheduled closing times; check the status card for changes.</p>`;
+      `${stale}<p class="muted">${mins} min home${via}. Scheduled closing times; check the status card for changes.</p>`;
   }catch(e){ body.textContent = "Couldn't load offline routing. Open the app once with signal."; }
 }
 document.getElementById("home-btn").addEventListener("click", ()=>{
@@ -1399,7 +1405,7 @@ async function takeRoute(destination){
     // last-lift check: would we reach a lift after it closes today?
     const warnings=[];
     if(statusFresh()){
-      const now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+      const nowMin=parisMinutes();
       groups.filter(g=>g.kind==='lift' && g.key).forEach(g=>{
         const closes=(statusData.lift_info[g.key]||{}).closes;
         const m=/^(\d{2}):(\d{2})$/.exec(closes||'');
@@ -1965,7 +1971,7 @@ async function shareDayCard(entry){
   if(!t) return;
   const canvas = document.createElement("canvas"); canvas.width = 1080; canvas.height = 1350;
   try{ await document.fonts.ready; }catch(e){}
-  const runs = Array.isArray(entry.track.runs) ? entry.track.runs : [];
+  const runs = Array.isArray(entry.track.runs) ? entry.track.runs.filter(r=>r && typeof r==="object" && !Array.isArray(r)) : [];
   FCStats.drawDayCard(canvas.getContext("2d"), {
     resort: RESORTS[entry.resort] ? RESORTS[entry.resort].name : "", date: new Date(entry.date+"T12:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}),
     vertical: t.vertical, runs: t.runs, distance: t.distance, topSpeed: t.topSpeed, liftRides: t.liftRides,
@@ -1998,11 +2004,11 @@ function renderLog(){
     card.innerHTML = `<strong>${nice}</strong> <span class="cond">· ${esc(entry.cond)}</span>
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
-      ${Array.isArray(entry.track?.rides)&&entry.track.rides.some(r=>r&&r.name)?`<p class="muted">Lifts: ${entry.track.rides.map(r=>r&&r.name?esc(String(r.name)):"?").join(" → ")}</p>`:''}
+      ${Array.isArray(entry.track?.rides)&&entry.track.rides.some(r=>r&&r.name)?`<p class="muted">Lifts: ${entry.track.rides.filter(r=>r && typeof r==="object" && !Array.isArray(r)).map(r=>r&&r.name?esc(String(r.name)):"?").join(" → ")}</p>`:''}
       ${photoThumbs(entry)}
       ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
       ${Array.isArray(entry.track?.path)&&entry.track.path.length>1?`<button class="secondary sharebtn replaybtn">▶ Replay day on map</button>`:''}
-      ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h${Array.isArray(run.pistes)&&run.pistes.length?' · '+run.pistes.join(', '):''}`)}</p>`).join(''):''}
+      ${Array.isArray(entry.track?.runs)?entry.track.runs.filter(r=>r && typeof r==="object" && !Array.isArray(r)).map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h${Array.isArray(run.pistes)&&run.pistes.length?' · '+run.pistes.join(', '):''}`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
     const share = card.querySelector(".sharebtn");
     if(share) share.addEventListener("click", ()=>shareDayCard(entry));
