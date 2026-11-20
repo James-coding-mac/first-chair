@@ -1,0 +1,11 @@
+{
+  "error": "HTTP Error 302: Found",
+  "fetched_at": "2026-11-20T17:53:46Z",
+  "massifs": {
+    "HAUTE-TARENTAISE": null,
+    "VANOISE": null
+  },
+  "ok": false,
+  "source": "Météo-France BERA (donneespubliques.meteofrance.fr)",
+  "v": 1
+}

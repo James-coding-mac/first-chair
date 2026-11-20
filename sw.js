@@ -1,10 +1,10 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v16";
+const VERSION = "v17";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
 const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
 const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)
-const TILE_MAX = 500;                      // cap so the tile cache can't grow forever
+const TILE_MAX = 1200;                     // cap so the tile cache can't grow forever (2D tiles + 3D terrain)
 
 const SHELL_FILES = [
   "./", "./index.html", "./manifest.json", "./track.js", "./route.js", "./stats.js", "./sun.js", "./rotate.js",
@@ -40,13 +40,14 @@ self.addEventListener("activate", event => {
 // Cross-origin hosts we're willing to cache (docs/SECURITY.md: same-origin + allow-listed only)
 function isAllowedCdn(url){
   return url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com" ||
-         (url.hostname === "unpkg.com" && url.pathname.startsWith("/leaflet@1.9.4/"));
+         (url.hostname === "unpkg.com" && (url.pathname.startsWith("/leaflet@1.9.4/") || url.pathname.startsWith("/maplibre-gl@4.7.1/")));
 }
 // opaque = a no-cors response (tiles, font CSS): its status can't be read, so it's accepted as-is
 function cacheable(res){ return res && (res.ok || res.type === "opaque"); }
 
 function isTile(url){
-  return url.hostname.includes("opensnowmap.org") ||
+  return url.hostname === "elevation-tiles-prod.s3.amazonaws.com" ||   // 3D terrain (AWS Terrain Tiles, open data)
+         url.hostname.includes("opensnowmap.org") ||
          url.hostname.includes("tile.openstreetmap.org");
 }
 
