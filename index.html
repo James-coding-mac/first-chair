@@ -121,6 +121,8 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 .trkbtns .photobtn{flex:0 0 52px!important;width:52px;padding-left:0;padding-right:0}
 .logphotos{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.logphotos img{width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer}
 #photoview img,#w-passimg img{max-width:100%;border-radius:12px;display:block}
+.lb{list-style:none;padding:0;margin:0}.lb li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
+.lb li.me{font-weight:600}.lb li span:last-child{color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -250,6 +252,14 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <button class="primary" id="logadd">Log the day</button>
   </div>
   <div id="season-stats" class="card" hidden></div>
+  <div class="card" id="friends">
+    <div class="label">Friends</div>
+    <div class="formrow"><label for="f-name">My name (shown to friends)</label><input type="text" id="f-name" maxlength="40" autocomplete="off"></div>
+    <div id="f-board"></div>
+    <div class="sos-row"><button class="secondary" id="f-share">Share my stats</button><button class="secondary" id="f-import">Import a friend's stats</button></div>
+    <input type="file" id="f-file" accept="application/json,.json" hidden>
+    <p class="muted" id="f-msg" style="margin-top:6px">No server: send your stats file over AirDrop/WhatsApp; friends import it. For live location, use Find My.</p>
+  </div>
   <div class="card" id="wallet">
     <div class="label">Wallet <span class="muted" style="font-size:11px;text-transform:none;letter-spacing:0">· stored only on this phone</span></div>
     <div id="passlinks" class="rlinks"></div>
@@ -751,6 +761,98 @@ document.getElementById("photofile").addEventListener("change", async e=>{
       piste: near && near.d < 150 ? near.p.n : "", thumb: thumb.dataURL, blob: full.blob });
     maybeStopWatch(); loadPhotos();
   }catch(err){ alert("Couldn't save that photo (storage full or unsupported image)."); }
+});
+
+/* ---------- friends without a server ---------- */
+// "Send my spot": the position lives in the URL fragment (#spot=...), which browsers never send to a server.
+function myName(){ const n = store.get("fc_name", ""); return typeof n === "string" ? n.slice(0, 40) : ""; }
+function sendMySpot(){
+  const p = latestPosition;
+  if(!p) return;
+  const c = p.coords, name = myName();
+  const url = location.origin + location.pathname + "#spot=" + [c.latitude.toFixed(5), c.longitude.toFixed(5), Math.round(p.timestamp/1000), resortId].join(",") +
+    (name ? "," + encodeURIComponent(name) : "");
+  const near = nearestFeature(c.latitude, c.longitude, "piste");
+  const text = `${name || "I"}'m here${near && near.d < 300 ? " (near " + near.p.n + ")" : ""}`;
+  if(navigator.share) navigator.share({ title:"My spot", text, url }).catch(()=>{});
+  else navigator.clipboard?.writeText(text + " " + url);
+}
+let spotLayer = null;
+function showSharedSpot(){
+  const m = /^#spot=(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+),(\d{9,11}),([a-z0-9]{1,8})(?:,([^,]{0,120}))?$/.exec(location.hash);
+  if(!m) return;
+  const lat = Number(m[1]), lon = Number(m[2]), ts = Number(m[3]) * 1000, rid = m[4];
+  if(Math.abs(lat) > 90 || Math.abs(lon) > 180) return;
+  let who = "";
+  try{ who = decodeURIComponent(m[5] || "").slice(0, 40); }catch(e){}
+  if(RESORTS[rid] && rid !== resortId){ document.getElementById("resortsel").value = rid; switchResort(rid); }
+  document.querySelector('nav button[data-t="map"]').click();
+  if(!mapReady) return;
+  if(spotLayer) map.removeLayer(spotLayer);
+  spotLayer = L.layerGroup().addTo(map);
+  const age = Number.isFinite(ts) ? ageText(Date.now() - ts) : "";
+  const mk = L.circleMarker([lat, lon], { radius:10, color:"#fff", weight:3, fillColor:"#7B4FB8", fillOpacity:1 }).addTo(spotLayer);
+  const html = `<strong>${esc(who || "Friend")}'s spot</strong><br>${esc(age)}`+
+    (R.graphData ? `<br><button class="secondary" id="spot-route" style="margin-top:6px">Route there</button>` : "");
+  mk.bindPopup(html).openPopup();
+  map.setView([lat, lon], 15);
+  map.once("popupopen", ()=>{});
+  setTimeout(()=>{ const b = document.getElementById("spot-route"); if(b) b.onclick = ()=>takeRoute({ name:(who || "Friend") + "'s spot", at:[lat, lon] }); }, 0);
+}
+window.addEventListener("hashchange", showSharedSpot);
+
+// stats files: {v:1, app:"first-chair", name, updated, resorts:{id:{days,runs,vertical,distance,topSpeed,pistes}}}
+function myStatsFile(){
+  const resorts = {};
+  [...new Set(daylog.map(e=>e.resort).filter(r=>RESORTS[r]))].forEach(r=>{
+    const s = FCStats.seasonStats(daylog, r), R2 = RESORTS[r];
+    const pistes = R2.mapData ? new Set([...skiedNames(r)].map(baseRunName)).size : 0;
+    resorts[r] = { days:s.days, runs:s.runs, vertical:Math.round(s.vertical), distance:Math.round(s.distance), topSpeed:Math.round(s.topSpeed), pistes };
+  });
+  return { v:1, app:"first-chair", name: myName() || "Me", updated: new Date().toISOString(), resorts };
+}
+function cleanStats(d){
+  if(!d || d.app !== "first-chair" || d.v !== 1 || typeof d.name !== "string" || typeof d.resorts !== "object" || !d.resorts) return null;
+  const out = { name: d.name.slice(0, 40).trim() || "Friend", updated: typeof d.updated === "string" ? d.updated.slice(0, 30) : "", resorts:{} };
+  for(const [r, v] of Object.entries(d.resorts)){
+    if(!RESORTS[r] || !v || typeof v !== "object") continue;
+    const n = k => Number.isFinite(v[k]) && v[k] >= 0 && v[k] < 1e8 ? Math.round(v[k]) : 0;
+    out.resorts[r] = { days:n("days"), runs:n("runs"), vertical:n("vertical"), distance:n("distance"), topSpeed:Math.min(n("topSpeed"), 200), pistes:n("pistes") };
+  }
+  return out;
+}
+function renderFriends(){
+  document.getElementById("f-name").value = myName();
+  const friends = store.get("fc_friends", {}) || {};
+  const me = cleanStats(myStatsFile());
+  const rows = [{ ...me, me:true }, ...Object.values(friends).map(cleanStats).filter(Boolean)]
+    .map(x=>{ const r = x.resorts[resortId] || {}; return { name:x.name, me:x.me, vertical:r.vertical||0, days:r.days||0, top:r.topSpeed||0, pistes:r.pistes||0 }; })
+    .sort((a,b)=>b.vertical - a.vertical);
+  const el = document.getElementById("f-board");
+  if(rows.length < 2){ el.innerHTML = ""; return; }
+  el.innerHTML = `<p class="muted" style="margin:6px 0">${esc(R.name)} leaderboard (vertical)</p><ol class="lb">`+rows.map((x,i)=>
+    `<li${x.me?' class="me"':""}><span>${i+1}. ${esc(x.name)}${x.me?" (me)":""}</span><span>${x.vertical.toLocaleString("en-GB")} m · ${x.days} d · ${x.top} km/h${x.pistes?` · ${x.pistes} pistes`:""}</span></li>`).join("")+`</ol>`;
+}
+document.getElementById("f-name").addEventListener("input", e=>{ store.set("fc_name", e.target.value.slice(0, 40)); });
+document.getElementById("f-share").addEventListener("click", async ()=>{
+  const data = myStatsFile(), name = (data.name || "me").replace(/[^A-Za-z0-9_-]+/g, "-").slice(0, 30);
+  const file = new File([JSON.stringify(data)], `first-chair-stats-${name}.json`, { type:"application/json" });
+  if(navigator.canShare && navigator.canShare({ files:[file] })){ try{ await navigator.share({ files:[file], title:"First Chair stats" }); return; }catch(e){ if(e && e.name==="AbortError") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = file.name; document.body.appendChild(a); a.click(); a.remove();
+});
+document.getElementById("f-import").addEventListener("click", ()=>document.getElementById("f-file").click());
+document.getElementById("f-file").addEventListener("change", async e=>{
+  const file = e.target.files && e.target.files[0]; e.target.value = "";
+  const msg = document.getElementById("f-msg");
+  if(!file) return;
+  if(file.size > 200000){ msg.textContent = "That file is too big to be a stats file."; return; }
+  let d = null;
+  try{ d = cleanStats(JSON.parse(await file.text())); }catch(err){}
+  if(!d){ msg.textContent = "That isn't a First Chair stats file."; return; }
+  const friends = store.get("fc_friends", {}) || {};
+  friends[d.name.toLowerCase()] = { v:1, app:"first-chair", ...d };
+  store.set("fc_friends", friends);
+  msg.textContent = `Imported ${d.name}'s stats.`; renderFriends();
 });
 
 /* wallet: typed details in localStorage (fc_wallet), pass photo in IndexedDB */
@@ -1580,9 +1682,10 @@ function renderSOS(){
        : `<p>Getting your position… go somewhere with a clear view of the sky.</p>`)+
     `<a class="sos-call" href="tel:112">CALL 112</a>${extra}`+
     `<p class="muted">112 works across the EU, also from a phone without a SIM. Give the coordinates and the nearest piste.</p>`+
-    `<div class="sos-row"><button class="secondary" id="soscopy"${p?"":" disabled"}>Copy details</button><button class="secondary" id="sosclose">Close</button></div>`+
+    `<div class="sos-row"><button class="secondary" id="soscopy"${p?"":" disabled"}>Copy details</button><button class="secondary" id="sosspot"${p?"":" disabled"}>Send my spot</button><button class="secondary" id="sosclose">Close</button></div>`+
     `<p class="muted" id="sosmsg"></p>`;
   document.getElementById("sosclose").onclick = closeSOS;
+  document.getElementById("sosspot").onclick = sendMySpot;
   document.getElementById("soscopy").onclick = ()=>{
     const t = sosText(), msg = document.getElementById("sosmsg");
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
@@ -1647,7 +1750,7 @@ async function shareDayCard(entry){
    LOG  (one global timeline, entries tagged with resort)
    ========================================================= */
 function renderLog(){
-  renderSeasonStats();
+  renderSeasonStats(); renderFriends();
   const el = document.getElementById("loglist");
   el.innerHTML = "";
   if(!daylog.length){ el.innerHTML = `<p class="muted" style="padding:6px 4px">No days logged yet. First chair awaits.</p>`; return; }
@@ -1799,7 +1902,7 @@ function switchResort(id){
   setRunsNote();
   buildMtnChips(); buildDiffChips(); buildSortChips();
   renderRuns(); renderEats(); renderLog();
-  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks(); renderWallet(); drawPhotos();
+  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks(); renderWallet(); drawPhotos(); renderFriends();
 }
 
 /* =========================================================
@@ -1837,6 +1940,8 @@ setupSun();
 renderLinks();
 renderWallet();
 loadPhotos();
+renderFriends();
+showSharedSpot();
 restoreTracking();
 
 /* register the service worker so the app shell works offline */

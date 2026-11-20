@@ -89,7 +89,7 @@ function app(storage=new Map()){
     vecData:{},RESORTS:{test:{name:'Test resort'}},resortId:'test',mapReady:false,daylog:[],
     esc:s=>String(s).replace(/[&<>"']/g,'_'),confirm:()=>true,
     // defined outside the sliced sections; tested in test_stats.mjs
-    renderSeasonStats(){},shareDayCard(){},renderSOS(){},pisteLines:()=>[],compactPath:()=>[],photoThumbs:()=>''};
+    renderSeasonStats(){},shareDayCard(){},renderSOS(){},pisteLines:()=>[],compactPath:()=>[],photoThumbs:()=>'',renderFriends(){}};
   vm.createContext(sandbox);vm.runInContext(gps+'\n'+log,sandbox);
   return {sandbox,node,listeners,run:source=>vm.runInContext(source,sandbox),storage};
 }
