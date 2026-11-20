@@ -108,6 +108,12 @@
     return loadPromise;
   }
 
+  // 'clean' = snow relief: no raster base, white snow + stronger MapLibre hillshade (no printed names)
+  const styleFor = key => key === 'clean'
+    ? { ...baseStyle, sources: { dem: baseStyle.sources.dem },
+        layers: [ { id: 'background', type: 'background', paint: { 'background-color': '#F7FAFC' } },
+                  { id: 'hillshade', type: 'hillshade', source: 'dem', paint: { 'hillshade-exaggeration': 0.6, 'hillshade-shadow-color': '#6F8299', 'hillshade-highlight-color': '#FFFFFF', 'hillshade-accent-color': '#8FA3B8' } } ] }
+    : baseStyle;
   const baseStyle = {
     version: 8,
     sources: {
@@ -132,15 +138,15 @@
     if(!Array.isArray(opts.labels) || typeof opts.labelAngle !== 'function') return;
     const pool = opts.labels.filter(x => x && x.name && Array.isArray(x.mid) && Number.isFinite(x.bearing));
     let items = [];
-    const orient = () => { const mb = instance.getBearing(); for(const it of items) it.m.setRotation(opts.labelAngle(it.b, mb) + mb); };
+    const orient = () => { const mb = instance.getBearing(); for(const it of items) if(it.b !== null) it.m.setRotation(opts.labelAngle(it.b, mb) + mb); };
     // label what's actually in view (longest first, one per name), like the 2D map
     const refresh = () => {
       for(const it of items) it.m.remove();
       items = [];
-      if(instance.getZoom() < 13) return;
+      const b = instance.getBounds();
       // tilted view: bounds reach the horizon, so pick the names nearest the centre of the view first
-      const b = instance.getBounds(), c = instance.getCenter(), k = Math.cos(c.lat * Math.PI / 180), seen = new Set();
-      const near = pool.filter(x => b.contains([x.mid[1], x.mid[0]]))
+      const c = instance.getCenter(), k = Math.cos(c.lat * Math.PI / 180), seen = new Set();
+      const near = (instance.getZoom() < 13 ? [] : pool).filter(x => b.contains([x.mid[1], x.mid[0]]))
         .map(x => ({ x, d: (x.mid[0] - c.lat) ** 2 + ((x.mid[1] - c.lng) * k) ** 2 }))
         .sort((p, q) => p.d - q.d).map(p => p.x);
       for(const x of near){
@@ -154,6 +160,21 @@
         const m = new maplibregl.Marker({ element: el, rotationAlignment: 'map', pitchAlignment: 'map', opacityWhenCovered: '1' })
           .setLngLat([x.mid[1], x.mid[0]]).addTo(instance);   // labelInfo mid is [lat, lon]
         items.push({ m, el, b: x.bearing });
+      }
+      // place names (clean background only): upright, by zoom like the 2D map
+      if(Array.isArray(opts.places)){
+        const z = instance.getZoom(), minZ = { village:11, peak:12, hamlet:14, lake:14 };
+        let k = 0;
+        for(const p of opts.places){
+          if(k >= 60) break;
+          if(!p || z < (minZ[p.t] || 15) || !Array.isArray(p.at) || !b.contains([p.at[1], p.at[0]])) continue;
+          k++;
+          const el = document.createElement('div');
+          el.className = 'map3d-place place-' + p.t;
+          el.textContent = p.t === 'peak' ? `▲ ${p.n}${Number.isFinite(p.ele) ? ' ' + p.ele.toLocaleString('en-GB') : ''}` : p.n;
+          const m = new maplibregl.Marker({ element: el, opacityWhenCovered: '1' }).setLngLat([p.at[1], p.at[0]]).addTo(instance);
+          items.push({ m, el, b: null });
+        }
       }
       orient();
     };
@@ -177,7 +198,7 @@
 
         instance = new maplibregl.Map({
           container,
-          style: baseStyle,
+          style: styleFor(opts.basemap),
           center: [lon, lat],
           zoom: opts.zoom,
           pitch: 0,

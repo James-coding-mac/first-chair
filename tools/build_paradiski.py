@@ -415,6 +415,35 @@ def main():
                          "osm": "%s/%d" % (e["type"], e["id"]), "source": "osm", "verified": False})
     services.sort(key=lambda x: (x["type"], x["name"], x["osm"]))
 
+    # --- place names for the label-free basemap: villages/hamlets, peaks (with height), named lakes ---
+    places, seen_places = [], set()
+    for e in els:
+        t = tags(e)
+        name = (t.get("name") or "").strip()
+        if not name:
+            continue
+        if t.get("place") in ("town", "village", "hamlet", "suburb", "neighbourhood"):
+            kind, reach = ("village" if t["place"] in ("town", "village") else "hamlet"), 2000
+        elif t.get("natural") == "peak":
+            kind, reach = "peak", 5000
+        elif t.get("natural") == "water":
+            kind, reach = "lake", 3000
+        else:
+            continue
+        p = centroid(geom(e))
+        if not ski_pts.nearest(p, reach)[0] or (kind, name) in seen_places:
+            continue
+        seen_places.add((kind, name))
+        rec = {"n": name, "t": kind, "at": r5(p)}
+        ele = ((t.get("ele") or "").split() or [""])[0].replace(",", ".") if kind == "peak" else ""
+        try:
+            if ele and 300 < float(ele) < 5000:
+                rec["ele"] = round(float(ele))
+        except ValueError:
+            pass
+        places.append(rec)
+    places.sort(key=lambda x: (["village", "peak", "hamlet", "lake"].index(x["t"]), -x.get("ele", 0), x["n"]))
+
     eats.sort(key=lambda x: -len(x["desc"]))
     merged = []
     for x in eats:
@@ -440,7 +469,7 @@ def main():
         "mountains": [{"id": "LP", "name": "La Plagne"}, {"id": "LA", "name": "Les Arcs / Peisey"}],
         "dataNote": "Generated from OpenStreetMap (© OSM contributors, ODbL). NOT yet checked against "
                     "the official 2026–27 piste map: names and grades may be wrong or missing.",
-        "runs": runs, "lifts": lifts, "eats": eats, "services": services,
+        "runs": runs, "lifts": lifts, "eats": eats, "services": services, "places": places,
     }
     # vertical drop per run: highest minus lowest known elevation (DEM) of its junction/end nodes
     drop_elev = json.load(open(ELEVATIONS, encoding="utf-8")) if os.path.exists(ELEVATIONS) else {}

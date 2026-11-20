@@ -68,7 +68,7 @@ let opened, positionCalls=0;
 const fc={async open(box,o){opened=o;},isOpen:()=>true,setPosition(){positionCalls++;}};
 const integration=vm.createContext({window:{FC3D:fc},FC3D:fc,Date,Math,
  document:{getElementById:()=>({hidden:true})},map:{getCenter:()=>({lat:45,lng:6}),getZoom:()=>13},
- rotor:{getBearing:()=>123},vecData:{},resortId:'pdk',currentRouteLine:[[45,6],[46,7]],labelInfo:[],labelAngle:()=>0,esc:x=>x,
+ rotor:{getBearing:()=>123},vecData:{},resortId:'pdk',currentRouteLine:[[45,6],[46,7]],labelInfo:[],labelAngle:()=>0,basemapKey:()=>'osm',R:{},esc:x=>x,
  latestPosition:{timestamp:Date.now(),coords:{latitude:45,longitude:6,accuracy:30}},alert:msg=>assert.fail(msg)});
 vm.runInContext(html.slice(html.indexOf('async function open3D('),html.indexOf('document.getElementById("map3d-close").addEventListener')),integration);
 await integration.open3D();assert.equal(opened.bearing,123);assert.equal(opened.path.length,2);assert.equal(positionCalls,1);

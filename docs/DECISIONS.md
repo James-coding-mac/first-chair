@@ -36,5 +36,9 @@
 - **3D terrain view**: MapLibre GL JS (open source, from the allowed CDN) + AWS Terrain Tiles (open data, no key) as a new allowed host; optional offline pack for Paradiski.
 - Later: native Apple Watch companion; accounts/live leaderboards (Supabase/Firebase) after the trip.
 
+## Basemap (James, 20 Nov 2026: "go with 1")
+- Tried **CARTO Voyager, no labels**: from a website it shows "API KEY REQUIRED" watermarks, so not used (no new host added).
+- Default background = **"Snow relief"** drawn in the app (steep.js reliefLayer) from AWS Terrain Tiles (already approved for 3D): white snow, NW hillshade, no printed names. First Chair draws all names itself (villages, hamlets, peaks with heights, lakes, pistes, lifts), so every name stays upright when the map rotates, in 2D and 3D. OpenStreetMap stays selectable ("OpenStreetMap (detailed)").
+
 ## Pending: needs James
 - (none)

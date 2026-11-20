@@ -61,7 +61,48 @@
       }
     });
   }
+  /* hillshade 0..1 (Horn gradients), light from azimuth 315° (NW), altitude 45°: the classic map relief */
+  function hillshade(elev, metresPerPx){
+    const n = 256, out = new Float32Array(n * n), k = 1 / (8 * metresPerPx);
+    const zen = 45 * Math.PI / 180, az = (360 - 315 + 90) * Math.PI / 180;
+    const at = (x, y) => elev[Math.min(n - 1, Math.max(0, y)) * n + Math.min(n - 1, Math.max(0, x))];
+    for(let y = 0; y < n; y++) for(let x = 0; x < n; x++){
+      const a = at(x-1,y-1), b = at(x,y-1), c = at(x+1,y-1), d = at(x-1,y), f = at(x+1,y), g = at(x-1,y+1), h = at(x,y+1), i = at(x+1,y+1);
+      const dzdx = ((c + 2*f + i) - (a + 2*d + g)) * k, dzdy = ((g + 2*h + i) - (a + 2*b + c)) * k;
+      const slope = Math.atan(Math.hypot(dzdx, dzdy)), aspect = Math.atan2(dzdy, -dzdx);
+      out[y * n + x] = Math.max(0, Math.cos(zen) * Math.cos(slope) + Math.sin(zen) * Math.sin(slope) * Math.cos(az - aspect));
+    }
+    return out;
+  }
+  /* "snow relief" background: white snow with blue-grey shading, no names (First Chair draws them) */
+  function reliefLayer(L){
+    return L.GridLayer.extend({
+      options: { maxNativeZoom: 15, maxZoom: 19, attribution: 'Relief from AWS Terrain Tiles' },
+      createTile(coords, done){
+        const tile = document.createElement('canvas'); tile.width = tile.height = 256;
+        const img = new Image(); img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try{
+            const c = document.createElement('canvas'); c.width = c.height = 256;
+            const cx = c.getContext('2d', { willReadFrequently: true }); cx.drawImage(img, 0, 0);
+            const elev = decode(cx.getImageData(0, 0, 256, 256).data);
+            const lat = tileLat(coords.y + 0.5, coords.z);
+            const mpp = 156543.034 * Math.cos(lat * Math.PI / 180) / Math.pow(2, coords.z);
+            const hs = hillshade(elev, mpp), ctx = tile.getContext('2d'), out = ctx.createImageData(256, 256);
+            for(let p = 0; p < hs.length; p++){
+              const v = Math.max(0, Math.min(1, (hs[p] - 0.25) / 0.55));   // stretch contrast; flat ground ≈ 0.7 → near white
+              out.data[p*4] = 120 + 135 * v; out.data[p*4+1] = 140 + 115 * v; out.data[p*4+2] = 165 + 90 * v; out.data[p*4+3] = 255;
+            }
+            ctx.putImageData(out, 0, 0); done(null, tile);
+          }catch(e){ done(e, tile); }
+        };
+        img.onerror = () => { const ctx = tile.getContext('2d'); ctx.fillStyle = '#EEF2F6'; ctx.fillRect(0, 0, 256, 256); done(new Error('terrain tile unavailable'), tile); };
+        img.src = DEM.replace('{z}', coords.z).replace('{x}', coords.x).replace('{y}', coords.y);
+        return tile;
+      }
+    });
+  }
   function tileLat(y, z){ const n = Math.PI - 2 * Math.PI * y / Math.pow(2, z); return 180 / Math.PI * Math.atan(Math.sinh(n)); }
 
-  root.FCSteep = { layer, slopes, decode, band, tileLat };
+  root.FCSteep = { layer, slopes, decode, band, tileLat, hillshade, reliefLayer };
 })(typeof window === 'undefined' ? globalThis : window);

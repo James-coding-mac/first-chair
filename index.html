@@ -76,9 +76,18 @@ button.secondary{background:var(--card-2);color:var(--ink);border:1px solid var(
 .map-label{width:0!important;height:0!important;margin:0!important;pointer-events:none;background:none;border:0}
 .map-label span{position:absolute;transform:translate(-50%,-50%);font:600 11px Inter,sans-serif;white-space:nowrap;color:inherit;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
 .map-label{color:#16283C}
-.map-label.lift{font-style:italic;color:#16283C}.map-label.g-green{color:#1f5c39}.map-label.g-blue{color:#1d4f86}.map-label.g-red{color:#9b2a1f}.map-label.g-offpiste{color:#8a6417}
+.map-label.lift{font-style:italic;color:#16283C}
+.map-label.place-village span{font:700 13px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#16283C}
+.map-label.place-hamlet span{font:600 11px 'Barlow Condensed',sans-serif;letter-spacing:.04em;color:#4C6076}
+.map-label.place-peak span{font:600 11px Inter,sans-serif;color:#6B4F2A}
+.map-label.place-lake span{font:italic 500 11px Inter,sans-serif;color:#2B6CB0}.map-label.g-green{color:#1f5c39}.map-label.g-blue{color:#1d4f86}.map-label.g-red{color:#9b2a1f}.map-label.g-offpiste{color:#8a6417}
 .map3d-label{font:600 12px Inter,sans-serif;white-space:nowrap;color:#16283C;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;pointer-events:none}
 .map3d-label.lift{font-style:italic}
+.map3d-place{white-space:nowrap;pointer-events:none;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+.map3d-place.place-village{font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#16283C}
+.map3d-place.place-hamlet{font:600 12px 'Barlow Condensed',sans-serif;color:#4C6076}
+.map3d-place.place-peak{font:600 12px Inter,sans-serif;color:#6B4F2A}
+.map3d-place.place-lake{font:italic 500 12px Inter,sans-serif;color:#2B6CB0}
 .lift-arrow span{display:block;font-size:12px;line-height:16px;text-align:center;color:#16283C;text-shadow:0 0 2px #fff}
 .steep-legend{background:var(--card);color:var(--ink);padding:4px 8px;border-radius:8px;font-size:11px;box-shadow:var(--shadow);margin-bottom:56px!important}
 .steep-legend span{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 3px 0 6px;vertical-align:-1px}
@@ -544,6 +553,19 @@ function setRunsNote(){
    MAP  (Leaflet: OSM tiles + OpenSnowMap overlay online;
          resorts with R.mapData also get bundled piste/lift vectors that work offline)
    ========================================================= */
+let baseLayers = null, snowLayer = null;
+function basemapKey(){
+  const pref = (store.get("fc_basemap", {}) || {})[resortId];
+  return pref === "osm" || pref === "clean" ? pref : (R.places && R.places.length ? "clean" : "osm");
+}
+/* pick the background for the current resort; OpenSnowMap (piste names baked in) only where we have no vectors */
+function applyBasemap(){
+  if(!mapReady && !baseLayers) return;
+  const want = baseLayers[basemapKey()];
+  Object.values(baseLayers).forEach(l=>{ if(l!==want && map.hasLayer(l)) map.removeLayer(l); });
+  if(!map.hasLayer(want)) want.addTo(map).bringToBack();
+  if(R.mapData){ if(map.hasLayer(snowLayer)) map.removeLayer(snowLayer); } else if(!map.hasLayer(snowLayer)) snowLayer.addTo(map);
+}
 let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0, skiedGroup, svcGroup, svcMarkers = [], labelGroup, labelInfo = [];
 const EATS_MIN_ZOOM = 15;   // restaurant dots only when zoomed in, to keep the map readable
 const MAPNOTE_ONLINE  = "Live pistes & lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom. Needs a data signal — the other tabs work offline.";
@@ -557,15 +579,28 @@ function initMap(){
     return;
   }
   map = L.map(el, { zoomControl:true, attributionControl:true, preferCanvas:true }).setView(R.map.center, R.map.zoom);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom:18, attribution:'&copy; OpenStreetMap contributors'
-  }).addTo(map);
-  const snow = L.tileLayer("https://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png", {
+  // Backgrounds: "snow relief" drawn in the app from free terrain tiles, with no printed names (First Chair
+  // draws every name, so all names stay upright when the map rotates) for resorts with place data;
+  // detailed OpenStreetMap otherwise, or when chosen. (CARTO no-labels was tried: it needs an API key.)
+  baseLayers = {
+    clean: window.FCSteep && typeof FCSteep.reliefLayer === "function" ? new (FCSteep.reliefLayer(L))() : L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:18 }),
+    osm: L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:18, attribution:'&copy; OpenStreetMap contributors' }),
+  };
+  snowLayer = L.tileLayer("https://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png", {
     maxZoom:18, attribution:'Pistes &copy; <a href="https://www.opensnowmap.org">OpenSnowMap</a>'
-  }).addTo(map);
+  });
+  const snow = snowLayer;
   vecGroup = L.layerGroup().addTo(map);
   eatGroup = L.layerGroup().addTo(map);   // the layers menu switches this on/off; zoom fills/empties it
-  layersCtl = L.control.layers(null, { "OpenSnowMap (online)": snow }, { collapsed:true }).addTo(map);
+  layersCtl = L.control.layers({ "Snow relief (all names upright)": baseLayers.clean, "OpenStreetMap (detailed)": baseLayers.osm },
+    { "OpenSnowMap (online)": snow }, { collapsed:true }).addTo(map);
+  map.on("baselayerchange", e=>{
+    const key = e.layer===baseLayers.osm ? "osm" : "clean";
+    const pref = store.get("fc_basemap", {}) || {}; pref[resortId] = key; store.set("fc_basemap", pref);
+    syncLabels();
+  });
+  applyBasemap();
   if(window.FCSteep){
     // FATMAP-style slope angle from free elevation tiles (viewed areas are cached for offline)
     const steep = new (FCSteep.layer(L))();
@@ -621,7 +656,8 @@ async function open3D(replayOptions = null){
   const c = map.getCenter();
   try{
     await FC3D.open(box, { center:[c.lat, c.lng], zoom: Math.max(11, map.getZoom() - 0.5),
-      geojson: vecData[resortId] || null, labels: labelInfo, labelAngle, path: replayOptions ? replayOptions.path : currentRouteLine,
+      geojson: vecData[resortId] || null, labels: labelInfo, labelAngle,
+      basemap: basemapKey(), places: basemapKey()==="clean" ? (R.places || []) : [], path: replayOptions ? replayOptions.path : currentRouteLine,
       bearing: rotor ? rotor.getBearing() : 0, replay: replayOptions, esc });
     if(FC3D.isOpen() && latestPosition && Date.now() - latestPosition.timestamp < 120000){
       const p = latestPosition.coords; FC3D.setPosition(p.latitude, p.longitude, p.accuracy);
@@ -1221,9 +1257,9 @@ function syncLabels(){
   if(!labelGroup) labelGroup = L.layerGroup().addTo(map);
   labelGroup.clearLayers();
   const z = map.getZoom();
-  if(z < 14 || !R.mapData || !labelInfo.length || !map.hasLayer(vecGroup)) return;
   const b = map.getBounds(), seen = new Set(); let n = 0;
-  for(const x of labelInfo){
+  const pisteLabels = z >= 14 && R.mapData && labelInfo.length && map.hasLayer(vecGroup);
+  for(const x of pisteLabels ? labelInfo : []){
     if(n >= 150) break;
     if(!b.contains(x.mid)) continue;
     if(x.kind==="lift") L.marker(x.mid, { interactive:false, keyboard:false,
@@ -1232,6 +1268,19 @@ function syncLabels(){
     seen.add(x.kind+x.name); n++;
     L.marker(x.mid, { interactive:false, keyboard:false,
       icon: L.divIcon({ className:"map-label "+(x.kind==="lift"?"lift":"g-"+x.grade), iconSize:[0,0], html:`<span data-b="${x.bearing.toFixed(1)}">${esc(x.name)}</span>` }) }).addTo(labelGroup);
+  }
+  // place names (villages, peaks, hamlets, lakes): only on the clean background (OSM tiles already carry them)
+  if(basemapKey()==="clean" && Array.isArray(R.places)){
+    const minZ = { village:11, peak:12, hamlet:14, lake:14 };
+    let k = 0;
+    for(const p of R.places){
+      if(k >= 120) break;
+      if(z < (minZ[p.t] || 15) || !Array.isArray(p.at) || !b.contains(p.at)) continue;
+      k++;
+      const text = p.t==="peak" ? `▲ ${p.n}${Number.isFinite(p.ele) ? " " + p.ele.toLocaleString("en-GB") : ""}` : p.n;
+      L.marker(p.at, { interactive:false, keyboard:false,
+        icon: L.divIcon({ className:"map-label place-"+p.t, iconSize:[0,0], html:`<span data-up="1">${esc(text)}</span>` }) }).addTo(labelGroup);
+    }
   }
   orientLabels();
 }
@@ -1244,6 +1293,8 @@ function labelAngle(lineBearing, mapBearing){
 function orientLabels(){
   if(!labelGroup) return;
   const b = rotor ? rotor.getBearing() : 0;
+  // place names: just stay upright (counter-rotate the map)
+  document.querySelectorAll(".map-label span[data-up]").forEach(sp=>{ sp.style.transform = `translate(-50%,-50%) rotate(${b}deg)`; });
   document.querySelectorAll(".map-label span[data-b]").forEach(sp=>{
     // the label sits inside the rotated map layer (rotate(-b)), so add b back
     sp.style.transform = `translate(-50%,-50%) rotate(${(labelAngle(Number(sp.dataset.b), b) + b).toFixed(1)}deg)`;
@@ -1253,6 +1304,7 @@ function orientLabels(){
 function showVectors(){
   document.getElementById("mapnote").textContent = R.mapData ? MAPNOTE_OFFLINE : MAPNOTE_ONLINE;
   if(!mapReady) return;
+  applyBasemap();
   const gen = ++vecGen;   // a newer call wins; stops a slow fetch drawing twice after quick resort switches
   vecGroup.clearLayers(); eatGroup.clearLayers(); eatMarkers = [];
   // the layers menu only offers the offline layers on resorts that have them
