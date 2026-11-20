@@ -1,6 +1,6 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v6";
+const VERSION = "v7";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
 const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
 const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)

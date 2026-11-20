@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#16283C">
+<meta name="theme-color" content="#16283C" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1622" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -17,190 +18,154 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
 :root{
-  --snow:#F2F6F9; --panel:#FFFFFF; --ink:#16283C; --ink2:#4C6076;
-  --line:#D8E3EC; --glacier:#3D7FB8; --p2p:#C0392B;
-  --green:#2E7D4F; --blue:#2B6CB0; --red:#C0392B; --black:#14181D; --gold:#E0A93C;
-  --radius:14px;
+  color-scheme:light;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;
+  --radius-control:12px;--radius-card:18px;--radius-pill:999px;
+  --bg:#F2F6F9;--card:#fff;--card-2:#F7FAFC;--ink:#16283C;--ink-2:#4C6076;
+  --border:rgba(22,40,60,.08);--shadow:0 1px 2px rgba(22,40,60,.06),0 8px 24px rgba(22,40,60,.06);
+  --nav-bg:rgba(255,255,255,.88);--navy:#16283C;--glacier:#3D7FB8;--accent-text:#286493;--primary:#316FA3;
+  --p2p:#C0392B;--green:#2E7D4F;--blue:#2B6CB0;--red:#C0392B;--black:#14181D;--gold:#936513;
+  --selected:var(--navy);--on-selected:#fff;--warn:#FFF6E0;
+  --snow:var(--bg);--panel:var(--card);--ink2:var(--ink-2);--line:var(--border);--radius:var(--radius-card);
+  --font-body:'Inter',system-ui,sans-serif;--font-heading:'Barlow Condensed',sans-serif;
+  --display:700 34px/38px var(--font-heading);--title:700 22px/1.15 var(--font-heading);
+  --section:600 12px/1.4 var(--font-heading);--body:15px/22px var(--font-body);--meta:13px/1.5 var(--font-body);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{
-  font-family:'Inter',system-ui,sans-serif;background:var(--snow);color:var(--ink);
-  font-size:15px;line-height:1.45;
-  padding-bottom:calc(70px + env(safe-area-inset-bottom));
-}
-header{
-  background:var(--ink);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
-  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
-}
-header h1{font-family:'Barlow Condensed';font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;line-height:1}
-/* resort switcher sits where the subtitle used to */
-.rsel{display:inline-flex;align-items:center;gap:3px}
-.rsel i{color:#9FB6CC;font-style:normal;font-size:11px;pointer-events:none}
-#resortsel{
-  font-family:'Barlow Condensed';font-weight:500;font-size:15px;letter-spacing:.10em;text-transform:uppercase;
-  color:#9FB6CC;background:transparent;border:0;padding:0;cursor:pointer;
-  -webkit-appearance:none;appearance:none;max-width:52vw;text-overflow:ellipsis;
-}
-#resortsel:focus{outline:none}
-#resortsel option{color:#16283C}
-main{max-width:640px;margin:0 auto;padding:16px}
-section{display:none}
-section.active{display:block}
-h2{font-family:'Barlow Condensed';font-weight:600;font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:18px 2px 8px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px}
-.muted{color:var(--ink2);font-size:13px}
-
-/* chips + inputs */
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.chip{
-  font-family:'Barlow Condensed';font-weight:600;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
-  border:1px solid var(--line);background:var(--panel);color:var(--ink2);
-  padding:5px 12px;border-radius:999px;cursor:pointer;
-}
-.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
-input[type=text],input[type=date],textarea,select{
-  width:100%;font:inherit;color:var(--ink);background:var(--panel);
-  border:1px solid var(--line);border-radius:10px;padding:9px 11px;
-}
-textarea{resize:vertical;min-height:56px}
-button.primary{
-  font-family:'Barlow Condensed';font-weight:700;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
-  background:var(--glacier);color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;width:100%;
-}
-button.secondary{
-  font-family:'Barlow Condensed';font-weight:700;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
-  background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;width:100%;
-}
-
-/* map */
-#map{
-  height:62vh;min-height:340px;
-  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
-  background:linear-gradient(#DCEAF5,#F6FAFD 70%);
-}
-#map .mapoff{
-  display:flex;align-items:center;justify-content:center;height:100%;
-  padding:24px;text-align:center;color:var(--ink2);font-size:14px;
-}
-.leaflet-container{font-family:inherit;background:#DCEAF5}
-
-/* weather */
-.wx{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px}
-.wx.loading{color:var(--ink2);font-size:13px}
-.wx .now{display:flex;align-items:center;gap:12px}
-.wx .now .emoji{font-size:30px;line-height:1}
-.wx .now .temp{font-family:'Barlow Condensed';font-weight:700;font-size:30px;letter-spacing:.02em}
-.wx .now .desc{font-size:13px;color:var(--ink2)}
-.wx .fc{display:flex;gap:8px;margin-top:10px}
-.wx .fc .d{flex:1;text-align:center;background:var(--snow);border-radius:10px;padding:7px 4px}
-.wx .fc .d .dow{font-family:'Barlow Condensed';font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
-.wx .fc .d .de{font-size:18px;margin:2px 0}
-.wx .fc .d .snow{font-size:12px;font-weight:600;color:var(--glacier)}
-.wx .fc .d .tmax{font-size:12px;color:var(--ink2)}
-.wx .stamp{font-size:11px;color:var(--ink2);margin-top:8px}
-
-.wx .alt-points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.wx .alt-point{min-width:0}
-.wx .alt-label{font-size:13px;font-weight:600;overflow-wrap:anywhere;margin-bottom:6px}
-.wx .alt-point .now{gap:6px;flex-wrap:wrap}
-.wx .alt-point .desc{font-size:12px}
-.wx .alt-point .fc{gap:3px}
-.wx .alt-point .fc .d{min-width:0;padding:7px 2px}
-
-/* gps tracker */
-.trkbtns{display:flex;gap:8px}
-.trkbtns button{flex:1}
-button.secondary.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+body{font:var(--body);background:var(--bg);color:var(--ink);padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:default}
+a{color:var(--accent-text)}
+:focus-visible{outline:3px solid var(--glacier);outline-offset:3px}
+header{position:sticky;top:0;z-index:1100;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:var(--space-3);background:var(--navy);color:#fff;padding:calc(var(--space-3) + env(safe-area-inset-top)) max(var(--space-4),calc((100vw - 608px)/2)) var(--space-3)}
+header h1{font:var(--title);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.rsel{position:relative;min-width:0;display:flex;align-items:center}
+.rsel i{position:absolute;right:var(--space-3);font-style:normal;pointer-events:none;color:#D7E5F0}
+#resortsel{appearance:none;-webkit-appearance:none;min-height:44px;max-width:100%;padding:var(--space-2) var(--space-8) var(--space-2) var(--space-3);border-radius:var(--radius-pill);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font:600 14px/1.2 var(--font-heading);letter-spacing:.04em;text-transform:uppercase;text-overflow:ellipsis}
+#resortsel option{color:var(--ink);background:var(--card)}
+.condition-chip{font:600 12px/1.4 var(--font-body);font-variant-numeric:tabular-nums;white-space:nowrap;color:#E3EFF8;text-align:right}
+.condition-chip small{display:block;font-size:10px;font-weight:400;color:#BDCFDE}
+main{max-width:640px;margin:auto;padding:var(--space-4)}
+section{display:none}section.active{display:block}
+h2{font:var(--title);text-transform:uppercase;letter-spacing:.04em;margin:var(--space-6) 0 var(--space-3)}
+.card,.wx{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-card);box-shadow:var(--shadow);padding:var(--space-4);margin-bottom:var(--space-4)}
+.muted,.wx.loading{font:var(--meta);color:var(--ink-2)}
+.chips{display:flex;gap:var(--space-2);overflow-x:auto;scrollbar-width:none;margin:var(--space-3) 0;padding:var(--space-1);scroll-padding:var(--space-1)}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;min-height:44px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--card);color:var(--ink-2);padding:var(--space-2) var(--space-4);font:600 15px/1.2 var(--font-heading);letter-spacing:.04em;text-transform:uppercase}
+.chip.on,button.secondary.on{background:var(--selected);border-color:var(--selected);color:var(--on-selected)}
+input[type=text],input[type=search],input[type=date],textarea,select{width:100%;min-width:0;min-height:44px;font:var(--body);font-size:16px;color:var(--ink);background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-control);padding:var(--space-3)}
+input::placeholder,textarea::placeholder{color:var(--ink-2);opacity:1}
+textarea{resize:vertical;min-height:88px}
+.search-field{position:relative}.search-field svg{position:absolute;left:var(--space-3);top:14px;width:20px;height:20px;color:var(--ink-2);pointer-events:none}.search-field input{padding-left:44px;min-height:48px}
+button.primary,button.secondary{min-height:48px;width:100%;padding:var(--space-3) var(--space-4);border-radius:var(--radius-control);font:700 17px/1.2 var(--font-heading);letter-spacing:.06em;text-transform:uppercase}
+button.primary{background:var(--primary);color:#fff;border:1px solid transparent}
+button.secondary{background:var(--card-2);color:var(--ink);border:1px solid var(--border)}
+.map-hero{position:relative;margin-bottom:var(--space-4);isolation:isolate}
+#map{height:min(62vh,560px);min-height:300px;border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;background:var(--card-2);box-shadow:var(--shadow)}
+#map .mapoff{display:flex;align-items:center;justify-content:center;height:100%;padding:var(--space-6) var(--space-6) 96px;text-align:center;color:var(--ink-2);font:var(--meta)}
+.leaflet-container{font-family:var(--font-body);background:var(--card-2)}
+.leaflet-bar{box-shadow:var(--shadow)!important;border:1px solid var(--border)!important;border-radius:var(--radius-control)!important;overflow:hidden}
+.leaflet-bar a,.leaflet-bar a:hover,.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--ink)}
+.leaflet-bar a{min-width:44px;min-height:44px;line-height:44px;border-color:var(--border)}
+.leaflet-control-attribution{background:var(--card)!important;color:var(--ink-2)!important;font-size:10px}.leaflet-control-attribution a,.leaflet-container a.leaflet-popup-close-button{color:var(--accent-text)}
+.leaflet-popup-content-wrapper{border-radius:var(--radius-card)}
+.trkbtns{display:flex;gap:var(--space-2)}.map-hero>.trkbtns{position:absolute;z-index:1000;left:var(--space-3);right:var(--space-3);bottom:var(--space-8);pointer-events:none}
+.trkbtns button{flex:1;min-width:0;pointer-events:auto;border-radius:var(--radius-pill);background:var(--card);box-shadow:var(--shadow)}
 button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
-.trkstats .spd{font-family:'Barlow Condensed';font-weight:700;font-size:34px;text-align:center;letter-spacing:.02em;margin-top:6px}
-.trkstats .spd small{font-size:14px;color:var(--ink2);font-weight:600}
-.trkgrid{display:flex;gap:8px;margin-top:8px}
-.trkgrid .m{flex:1;text-align:center;background:var(--snow);border-radius:10px;padding:8px 4px}
-.trkgrid .m .k{font-family:'Barlow Condensed';font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
-.trkgrid .m .val{font-family:'Barlow Condensed';font-weight:700;font-size:19px}
-.trkgrid .m .val small{font-size:11px;color:var(--ink2);font-weight:600}
-.trksave{margin-top:10px}
-
-/* run + eat rows */
-.row{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
-.rowhead{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer}
-.diff{font-size:13px;width:30px;flex-shrink:0;text-align:center;font-weight:600}
-.diff.green{color:var(--green)} .diff.blue{color:var(--blue)} .diff.red{color:var(--red)}
-.diff.black,.diff.dblack{color:var(--black)}
-.diff.offpiste{color:var(--gold)}
-.unv{display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--gold);border-radius:4px;
-  font-size:10px;font-weight:600;letter-spacing:.04em;color:#8a6417;vertical-align:1px}
-.warn{background:#FFF6E0;border-left:3px solid var(--gold);padding:7px 9px;border-radius:6px}
-.rowhead .nm{font-weight:600;flex:1}
-.rowhead .meta{font-size:12px;color:var(--ink2)}
-.fav{font-size:18px;color:var(--line);cursor:pointer;flex-shrink:0}
-.fav.on{color:var(--gold)}
-.rowbody{display:none;padding:0 13px 13px;border-top:1px dashed var(--line)}
-.row.open .rowbody{display:block}
-.rowbody p{margin:9px 0 7px;font-size:13.5px}
-.stars{font-size:20px;letter-spacing:3px;cursor:pointer;color:var(--line)}
-.stars .lit{color:var(--gold)}
-
-/* log */
-.logentry{position:relative}
-.logentry .del{position:absolute;top:10px;right:12px;color:var(--ink2);font-size:13px;cursor:pointer}
-.logentry .rtag{font-family:'Barlow Condensed';font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:11px;color:var(--ink2)}
-.cond{font-family:'Barlow Condensed';font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:14px;color:var(--glacier)}
-
-/* bottom nav */
-nav{
-  position:fixed;bottom:0;left:0;right:0;z-index:30;
-  background:var(--panel);border-top:1px solid var(--line);
-  display:flex;padding-bottom:env(safe-area-inset-bottom);
+.wx .now{display:flex;align-items:center;gap:var(--space-3)}
+.wx .now .temp{font:700 40px/1.1 var(--font-heading);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.wx .now .emoji{display:none}
+.wx .desc{font:var(--meta);color:var(--ink-2);margin-top:var(--space-2)}
+.wx .fc{display:flex;gap:var(--space-2);margin-top:var(--space-4)}
+.wx .fc .d{flex:1;min-width:0;text-align:center;background:var(--card-2);border-radius:var(--radius-control);padding:var(--space-2) var(--space-1)}
+.wx .fc .dow,.wx .alt-label,.trkgrid .k,label{font:var(--section);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.wx .fc .de{font-size:18px;margin:var(--space-1) 0}.wx .fc .snow{font-size:12px;font-weight:600;color:var(--accent-text)}.wx .fc .tmax{font:var(--meta);color:var(--ink-2)}
+.wx .stamp{font-size:12px;color:var(--ink-2);margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--border)}
+.wx .alt-points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}.wx .alt-point{min-width:0}.wx .alt-label{margin-bottom:var(--space-2);overflow-wrap:anywhere;min-height:34px}
+.wx .alt-point+.alt-point{border-left:1px solid var(--border);padding-left:var(--space-4)}
+.wx .alt-point .fc{gap:var(--space-1)}.weather-detail{display:block;margin-top:var(--space-1)}
+.trkstats .spd{font:var(--display);text-align:center;margin:var(--space-2) 0}
+.trkstats small{font:var(--meta);color:var(--ink-2)}
+.trkgrid{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-2)}
+.trkgrid .m{flex:1 1 72px;text-align:center;background:var(--card-2);border-radius:var(--radius-control);padding:var(--space-2) var(--space-1)}
+.trkgrid .val{font:var(--title)}.trkgrid .val,.spd,.wx .fc{font-variant-numeric:tabular-nums}.trksave{margin-top:var(--space-3)}
+#mapnote{margin-bottom:var(--space-4)}
+#runlist,#eatlist,#loglist{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;box-shadow:var(--shadow)}
+.row{background:var(--card);overflow:hidden}.row+.row{border-top:1px solid var(--border)}
+.rowhead{display:flex;align-items:center;gap:var(--space-2);min-height:52px;padding:var(--space-3);cursor:pointer}
+.rowhead:after{content:'›';font-size:22px;color:var(--ink-2);transition:transform 180ms}.row.open .rowhead:after{transform:rotate(90deg)}
+.rowhead .nm{font-weight:600;flex:1;min-width:0;overflow-wrap:anywhere}.rowhead .meta{font:var(--meta);color:var(--ink-2);margin-top:var(--space-1)}
+.diff{display:inline-flex;align-items:center;justify-content:center;font-size:20px;width:32px;min-height:32px;flex-shrink:0;line-height:1;letter-spacing:-3px}
+.diff.green{color:var(--green)}.diff.blue{color:var(--blue)}.diff.red{color:var(--red)}.diff.black,.diff.dblack{color:var(--black)}.diff.offpiste{color:var(--gold)}
+.unv{display:inline-block;padding:0 var(--space-1);margin-left:var(--space-1);border:1px solid var(--gold);border-radius:var(--radius-pill);font:600 9px/1.6 var(--font-body);letter-spacing:.04em;color:var(--gold);vertical-align:1px}
+.warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
+.fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
+.rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
+.row.open .rowbody{max-height:2000px;opacity:1;visibility:visible;padding:0 var(--space-4) var(--space-4)}
+.rowbody p{margin:var(--space-3) 0;font:var(--meta)}
+.stars{display:flex;cursor:pointer;color:var(--ink-2);flex-shrink:0;font-size:22px;letter-spacing:0}.stars span{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}.stars .lit{color:var(--gold)}
+#eatlist .rowhead{flex-wrap:wrap}#eatlist .rowhead .nm{flex-basis:calc(100% - 32px)}#eatlist .rowhead:after{order:1}#eatlist .stars{order:2;margin-left:auto}
+.logentry{position:relative;overflow-wrap:anywhere;padding-right:72px}#loglist .logentry{border:0;border-radius:0;box-shadow:none;margin:0}#loglist .logentry+.logentry{border-top:1px solid var(--border)}
+.logentry .del{position:absolute;top:var(--space-2);right:var(--space-2);display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;color:var(--p2p);font:var(--meta);cursor:pointer}
+.logentry .rtag{font:var(--section);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-top:var(--space-1)}
+.cond{font:600 14px/1.4 var(--font-heading);text-transform:uppercase;color:var(--accent-text)}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:1200;max-width:640px;margin:auto;display:flex;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom))}
+nav button{flex:1;min-width:44px;min-height:48px;background:none;border:0;color:var(--ink-2);font:600 12px/1.4 var(--font-heading);letter-spacing:.08em;text-transform:uppercase}
+nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24px;height:24px}nav button.on{color:var(--accent-text)}
+.formrow{margin-bottom:var(--space-3)}label{display:block;margin-bottom:var(--space-1)}
+#route-targets{max-height:220px;overflow:auto;display:grid;gap:var(--space-2);margin-top:var(--space-2)}#route-targets:empty{display:none}
+#route-targets button{text-align:left;white-space:normal}#route-home{margin-top:var(--space-3)}
+#route-result ol{list-style:none;padding:var(--space-3) 0}
+#route-result li{position:relative;display:flex;align-items:flex-start;gap:var(--space-2);padding:var(--space-3) 0 var(--space-3) 40px;overflow-wrap:anywhere;min-height:52px}
+#route-result li:before{content:'';position:absolute;top:0;bottom:0;left:15px;width:1px;background:var(--border)}
+#route-result li:first-child:before{top:24px}#route-result li:last-child:before{bottom:calc(100% - 24px)}
+.route-dot{position:absolute;left:0;top:var(--space-2);width:32px;height:32px;background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-pill);display:grid;place-items:center;font-size:13px}
+.route-label{flex:1;min-width:0}.route-time{font:var(--meta);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink-2)}
+#route-clear{margin-top:var(--space-4)}#routing[hidden],#route-result[hidden],[hidden]{display:none!important}
+.eat-route{margin:0 var(--space-3) var(--space-3);max-width:calc(100% - 24px)}
+@media(max-width:400px){header{gap:var(--space-2)}header h1{font-size:20px}#resortsel{font-size:13px;padding-left:var(--space-2)}.condition-chip{font-size:11px}.wx .alt-points{gap:var(--space-2)}.wx .alt-point+.alt-point{padding-left:var(--space-2)}}
+@media(prefers-color-scheme:dark){
+ :root{color-scheme:dark;--bg:#0B1622;--card:#12202F;--card-2:#182A3C;--ink:#E8EEF4;--ink-2:#9DB0C3;--border:rgba(255,255,255,.08);--nav-bg:rgba(18,32,47,.88);--accent-text:#83B9E5;--selected:var(--glacier);--on-selected:#fff;--green:#76CB95;--blue:#83B9E5;--red:#FF948A;--black:#E8EEF4;--gold:#DDB66C;--p2p:#FF948A;--warn:#302B20}
+ .diff.black,.diff.dblack{-webkit-text-stroke:1px var(--black);color:transparent}
+ button.on-track{background:#A93228;color:#fff}.chip.on,button.secondary.on{background:var(--primary)}
 }
-nav button{
-  flex:1;background:none;border:0;padding:9px 0 7px;cursor:pointer;color:var(--ink2);
-  font-family:'Barlow Condensed';font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;
-}
-nav button .ic{display:block;font-size:19px;margin-bottom:1px}
-nav button.on{color:var(--ink)}
-nav button.on .ic{color:var(--glacier)}
-.formrow{margin-bottom:9px}
-label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-/* Offline route controls */
-#route-targets{max-height:220px;overflow:auto;display:grid;gap:6px}
-#route-targets:empty{display:none}
-#route-targets button{text-align:left;white-space:normal}
-#route-result li{margin:10px 0;overflow-wrap:anywhere}
-#routing[hidden],#route-result[hidden]{display:none}
-.eat-route{margin:8px 12px}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 
 <header>
   <h1>First Chair</h1>
-  <span class="rsel"><select id="resortsel" aria-label="Choose resort"></select><i>▾</i></span>
+  <span class="rsel"><select id="resortsel" aria-label="Choose resort"></select><i aria-hidden="true">▾</i></span>
+  <span id="condition-chip" class="condition-chip" hidden></span>
 </header>
 
 <main>
 
 <!-- ============ MAP ============ -->
 <section id="tab-map" class="active">
+  <div class="map-hero">
+    <div id="map"></div>
+    <div class="trkbtns">
+      <button class="secondary" id="locbtn">⌖ Locate me</button>
+      <button class="secondary" id="trackbtn">▶ Track day</button>
+    </div>
+  </div>
   <div id="weather" class="wx loading">Loading weather…</div>
   <div id="routing" class="card" hidden>
     <label for="route-search">Route to…</label>
-    <input id="route-search" type="search" placeholder="Search lift tops and mountain restaurants…" autocomplete="off">
+    <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="route-search" type="search" placeholder="Lift tops & mountain restaurants" autocomplete="off"></div>
     <div id="route-targets"></div>
     <button id="route-home" class="secondary">Home · base</button>
     <div id="route-chips" class="chips" aria-label="Maximum route difficulty"></div>
   </div>
-  <div id="map"></div>
   <div id="route-result" class="card" hidden>
     <div id="route-details" role="status" aria-live="polite"></div>
     <button id="route-clear" class="secondary">Clear route</button>
   </div>
   <p class="muted" id="mapnote" style="margin-top:8px"></p>
   <div class="card" id="tracker">
-    <div class="trkbtns">
-      <button class="secondary" id="locbtn">📍 Locate me</button>
-      <button class="secondary" id="trackbtn">▶ Track day</button>
-    </div>
+
     <div id="trkstats" class="trkstats" hidden></div>
     <p id="trkmessage" class="muted" role="status"></p>
     <p class="muted" style="font-size:11px;margin-top:8px">Uses your phone's GPS. Keep the screen on while tracking — web apps can't record in the background. Descent from GPS altitude is approximate.</p>
@@ -209,7 +174,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 
 <!-- ============ RUNS ============ -->
 <section id="tab-runs">
-  <input type="text" id="runsearch" placeholder="Search runs…">
+  <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="text" id="runsearch" aria-label="Search runs" placeholder="Search runs…"></div>
   <div class="chips" id="mtnchips"></div>
   <div class="chips" id="diffchips"></div>
   <div id="runlist"></div>
@@ -230,14 +195,14 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 <!-- ============ LOG ============ -->
 <section id="tab-log">
   <div class="card">
-    <div class="formrow"><label>Date</label><input type="date" id="logdate"></div>
-    <div class="formrow"><label>Conditions</label>
+    <div class="formrow"><label for="logdate">Date</label><input type="date" id="logdate"></div>
+    <div class="formrow"><label for="logcond">Conditions</label>
       <select id="logcond">
         <option>Powder</option><option>Packed powder</option><option>Groomers</option>
         <option>Spring slush</option><option>Icy</option><option>Whiteout</option><option>Bluebird</option>
       </select>
     </div>
-    <div class="formrow"><label>Notes — runs done, who with, standout moments</label><textarea id="lognotes"></textarea></div>
+    <div class="formrow"><label for="lognotes">Notes — runs done, who with, standout moments</label><textarea id="lognotes"></textarea></div>
     <button class="primary" id="logadd">Log the day</button>
   </div>
   <h2>Past days</h2>
@@ -255,10 +220,10 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 </main>
 
 <nav>
-  <button data-t="map" class="on"><span class="ic">⛰</span>Map</button>
-  <button data-t="runs"><span class="ic">⛷</span>Runs</button>
-  <button data-t="eat"><span class="ic">🍴</span>Eat</button>
-  <button data-t="log"><span class="ic">✎</span>Log</button>
+  <button data-t="map" class="on"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Z M9 3v16 M15 5v16"/></svg></span>Map</button>
+  <button data-t="runs"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 20 7-14 4 7 3-5 6 12Z M6 12l3 2 3-2"/></svg></span>Runs</button>
+  <button data-t="eat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v6m3-6v6M2 3v6q0 3 3 3t3-3M5 12v9M20 3c-4 3-5 7-5 10h5m0-10v18"/></svg></span>Eat</button>
+  <button data-t="log"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M9 3v18M3 7h4M3 12h4M3 17h4M12 8h5M12 12h5"/></svg></span>Log</button>
 </nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -665,7 +630,7 @@ async function takeRoute(destination){
         const grades=[...g.grades].sort((a,b)=>graph.grades.indexOf(a)-graph.grades.indexOf(b));
         const label=g.kind==='walk'?`Walk ${Math.round(g.length)} m`:g.kind==='lift'?`▲ ${g.name||'Unnamed lift'}`:
           `${diffSym(grades[grades.length-1])} ${g.name||'Unnamed piste'} (${grades.join('/')})`;
-        return `<li>${esc(label)}${g.kind==='walk'?'':` · ${minutes(g.time)}`}</li>`;
+        return `<li><span class="route-dot" aria-hidden="true">${g.kind==='lift'?'▲':g.kind==='walk'?'↗':esc(diffSym(grades[grades.length-1]))}</span><span class="route-label">${esc(label)}</span>${g.kind==='walk'?'':`<span class="route-time">${minutes(g.time)}</span>`}</li>`;
       }).join('')+'</ol>':'<p>Start and destination snap to the same graph node.</p>')+
       '<p class="muted">Unverified OSM route; unknown grades are allowed with every filter. Times exclude distances to snapped nodes and do not reflect current closures.</p>'+
       (mapReady?'':'<p class="muted">Map unavailable; route steps are available above.</p>');
@@ -693,7 +658,19 @@ const WMO = {
 function wmo(c){ return WMO[c] || ["—","🌡"]; }
 let wxCache = store.get("fc_weather", {});   // { resortId: { data, at } }
 
+function paintConditionChip(data, at){
+  const chip=document.getElementById('condition-chip');
+  const temp=wxNumber(data?.current?.temperature_2m);
+  const snow=wxNumber(data?.daily?.snowfall_sum?.[0]);
+  chip.hidden=!Number.isFinite(temp) || !Number.isFinite(snow);
+  chip.textContent='';
+  if(chip.hidden) return;
+  chip.append(document.createTextNode(`${Math.round(temp)}° · ${snow<1?snow.toFixed(1):Math.round(snow)} cm`));
+  const caption=document.createElement('small');caption.textContent='Cached · today’s snow';chip.append(caption);
+  chip.title=`Village conditions · forecast saved ${new Date(at).toLocaleString('en-GB')}`;
+}
 function renderWeather(){
+  paintConditionChip(null);
   if(R.weatherPoints) return renderAltitudeWeather();
   const el = document.getElementById("weather");
   const cached = wxCache[resortId];
@@ -767,6 +744,7 @@ function renderAltitudeWeather(){
   }).catch(unavailable);
 }
 function paintAltitudeWeather(points, cached, state){
+  paintConditionChip(cached.points[0], cached.at);
   const el = document.getElementById("weather");
   const columns = points.map((point,p)=>{
     const data = cached.points[p], cur = data.current, daily = data.daily;
@@ -787,8 +765,8 @@ function paintAltitudeWeather(points, cached, state){
     }).join("");
     return `<div class="alt-point"><div class="alt-label">${esc(point.label)}</div>`+
       `<div class="now"><span class="emoji">${esc(emoji)}</span><span class="temp">${esc(wxRounded(cur.temperature_2m))}°</span></div>`+
-      `<div class="desc">${esc(condition)}<br>Wind ${esc(wxRounded(cur.wind_speed_10m))} km/h ${esc(compass)}`+
-      `<br>Gusts ${esc(wxRounded(cur.wind_gusts_10m))} km/h<br>Freezing level ${esc(freezing)} m</div>`+
+      `<div class="desc">${esc(condition)}<span class="weather-detail">↗ Wind ${esc(wxRounded(cur.wind_speed_10m))} km/h ${esc(compass)}</span>`+
+      `<span class="weather-detail">≋ Gusts ${esc(wxRounded(cur.wind_gusts_10m))} km/h</span><span class="weather-detail">⌁ Freezing ${esc(freezing)} m</span></div>`+
       `<div class="fc">${days}</div></div>`;
   }).join("");
   const ageMinutes = Math.max(0, Math.floor((Date.now()-Number(cached.at))/60000));
@@ -801,6 +779,7 @@ function paintAltitudeWeather(points, cached, state){
 }
 
 function paintWeather(data, at, stale){
+  paintConditionChip(data, at);
   const el = document.getElementById("weather");
   const cur = data.current, d = data.daily;
   const [ct,ce] = wmo(cur.weather_code);
@@ -1007,7 +986,7 @@ function renderRuns(){
       `<div class="rowhead">
         <span class="diff ${r.diff}">${diffSym(r.diff)}</span>
         <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}</div></span>
-        <span class="fav ${favs[resortId].includes(r.name)?"on":""}">★</span>
+        <button type="button" aria-label="Favourite ${esc(r.name)}" aria-pressed="${favs[resortId].includes(r.name)}" class="fav ${favs[resortId].includes(r.name)?"on":""}">★</button>
       </div>
       <div class="rowbody">
         ${r.diff==="offpiste" ? `<p class="warn"><strong>Off-piste route.</strong> Not groomed, patrolled or made safe. Check the avalanche bulletin first: <a href="${BERA_URL}" target="_blank" rel="noopener">Météo-France BERA</a> (choose your massif).</p>` : ""}

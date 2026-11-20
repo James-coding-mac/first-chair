@@ -1,7 +1,7 @@
 # Status
 
 **Updated:** 20 Nov 2026
-**Current step:** Steps 1–3 live. Step 4 (tracking) implemented locally, awaiting Claude review and iPhone field testing. Step 5a (route graph) implemented. Step 5b (routing UI) implemented locally, awaiting Claude review and iPhone offline testing; then 5c (UI polish). Step 6 needs James's decision.
+**Current step:** Steps 1–3 live. Step 4 (tracking) implemented locally, awaiting Claude review and iPhone field testing. Step 5a (route graph) implemented. Step 5b (routing UI) implemented locally, awaiting Claude review and iPhone offline testing; Step 5c (UI polish) implemented locally, awaiting Claude review and browser/iPhone visual checks. Step 6 needs James's decision.
 
 - Live at https://james-coding-mac.github.io/first-chair/. James still to check on the iPhone: Paradiski, offline map in airplane mode, altitude weather.
 - **Paradiski** is in the resort switcher: 293 runs (La Plagne + Les Arcs/Peisey), 211 restaurants (47 on the mountain, 164 village), 152 lifts in the data (drawn on the map; no lift list screen). Every record shows an UNVERIFIED tag.
@@ -20,3 +20,6 @@
 
 - Step 5b (local/uncommitted): `route.js` provides heap-based Dijkstra, excluding off-piste and allowing unknown grades under every filter. Paradiski has searchable lift-top/mountain-restaurant destinations, Eat Route buttons, Home, GPS/base start selection, remembered `fc_route_pref`, map overlays and collapsed directions. Graph loads lazily and is precached with route.js in SW `v6`. Other resorts have no routing controls.
 - Step 5b checks: `node tools/test_route_js.mjs` matches Python for the same 10 destinations under all/red/blue/green (8/7/6/0 reachable), with times within 1%; routing UI logic and tracking regression checks pass. Builder prints no WARNING and generated data is identical except `graphData`. Syntax checks pass. Existing OSM disconnections remain; browser visual and iPhone offline tests pending. See `docs/sessions/2026-11-20-step5b-routing-ui.md`.
+
+- Step 5c (local/uncommitted): `index.html` now has shared spacing/type/surface tokens, automatic dark mode, SVG tab icons, a map hero with floating Locate/Track controls, cached header conditions, large weather temperatures, grouped lists, scrollable filters, and route timelines. Existing IDs/classes, events and storage keys are preserved; SW shell is `v7`. No new hosts, dependencies or data changes.
+- Step 5c checks: inline JS and SW syntax, tracking tests, route parity/UI tests, ID/storage-key audit, header-chip cache cases, sampled text contrast and `git diff --check` pass. Browser rendering remains unverified: local-server bind was blocked by the sandbox, browser host unavailable, and native Chrome access denied. Claude should check 360px light/dark layouts, expanded rows, cached/offline conditions and iPhone safe areas before commit. See `docs/sessions/2026-11-20-step5c-ui-polish.md`.
