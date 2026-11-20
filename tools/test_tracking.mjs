@@ -87,7 +87,9 @@ function app(storage=new Map()){
     localStorage:{removeItem:k=>storage.delete(k)},setInterval:fn=>{listeners.persist=fn;},
     store:{get:(k,f)=>storage.has(k)?JSON.parse(storage.get(k)):f,set:(k,v)=>storage.set(k,JSON.stringify(v))},
     vecData:{},RESORTS:{test:{name:'Test resort'}},resortId:'test',mapReady:false,daylog:[],
-    esc:s=>String(s).replace(/[&<>"']/g,'_'),confirm:()=>true};
+    esc:s=>String(s).replace(/[&<>"']/g,'_'),confirm:()=>true,
+    // defined outside the sliced sections; tested in test_stats.mjs
+    renderSeasonStats(){},shareDayCard(){},renderSOS(){}};
   vm.createContext(sandbox);vm.runInContext(gps+'\n'+log,sandbox);
   return {sandbox,node,listeners,run:source=>vm.runInContext(source,sandbox),storage};
 }

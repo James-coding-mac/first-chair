@@ -105,6 +105,15 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 #status-card .st-name{font-weight:600;min-width:9em}#status-card .st-val{font-variant-numeric:tabular-nums}
 #status-card .st-pistes{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
 #status-card .st-note{margin-top:6px;font-size:12px}
+.sosbtn{flex:0 0 auto!important;color:#C0392B!important;border:1.5px solid #C0392B!important;font-weight:700}
+.sos .sos-coords{font:600 22px/1.3 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em;user-select:all}
+.sos .sos-call{display:block;text-align:center;background:#C0392B;color:#fff;border-radius:12px;padding:14px;margin:12px 0 8px;
+  font:700 22px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-decoration:none}
+.sos .sos-row{display:flex;gap:8px;margin-top:8px}.sos .sos-row button{flex:1}
+#season-stats .ss-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+#season-stats .ss-v{font:700 26px 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}
+#season-stats .ss-k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.sharebtn{margin-top:8px}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -156,8 +165,10 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <div class="trkbtns">
       <button class="secondary" id="locbtn">⌖ Locate me</button>
       <button class="secondary" id="trackbtn">▶ Track day</button>
+      <button class="secondary sosbtn" id="sosbtn" aria-label="Emergency: where am I">SOS</button>
     </div>
   </div>
+  <div id="sos-card" class="card sos" hidden></div>
   <div id="weather" class="wx loading">Loading weather…</div>
   <div id="routing" class="card" hidden>
     <label for="route-search">Route to…</label>
@@ -213,6 +224,7 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <div class="formrow"><label for="lognotes">Notes — runs done, who with, standout moments</label><textarea id="lognotes"></textarea></div>
     <button class="primary" id="logadd">Log the day</button>
   </div>
+  <div id="season-stats" class="card" hidden></div>
   <h2>Past days</h2>
   <div id="loglist"></div>
 
@@ -239,6 +251,7 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
 <script src="data/build/paradiski.js"></script>
 <script src="track.js"></script>
 <script src="route.js"></script>
+<script src="stats.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -923,7 +936,7 @@ function paintWeather(data, at, stale){
 /* =========================================================
    GPS  (locate + session tracking — screen-on, foreground only)
    ========================================================= */
-let watchId=null, following=false, tracking=false, locMarker=null, accCircle=null;
+let watchId=null, following=false, tracking=false, locMarker=null, accCircle=null, sosOpen=false;
 let track=[], trkStart=0, trkResort=null, trkPending=false, trkBreak=false, trkStorageError='';
 const localDay=t=>{ const d=new Date(t); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 function trackingAnalysis(){
@@ -961,7 +974,7 @@ function ensureWatch(){
   return true;
 }
 function maybeStopWatch(){
-  if(watchId!==null && !following && !tracking){
+  if(watchId!==null && !following && !tracking && !sosOpen){
     navigator.geolocation.clearWatch(watchId); watchId=null;
     if(locMarker && mapReady){ map.removeLayer(locMarker); map.removeLayer(accCircle); }
     locMarker=accCircle=null;
@@ -981,6 +994,7 @@ function onGeoErr(e){
 }
 function onPos(pos){
   latestPosition=pos;
+  if(sosOpen) renderSOS();
   const c=pos.coords, here=[c.latitude, c.longitude];
   if(mapReady){
     if(!locMarker){
@@ -1037,9 +1051,14 @@ function finishTracking(){
   const el=document.getElementById('trkstats');
   el.hidden=false;
   el.innerHTML=`<p class="muted">${esc(localDay(trkStart))} · ${esc(trackingSummary(trackingAnalysis()))}</p>`+
-    '<div class="trkbtns trksave"><button class="secondary" id="trkresume">Resume tracking</button><button class="primary" id="trksavebtn">Save to log</button><button class="secondary" id="trkdiscard">Discard</button></div>';
+    '<div class="trkbtns trksave"><button class="secondary" id="trkresume">Resume tracking</button><button class="primary" id="trksavebtn">Save to log</button><button class="secondary" id="trkdiscard">Discard</button></div>'+
+    '<button class="secondary sharebtn" id="trkshare">Share day card</button>';
   document.getElementById('trkresume').disabled=localDay(trkStart)!==localDay(Date.now());
   document.getElementById('trkresume').addEventListener('click',resumeTracking);
+  document.getElementById('trkshare').addEventListener('click',()=>{
+    const a=trackingAnalysis();
+    shareDayCard({date:localDay(trkStart),resort:trkResort,track:{totals:a.totals,runs:a.runs}});
+  });
   document.getElementById('trkdiscard').addEventListener('click',clearTracking);
   document.getElementById('trksavebtn').addEventListener('click',()=>{
     const a=trackingAnalysis();
@@ -1176,9 +1195,121 @@ function renderEats(){
 }
 
 /* =========================================================
+   SOS / WHERE AM I  (offline; 112 is the EU emergency number)
+   ========================================================= */
+// Piste-rescue numbers: add here ONLY once James has confirmed them from an official source, e.g.
+// const RESCUE = { pdk: [{label:"La Plagne piste rescue", tel:"+33…"}] };
+const RESCUE = {};
+function dm(v, pos, neg){
+  const a = Math.abs(v), d = Math.floor(a), m = (a - d) * 60;
+  return `${d}°${m.toFixed(3)}′${v >= 0 ? pos : neg}`;
+}
+function nearestFeature(lat, lon, kind){
+  const fc = vecData[resortId];
+  if(!fc || !R.mapData) return null;
+  const kx = Math.cos(lat * Math.PI / 180) * 111320, ky = 110540;
+  let best = null;
+  fc.features.forEach(f=>{
+    if(f.properties.k !== kind || !f.properties.n) return;
+    const g = f.geometry, ring = g.type === "Polygon" ? g.coordinates[0] : g.coordinates;
+    for(let i = 0; i + 1 < ring.length; i++){
+      const ax = (ring[i][0] - lon) * kx, ay = (ring[i][1] - lat) * ky, bx = (ring[i+1][0] - lon) * kx, by = (ring[i+1][1] - lat) * ky;
+      const dx = bx - ax, dy = by - ay, L2 = dx*dx + dy*dy;
+      const t = L2 ? Math.max(0, Math.min(1, -(ax*dx + ay*dy) / L2)) : 0;
+      const d = Math.hypot(ax + t*dx, ay + t*dy);
+      if(!best || d < best.d) best = { d, p: f.properties };
+    }
+  });
+  return best;
+}
+function sosText(){
+  const p = latestPosition;
+  if(!p) return "";
+  const c = p.coords, lines = [
+    `Position: ${c.latitude.toFixed(5)}, ${c.longitude.toFixed(5)}`,
+    `(${dm(c.latitude,"N","S")} ${dm(c.longitude,"E","W")}) ±${Math.round(c.accuracy)} m`];
+  if(Number.isFinite(c.altitude)) lines.push(`Altitude: ~${Math.round(c.altitude)} m`);
+  const pi = nearestFeature(c.latitude, c.longitude, "piste"), li = nearestFeature(c.latitude, c.longitude, "lift");
+  if(pi && pi.d < 1000) lines.push(`Nearest piste: ${pi.p.n} (${gradeLabel(pi.p.g)}), ${Math.round(pi.d)} m`);
+  if(li && li.d < 2000) lines.push(`Nearest lift: ${li.p.n}, ${Math.round(li.d)} m`);
+  lines.push(`Resort: ${R.name}`, `Time: ${new Date(p.timestamp).toLocaleTimeString("en-GB")}`);
+  return lines.join("\n");
+}
+function renderSOS(){
+  const el = document.getElementById("sos-card");
+  const p = latestPosition, fresh = p && Date.now() - p.timestamp < 60000;
+  const extra = (RESCUE[resortId] || []).map(r=>`<a class="sos-call" href="tel:${esc(r.tel)}">${esc(r.label)}</a>`).join("");
+  el.innerHTML = `<div class="label">Where am I</div>`+
+    (p ? `<div class="sos-coords">${esc(sosText()).replace(/\n/g,"<br>")}</div>`+
+         (fresh ? "" : `<p class="muted">Position is ${esc(ageText(Date.now()-p.timestamp))} old — waiting for a new fix.</p>`)
+       : `<p>Getting your position… go somewhere with a clear view of the sky.</p>`)+
+    `<a class="sos-call" href="tel:112">CALL 112</a>${extra}`+
+    `<p class="muted">112 works across the EU, also from a phone without a SIM. Give the coordinates and the nearest piste.</p>`+
+    `<div class="sos-row"><button class="secondary" id="soscopy"${p?"":" disabled"}>Copy details</button><button class="secondary" id="sosclose">Close</button></div>`+
+    `<p class="muted" id="sosmsg"></p>`;
+  document.getElementById("sosclose").onclick = closeSOS;
+  document.getElementById("soscopy").onclick = ()=>{
+    const t = sosText(), msg = document.getElementById("sosmsg");
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+      .then(()=>{ msg.textContent = "Copied."; })
+      .catch(()=>{ const r = document.createRange(); r.selectNodeContents(el.querySelector(".sos-coords")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = "Selected: tap Copy."; });
+  };
+}
+function closeSOS(){ sosOpen = false; document.getElementById("sos-card").hidden = true; maybeStopWatch(); }
+document.getElementById("sosbtn").addEventListener("click", ()=>{
+  if(sosOpen){ closeSOS(); return; }
+  sosOpen = true;
+  const el = document.getElementById("sos-card"); el.hidden = false;
+  renderSOS(); ensureWatch();
+  el.scrollIntoView({ behavior:"smooth", block:"start" });
+});
+
+/* =========================================================
+   SEASON STATS + SHAREABLE DAY CARD
+   ========================================================= */
+let statsFilter = "";
+function renderSeasonStats(){
+  const el = document.getElementById("season-stats");
+  if(!daylog.length){ el.hidden = true; return; }
+  el.hidden = false;
+  const s = FCStats.seasonStats(daylog, statsFilter || null);
+  const resorts = [...new Set(daylog.map(e=>e.resort).filter(r=>RESORTS[r]))];
+  const pills = resorts.length > 1 ? `<div class="chips">`+[["","All"], ...resorts.map(r=>[r, RESORTS[r].name])]
+    .map(([v,l])=>`<button class="chip${v===statsFilter?" on":""}" data-v="${esc(v)}">${esc(l)}</button>`).join("")+`</div>` : "";
+  const cell = (v,k)=>`<div><div class="ss-v">${esc(v)}</div><div class="ss-k">${esc(k)}</div></div>`;
+  el.innerHTML = `<div class="label">Season</div>${pills}<div class="ss-grid">`+
+    cell(s.days,"Days")+cell(s.trackedDays ? s.runs : "—","Runs")+cell(s.trackedDays ? Math.round(s.vertical).toLocaleString("en-GB")+" m" : "—","Vertical")+
+    cell(s.trackedDays ? (s.distance/1000).toFixed(0)+" km" : "—","Skied")+cell(s.trackedDays ? Math.round(s.topSpeed)+" km/h" : "—","Top speed")+
+    cell(s.bestDay ? Math.round(s.bestDay.vertical).toLocaleString("en-GB")+" m" : "—","Best day")+`</div>`+
+    (s.trackedDays ? "" : `<p class="muted" style="margin-top:8px">Use Track day on the Map tab to add runs and vertical.</p>`);
+  el.querySelectorAll(".chip").forEach(b=>b.addEventListener("click", ()=>{ statsFilter = b.dataset.v; renderSeasonStats(); }));
+}
+async function shareDayCard(entry){
+  const t = entry.track && entry.track.totals;
+  if(!t) return;
+  const canvas = document.createElement("canvas"); canvas.width = 1080; canvas.height = 1350;
+  try{ await document.fonts.ready; }catch(e){}
+  const runs = Array.isArray(entry.track.runs) ? entry.track.runs : [];
+  FCStats.drawDayCard(canvas.getContext("2d"), {
+    resort: RESORTS[entry.resort] ? RESORTS[entry.resort].name : "", date: new Date(entry.date+"T12:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}),
+    vertical: t.vertical, runs: t.runs, distance: t.distance, topSpeed: t.topSpeed, liftRides: t.liftRides,
+    profile: [0, ...runs.flatMap(r=>typeof r.vertical==="number" ? [r.vertical, 0] : [])]   // one peak per run, height = its drop
+  });
+  const blob = await new Promise(r=>canvas.toBlob(r, "image/png"));
+  if(!blob) return;
+  const file = new File([blob], `first-chair-${entry.date}.png`, { type:"image/png" });
+  if(navigator.canShare && navigator.canShare({ files:[file] })){
+    try{ await navigator.share({ files:[file], title:"First Chair" }); return; }catch(e){ if(e && e.name==="AbortError") return; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+}
+
+/* =========================================================
    LOG  (one global timeline, entries tagged with resort)
    ========================================================= */
 function renderLog(){
+  renderSeasonStats();
   const el = document.getElementById("loglist");
   el.innerHTML = "";
   if(!daylog.length){ el.innerHTML = `<p class="muted" style="padding:6px 4px">No days logged yet. First chair awaits.</p>`; return; }
@@ -1191,8 +1322,11 @@ function renderLog(){
     card.innerHTML = `<strong>${nice}</strong> <span class="cond">· ${esc(entry.cond)}</span>
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
+      ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
       ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
+    const share = card.querySelector(".sharebtn");
+    if(share) share.addEventListener("click", ()=>shareDayCard(entry));
     card.querySelector(".del").addEventListener("click", ()=>{
       if(!confirm("Delete this day?")) return;
       daylog = daylog.filter(x=>x.id!==entry.id);
