@@ -1,6 +1,6 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v20";
+const VERSION = "v21";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
 const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
 const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)
@@ -81,12 +81,14 @@ self.addEventListener("fetch", event => {
     event.respondWith(
       caches.open(TILES).then(async cache => {
         const hit = await cache.match(req);
-        if(hit) return hit;
+        // 2D Leaflet tiles are <img> (no-cors) so they're cached opaque; MapLibre (3D) fetches the same URLs
+        // in cors mode and must not get an opaque copy. Refetch readable and replace (works for <img> too).
+        if(hit && !(hit.type === "opaque" && req.mode === "cors")) return hit;
         try{
           const res = await fetch(req);
           if(cacheable(res)){ cache.put(req, res.clone()); trimCache(TILES, TILE_MAX); }
           return res;
-        }catch(e){ return hit || Response.error(); }
+        }catch(e){ return hit && req.mode !== "cors" ? hit : Response.error(); }
       })
     );
     return;
