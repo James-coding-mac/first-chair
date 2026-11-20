@@ -1,7 +1,7 @@
 # Status
 
 **Updated:** 20 Nov 2026
-**Current step:** Plan steps 1–6 DONE and live, plus extra features (James, 20 Nov): SOS/where-am-I + 112, season stats, share day card, pistes skied, sun on slopes, snow depth + 7-day snowfall, resort links card, biggest descents, queue times (when published), day replay, services layer. Remaining: Step 7 (James checks names/grades against the official 2026–27 map: see unmatched list in data/status/paradiski.json and the 16-greens issue), Step 8 freeze. **James to do:** add `.github/workflows/status.yml` on GitHub (push token lacks `workflow` scope), test on iPhone (airplane mode, routing, SOS, tracking on a walk).
+**Current step:** see docs/sessions/HANDOFF.md (20 Nov 15:30). Steps 1–6 + all extras live; wallet/photos/friends live; 3D view (blocked: terrain CORS) and avalanche fetcher in progress with Qwen.
 
 - Live at https://james-coding-mac.github.io/first-chair/. James still to check on the iPhone: Paradiski, offline map in airplane mode, altitude weather.
 - **Paradiski** is in the resort switcher: 293 runs (La Plagne + Les Arcs/Peisey), 211 restaurants (47 on the mountain, 164 village), 152 lifts in the data (drawn on the map; no lift list screen). Every record shows an UNVERIFIED tag.
