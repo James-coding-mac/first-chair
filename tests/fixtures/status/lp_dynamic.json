@@ -1,0 +1,4105 @@
+{
+  "snow": [
+    {
+      "id": "512",
+      "avalanche": "UNDEF",
+      "snowQuality": "FRESH",
+      "snowTotal": 22
+    },
+    {
+      "id": "513",
+      "avalanche": "UNDEF",
+      "snowQuality": "UNDEF",
+      "snowTotal": 0
+    },
+    {
+      "id": "514",
+      "avalanche": "UNDEF",
+      "snowQuality": "FRESH",
+      "snowTotal": 116
+    }
+  ],
+  "weather": [
+    {
+      "id": "512",
+      "name": "Station",
+      "altitude": 2000,
+      "date": "2026-11-20",
+      "amSky": "CLOUDY_LIGHT_RAIN",
+      "amTemp": 1,
+      "amWindSpeed": 0,
+      "amUv": 0,
+      "pmSky": "MOSTLY_CLOUDY_LIGHT_RAIN",
+      "pmTemp": 2,
+      "pmWindSpeed": 0,
+      "pmUv": 0
+    },
+    {
+      "id": "513",
+      "name": "Village",
+      "altitude": 1250,
+      "date": "2026-11-20",
+      "amSky": "CLOUDY_MODERATE_HEAVY_SNOWFALL",
+      "amTemp": -2,
+      "amWindSpeed": 11,
+      "amWindDir": "WEST",
+      "amUv": 1,
+      "pmSky": "VARIABLE_SKY_LIGHT_SNOWFALL",
+      "pmTemp": -2,
+      "pmWindSpeed": 11,
+      "pmWindDir": "WEST",
+      "pmUv": 1
+    },
+    {
+      "id": "514",
+      "name": "LIVE 3000",
+      "altitude": 3000,
+      "date": "2026-11-20",
+      "amSky": "CLOUDY_LIGHT_RAIN",
+      "amTemp": -9,
+      "amWindSpeed": 42,
+      "amWindDir": "WEST",
+      "amUv": 0,
+      "pmSky": "MOSTLY_CLOUDY_LIGHT_RAIN",
+      "pmTemp": -10,
+      "pmWindSpeed": 42,
+      "pmWindDir": "WEST",
+      "pmUv": 0
+    }
+  ],
+  "poi": [
+    {
+      "id": "502",
+      "lifts": [
+        {
+          "id": "3659",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:10"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3658",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3661",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3662",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3656",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3657",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3660",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "3638",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12112",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3641",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3642",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3643",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:10"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3644",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3648",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3649",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3651",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3653",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3654",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3655",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3639",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3645",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3646",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3650",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11041",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3652",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3640",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3647",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11094",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12077",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "509",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3773",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3767",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3766",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11932",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3765",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12084",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12085",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11921",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3768",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3769",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3770",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3771",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3772",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 17:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "2798",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "9479",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9480",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9474",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9478",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9476",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9477",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9475",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9482",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9481",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9484",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9486",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9483",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "9485",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "510",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3780",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3774",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3775",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3776",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3777",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12086",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12087",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12088",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12089",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12090",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12091",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3779",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3778",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "9363",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "9364",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "511",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3782",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3781",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3783",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12092",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "59872",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12093",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12095",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12096",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12097",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12098",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12094",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3784",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3785",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "508",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3758",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3759",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3760",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3761",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3762",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3763",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3764",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "501",
+      "lifts": [
+        {
+          "id": "12864",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "Fermé pour la journée - vent fort",
+            "en_US": "SCHEDULED TO OPEN AT HH:MM"
+          }
+        },
+        {
+          "id": "12837",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "Fermé pour la journée - vent fort",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12865",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "Fermé pour la journée - vent fort",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3635",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "3631",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3628",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3632",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3626",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3629",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3633",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12835",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12836",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "503",
+      "lifts": [
+        {
+          "id": "3706",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "FERMÉ DE 12:45 À 14:00",
+            "en_US": "CLOSED FROM 12:45 TO 14:00"
+          }
+        },
+        {
+          "id": "10221",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "FERMÉ DE 12:45 À 14:00",
+            "en_US": "CLOSED FROM 12:45 TO 14:00"
+          }
+        },
+        {
+          "id": "3690",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "08:45 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3694",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3705",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "08:45 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": "SCHEDULED TO OPEN AT HH:MM"
+          }
+        },
+        {
+          "id": "3689",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:15 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3691",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:15 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3695",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3699",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3700",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3688",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3692",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3703",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3693",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3697",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3701",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:15 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3698",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3696",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3702",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:15 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3704",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "3663",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3664",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3665",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3666",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:20 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12074",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3675",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3677",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3678",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3680",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3681",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3682",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3683",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3684",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3685",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3687",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3667",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3670",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3671",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3674",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3676",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3668",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3672",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3673",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3679",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11042",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12081",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3686",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "71744",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "3796",
+      "lifts": [
+        {
+          "id": "11215",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "00:00 - 01:00",
+            "08:00 - 23:59"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": "SHUTTLE BUS IN PLACE"
+          }
+        },
+        {
+          "id": "11206",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11210",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11211",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11205",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11207",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11208",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11212",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11214",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "11186",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11201",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11184",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12079",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11190",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11192",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11194",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11195",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11198",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11200",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11202",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11204",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11182",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11187",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12108",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 15:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11193",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11197",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11196",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11203",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11183",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11185",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12107",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12109",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11580",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12110",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11680",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "71746",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12068",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "500",
+      "lifts": [
+        {
+          "id": "3614",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:20 - 23:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": "SHUTTLE BUS IN PLACE"
+          }
+        },
+        {
+          "id": "72059",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "72060",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3613",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3616",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3617",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 15:55"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3619",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3620",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:30 - 15:55"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3623",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3618",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3625",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:30 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3612",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3615",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3621",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3622",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:30 - 16:15"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "12189",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3605",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3592",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3593",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3594",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3595",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3596",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3597",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3599",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3600",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3601",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:10 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3604",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3606",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:00"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3607",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3608",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3610",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3611",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12111",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3602",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3609",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3603",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "72057",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11181",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12070",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "498",
+      "lifts": [
+        {
+          "id": "11140",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11142",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11133",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11137",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11143",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11135",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11141",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11132",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11134",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11136",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11138",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11139",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11144",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11153",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "11110",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11107",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "11112",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "11114",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "11115",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11117",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11118",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11119",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11121",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:40"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "11122",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11123",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12080",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11124",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11125",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11126",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11128",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11129",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11130",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11131",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:10"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11108",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:20"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11116",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:05 - 16:35"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11120",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:10 - 16:05"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11414",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11096",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11151",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "11231",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "71748",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "71747",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "71745",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "504",
+      "lifts": [
+        {
+          "id": "3728",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "11209",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:25"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "FERMÉ DE 12:15 À 13:30",
+            "en_US": "CLOSED FROM 12:15 TO 13:30"
+          }
+        },
+        {
+          "id": "11213",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3725",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3726",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3727",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:15"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3729",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ],
+      "trails": [
+        {
+          "id": "3710",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3719",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3707",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3712",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "71375",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3714",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "12076",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "3716",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3718",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3720",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:00 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3721",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3708",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3709",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3711",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:45"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "en_US": "",
+            "fr_FR": ""
+          }
+        },
+        {
+          "id": "12082",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3713",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "groomingStatus": "UNDEF",
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3715",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3717",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [
+            "09:05 - 16:30"
+          ],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3722",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        },
+        {
+          "id": "3723",
+          "openingStatus": "OUT_OF_PERIOD",
+          "openingStatusCompl": "OUT_OF_PERIOD",
+          "operating": false,
+          "openings": [],
+          "msgType": "UNDEF",
+          "message": {
+            "fr_FR": "",
+            "en_US": ""
+          }
+        }
+      ]
+    }
+  ]
+}

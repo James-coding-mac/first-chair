@@ -1,0 +1,1269 @@
+{
+  "fetched_at": "2026-11-20T14:44:31Z",
+  "lift_info": {
+    "LA|Vanoise Express 2": {
+      "closes": "16:30"
+    },
+    "LP|Aiglon": {
+      "closes": "16:40"
+    },
+    "LP|Aime-la-Plagne": {
+      "closes": "16:40"
+    },
+    "LP|Ange": {
+      "closes": "16:35"
+    },
+    "LP|Belle Plagne": {
+      "closes": "23:30"
+    },
+    "LP|Bijolin": {
+      "closes": "16:20"
+    },
+    "LP|Biquet": {
+      "closes": "16:25"
+    },
+    "LP|Blanchets": {
+      "closes": "16:20"
+    },
+    "LP|Borseliers": {
+      "closes": "16:30"
+    },
+    "LP|Borseliers 3": {
+      "closes": "16:35"
+    },
+    "LP|Boulevard": {
+      "closes": "16:40"
+    },
+    "LP|Bécoin": {
+      "closes": "16:30"
+    },
+    "LP|Carella": {
+      "closes": "15:55"
+    },
+    "LP|Champagny": {
+      "closes": "16:10"
+    },
+    "LP|Col de Forcle": {
+      "closes": "16:30"
+    },
+    "LP|Colosses": {
+      "closes": "16:20"
+    },
+    "LP|Crozats": {
+      "closes": "16:20"
+    },
+    "LP|Envers": {
+      "closes": "16:25"
+    },
+    "LP|Funiplagne Grande Rochette": {
+      "closes": "16:25"
+    },
+    "LP|Golf": {
+      "closes": "16:30"
+    },
+    "LP|Grenouilles": {
+      "closes": "16:15"
+    },
+    "LP|Inversens": {
+      "closes": "15:55"
+    },
+    "LP|La Roche": {
+      "closes": "16:30"
+    },
+    "LP|Lac Noir": {
+      "closes": "16:25"
+    },
+    "LP|Les Coches": {
+      "closes": "16:40"
+    },
+    "LP|Lovatière": {
+      "closes": "16:25"
+    },
+    "LP|Montalbert": {
+      "closes": "16:25"
+    },
+    "LP|Montchavin": {
+      "closes": "16:25"
+    },
+    "LP|Ourson": {
+      "closes": "16:45"
+    },
+    "LP|Petits Loups": {
+      "closes": "16:30"
+    },
+    "LP|Plan Bois": {
+      "closes": "16:25"
+    },
+    "LP|Plan Leschaux": {
+      "closes": "16:20"
+    },
+    "LP|Plateau de Carella": {
+      "closes": "16:15"
+    },
+    "LP|Praconduit": {
+      "closes": "16:40"
+    },
+    "LP|Quillis": {
+      "closes": "16:30"
+    },
+    "LP|Replat": {
+      "closes": "16:20"
+    },
+    "LP|Rossa": {
+      "closes": "16:25"
+    },
+    "LP|Stade": {
+      "closes": "16:40"
+    },
+    "LP|TK Éterlou": {
+      "closes": "16:35"
+    },
+    "LP|Tyrolien": {
+      "closes": "16:40"
+    },
+    "LP|Télébuffette": {
+      "closes": "16:40"
+    },
+    "LP|Télémétro": {
+      "closes": "23:59"
+    },
+    "LP|Vanoise Express 1": {
+      "closes": "16:30"
+    },
+    "LP|Verdons Sud": {
+      "closes": "16:25"
+    }
+  },
+  "lifts": {
+    "LA|1ere glisse 1800": "closed",
+    "LA|1ers virages 1800": "closed",
+    "LA|2300": "closed",
+    "LA|Aiguille Rouge": "closed",
+    "LA|Aiguillette": "unknown",
+    "LA|Arcabulle": "closed",
+    "LA|Arpette": "unknown",
+    "LA|Blanchot": "unknown",
+    "LA|Bois de l'Ours": "closed",
+    "LA|Bougnette": "unknown",
+    "LA|Cabri": "closed",
+    "LA|Cabriolet": "closed",
+    "LA|Cachette": "closed",
+    "LA|Carreley": "closed",
+    "LA|Charmettoger": "closed",
+    "LA|Clocheret": "closed",
+    "LA|Club Med": "unknown",
+    "LA|Combettes": "closed",
+    "LA|Comborcière": "closed",
+    "LA|Dahu": "closed",
+    "LA|Derby": "closed",
+    "LA|Droset": "closed",
+    "LA|Eldorador": "closed",
+    "LA|Flamme Olympique": "closed",
+    "LA|Grand Col": "closed",
+    "LA|Grizzly": "closed",
+    "LA|Jackson": "unknown",
+    "LA|Jardin Alpin": "closed",
+    "LA|Lac des Combes": "closed",
+    "LA|Lanchettes": "closed",
+    "LA|Lonzagne": "unknown",
+    "LA|Marmottes": "closed",
+    "LA|Millerette": "closed",
+    "LA|Mini Club": "unknown",
+    "LA|Mont-Blanc": "closed",
+    "LA|Mélèzes": "unknown",
+    "LA|Ourson": "unknown",
+    "LA|Parchey": "closed",
+    "LA|Peisey": "closed",
+    "LA|Pente École": "unknown",
+    "LA|Petit Chemin": "unknown",
+    "LA|Plagnettes": "closed",
+    "LA|Plan Vert": "closed",
+    "LA|Premiers Virages": "unknown",
+    "LA|Premières Glisses": "unknown",
+    "LA|Pré-Saint-Esprit": "unknown",
+    "LA|Rhodos": "closed",
+    "LA|Rhonaz": "closed",
+    "LA|Saint-Jacques": "unknown",
+    "LA|Sifflote": "unknown",
+    "LA|Snow Park": "closed",
+    "LA|Tommelet": "closed",
+    "LA|Transarc I": "closed",
+    "LA|Transarc II": "closed",
+    "LA|Tétras": "unknown",
+    "LA|Vagère": "closed",
+    "LA|Vallandry": "unknown",
+    "LA|Vanoise Express 2": "closed",
+    "LA|Varet": "closed",
+    "LA|Vezaille": "closed",
+    "LA|Villards": "closed",
+    "LA|Villaroger": "closed",
+    "LA|École": "unknown",
+    "LA|Éterlou": "closed",
+    "LP|1800": "unknown",
+    "LP|Adrets": "unknown",
+    "LP|Aiglon": "closed",
+    "LP|Aime-la-Plagne": "closed",
+    "LP|Ange": "closed",
+    "LP|Ange 2": "unknown",
+    "LP|Aollets": "closed",
+    "LP|Arpette": "closed",
+    "LP|Bauches": "closed",
+    "LP|Belle Plagne": "closed",
+    "LP|Bergerie": "closed",
+    "LP|Bijolin": "closed",
+    "LP|Biquet": "closed",
+    "LP|Blanchets": "closed",
+    "LP|Borseliers": "closed",
+    "LP|Borseliers 3": "closed",
+    "LP|Boulevard": "closed",
+    "LP|Bécoin": "closed",
+    "LP|Cap Vacances": "unknown",
+    "LP|Carella": "closed",
+    "LP|Chalet de Bellecôte": "closed",
+    "LP|Champagny": "closed",
+    "LP|Chevrette": "closed",
+    "LP|Col de Forcle": "closed",
+    "LP|Colorado": "closed",
+    "LP|Colosses": "closed",
+    "LP|Crozats": "closed",
+    "LP|Crêtes": "closed",
+    "LP|Dos Rond": "closed",
+    "LP|Dou du Praz": "closed",
+    "LP|Dromadaire": "closed",
+    "LP|Envers": "closed",
+    "LP|Funiplagne Grande Rochette": "closed",
+    "LP|Glaciers": "unknown",
+    "LP|Glaciers 1": "unknown",
+    "LP|Glaciers 2": "closed",
+    "LP|Golf": "closed",
+    "LP|Grangette": "closed",
+    "LP|Grenouilles": "closed",
+    "LP|Inversens": "closed",
+    "LP|Jardin d'Enfants Plagne Villages": "unknown",
+    "LP|La Roche": "closed",
+    "LP|Lac Noir": "closed",
+    "LP|Le France": "closed",
+    "LP|Les Coches": "closed",
+    "LP|Lovatière": "closed",
+    "LP|Manège Club Med": "unknown",
+    "LP|Montalbert": "closed",
+    "LP|Montchavin": "closed",
+    "LP|Mélèzes": "closed",
+    "LP|Ourson": "closed",
+    "LP|Oursons Plagne Montalbert": "unknown",
+    "LP|Oxygène": "unknown",
+    "LP|Patinoire": "unknown",
+    "LP|Petit Sauget": "closed",
+    "LP|Petits Loups": "closed",
+    "LP|Pierres Blanches": "closed",
+    "LP|Piou Piou": "unknown",
+    "LP|Plan Bois": "closed",
+    "LP|Plan Leschaux": "closed",
+    "LP|Planchamps": "unknown",
+    "LP|Plateau de Carella": "closed",
+    "LP|Praconduit": "closed",
+    "LP|Quillis": "closed",
+    "LP|Raffort": "unknown",
+    "LP|Replat": "closed",
+    "LP|Roche de Mio": "unknown",
+    "LP|Roche de Mio 1": "closed",
+    "LP|Roche de Mio 2": "closed",
+    "LP|Rossa": "closed",
+    "LP|Salla": "closed",
+    "LP|Solu": "closed",
+    "LP|Stade": "closed",
+    "LP|Sucette de Montchavin": "closed",
+    "LP|TK Éterlou": "closed",
+    "LP|TKE - Gentil": "unknown",
+    "LP|Tyrolien": "closed",
+    "LP|Télébuffette": "closed",
+    "LP|Télébus": "closed",
+    "LP|Télémétro": "closed",
+    "LP|Vanoise Express 1": "closed",
+    "LP|Verdons Sud": "closed",
+    "LP|Écureuils": "closed"
+  },
+  "piste_info": {
+    "Adrets": {
+      "closes": "16:30"
+    },
+    "Aigle": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Aiguille Rouge": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Arolles (Belle Plagne)": {
+      "closes": "16:30"
+    },
+    "Arolles (Le Bois d'Âne)": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Banzaï": {
+      "closes": "16:20"
+    },
+    "Barmont": {
+      "closes": "17:25",
+      "grooming": "GROOMED"
+    },
+    "Belette": {
+      "closes": "17:25",
+      "grooming": "GROOMED"
+    },
+    "Belle Plagne": {
+      "closes": "16:30"
+    },
+    "Blanchets": {
+      "closes": "16:30"
+    },
+    "Bois de Saule": {
+      "closes": "17:35",
+      "grooming": "NOT_GROOMED"
+    },
+    "Bois de l'Ours": {
+      "closes": "17:20",
+      "grooming": "NOT_GROOMED"
+    },
+    "Bosses (Vallandry)": {
+      "closes": "17:25",
+      "grooming": "NOT_GROOMED"
+    },
+    "Bouquetin": {
+      "closes": "16:00"
+    },
+    "Bozelet": {
+      "closes": "16:30"
+    },
+    "Bretelle Trieuse": {
+      "closes": "16:30"
+    },
+    "Bridge": {
+      "closes": "16:20"
+    },
+    "Cachette": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Capella": {
+      "closes": "16:25"
+    },
+    "Carina": {
+      "closes": "16:35"
+    },
+    "Carreley": {
+      "closes": "17:20",
+      "grooming": "NOT_GROOMED"
+    },
+    "Carroley": {
+      "closes": "16:30"
+    },
+    "Chalets": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Chantel": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Charmettoger": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Chevrette": {
+      "closes": "16:30"
+    },
+    "Clair Blanc": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Clapet": {
+      "closes": "17:15",
+      "grooming": "GROOMED"
+    },
+    "Clocheret": {
+      "closes": "17:15",
+      "grooming": "GROOMED"
+    },
+    "Col de la Chal": {
+      "closes": "17:20"
+    },
+    "Col des Frettes": {
+      "closes": "17:20",
+      "grooming": "PARTIALLY_GROOMED"
+    },
+    "Combe": {
+      "closes": "17:40",
+      "grooming": "PARTIALLY_GROOMED"
+    },
+    "Combes": {
+      "closes": "17:40",
+      "grooming": "PARTIALLY_GROOMED"
+    },
+    "Combettes": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Comborcière": {
+      "closes": "17:25",
+      "grooming": "NOT_GROOMED"
+    },
+    "Coqs": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Crêtes": {
+      "closes": "17:10",
+      "grooming": "NOT_GROOMED"
+    },
+    "Dents du Peigne": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Dou de l'Homme": {
+      "closes": "17:10",
+      "grooming": "NOT_GROOMED"
+    },
+    "Dou de l'homme": {
+      "closes": "17:10",
+      "grooming": "NOT_GROOMED"
+    },
+    "Dou du Praz": {
+      "closes": "16:35"
+    },
+    "Droset": {
+      "closes": "17:25",
+      "grooming": "NOT_GROOMED"
+    },
+    "Ecureuils": {
+      "closes": "17:30",
+      "grooming": "NOT_GROOMED"
+    },
+    "Edelweiss": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Edmond Blanchoz": {
+      "closes": "16:30"
+    },
+    "Fond Blanc": {
+      "closes": "17:20",
+      "grooming": "NOT_GROOMED"
+    },
+    "Fornelet": {
+      "closes": "16:45"
+    },
+    "Frisbee": {
+      "closes": "16:05"
+    },
+    "Froide Fontaine": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Gavotte": {
+      "closes": "15:30"
+    },
+    "Geisha": {
+      "closes": "16:30"
+    },
+    "Gentil": {
+      "closes": "16:45"
+    },
+    "Golf (Aime 2000)": {
+      "closes": "16:30"
+    },
+    "Golf (Arc 1800)": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Gollet": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Grand Col": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Grand Renard": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Grands Mélèzes": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Grive": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Génépi": {
+      "closes": "16:40",
+      "grooming": "NOT_GROOMED"
+    },
+    "Hara Kiri": {
+      "closes": "16:30"
+    },
+    "Hara-Kiri": {
+      "closes": "16:30"
+    },
+    "Jardin Millerette": {
+      "closes": "16:30",
+      "grooming": "NOT_GROOMED"
+    },
+    "L'Arpette": {
+      "closes": "16:30"
+    },
+    "La Tome": {
+      "closes": "16:30"
+    },
+    "Lac": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Lanches": {
+      "closes": "17:10",
+      "grooming": "NOT_GROOMED"
+    },
+    "Le Fornelet": {
+      "closes": "16:45"
+    },
+    "Le Gentil": {
+      "closes": "16:45"
+    },
+    "Le Serac": {
+      "closes": "16:30"
+    },
+    "Les Adrets": {
+      "closes": "16:30"
+    },
+    "Les Arolles": {
+      "closes": "16:30"
+    },
+    "Les Barrieres": {
+      "closes": "16:30"
+    },
+    "Les Crepines": {
+      "closes": "16:30"
+    },
+    "Les Dunes": {
+      "closes": "16:30"
+    },
+    "Les Granges": {
+      "closes": "17:35",
+      "grooming": "NOT_GROOMED"
+    },
+    "Les Halles": {
+      "closes": "16:30"
+    },
+    "Les Laines": {
+      "closes": "16:30"
+    },
+    "Les Leitchoums (La Plagne) #1": {
+      "closes": "16:30"
+    },
+    "Les Leitchoums (La Plagne) #2": {
+      "closes": "16:30"
+    },
+    "Les Mines": {
+      "closes": "16:30"
+    },
+    "Les Ours": {
+      "closes": "16:30"
+    },
+    "Liaison Verdons": {
+      "closes": "16:30"
+    },
+    "Loup Garou": {
+      "closes": "16:30"
+    },
+    "Lutins (Dou de la Ramaz)": {
+      "closes": "16:45"
+    },
+    "Lutins (Le Bois d'Âne)": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Lys": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Malgovert": {
+      "closes": "17:25",
+      "grooming": "NOT_GROOMED"
+    },
+    "Marais": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Marie Chantal": {
+      "closes": "16:25"
+    },
+    "Marmottes": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Maïtaz": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Mira": {
+      "closes": "16:30"
+    },
+    "Mont Blanc": {
+      "closes": "16:30"
+    },
+    "Mont-Blanc": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Morey": {
+      "closes": "17:35",
+      "grooming": "GROOMED"
+    },
+    "Muguet": {
+      "closes": "17:15",
+      "grooming": "GROOMED"
+    },
+    "Mur des Adrets": {
+      "closes": "16:30"
+    },
+    "Myrtilles (Les Praizes-Dessous)": {
+      "closes": "16:30"
+    },
+    "Myrtilles (Vallandry)": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Ours (Belle Plagne)": {
+      "closes": "16:30"
+    },
+    "Ours (Plan Peisey)": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Ourson (Plagne Bellecôte)": {
+      "closes": "16:30"
+    },
+    "Ourson (Plan Peisey)": {
+      "closes": "17:40",
+      "grooming": "GROOMED"
+    },
+    "Pavane": {
+      "closes": "16:45"
+    },
+    "Petit Renard": {
+      "closes": "17:20",
+      "grooming": "NOT_GROOMED"
+    },
+    "Petite Rochette": {
+      "closes": "16:25"
+    },
+    "Plagnettes": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Plan": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Plan Bois": {
+      "closes": "17:25",
+      "grooming": "GROOMED"
+    },
+    "Plan des Eaux": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Plan-Vert": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Poney": {
+      "closes": "17:40",
+      "grooming": "GROOMED"
+    },
+    "Praconduit": {
+      "closes": "16:30"
+    },
+    "Prajourdan": {
+      "closes": "16:30"
+    },
+    "Pralioud": {
+      "closes": "16:45"
+    },
+    "Puy du Fou": {
+      "closes": "16:30"
+    },
+    "Puy du fou": {
+      "closes": "16:30"
+    },
+    "Quillis": {
+      "closes": "16:00"
+    },
+    "Ramy": {
+      "closes": "16:30"
+    },
+    "Ravines": {
+      "closes": "16:30"
+    },
+    "Refuge": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Renard": {
+      "closes": "17:25",
+      "grooming": "GROOMED"
+    },
+    "Reservoir": {
+      "closes": "16:45"
+    },
+    "Rhodos (Arc 1800)": {
+      "closes": "17:25",
+      "grooming": "GROOMED"
+    },
+    "Rhodos (Belle Plagne)": {
+      "closes": "16:30"
+    },
+    "Rhonaz": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Robert Blanc": {
+      "closes": "16:40",
+      "grooming": "NOT_GROOMED"
+    },
+    "Roc du Diable": {
+      "closes": "16:30"
+    },
+    "Rochette": {
+      "closes": "16:30"
+    },
+    "Rouelles": {
+      "closes": "17:35",
+      "grooming": "NOT_GROOMED"
+    },
+    "Réservoir": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Samba": {
+      "closes": "16:30"
+    },
+    "Secret": {
+      "closes": "17:25",
+      "grooming": "GROOMED"
+    },
+    "Soleil": {
+      "closes": "16:35"
+    },
+    "Solliet": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Sollières": {
+      "closes": "17:10",
+      "grooming": "NOT_GROOMED"
+    },
+    "Teppes": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Traversée 2": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Trieuse Bas": {
+      "closes": "16:30"
+    },
+    "Tuffes": {
+      "closes": "17:20",
+      "grooming": "NOT_GROOMED"
+    },
+    "Vagère": {
+      "closes": "17:30",
+      "grooming": "GROOMED"
+    },
+    "Vallée de l'Arc 1": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Vallée de l'Arc 2": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Vallée de l'Arc 3": {
+      "closes": "17:20",
+      "grooming": "GROOMED"
+    },
+    "Vega": {
+      "closes": "16:35"
+    },
+    "Verdons": {
+      "closes": "16:10"
+    },
+    "Villaroger": {
+      "closes": "17:10",
+      "grooming": "GROOMED"
+    },
+    "Écartée": {
+      "closes": "16:30"
+    },
+    "École Montalbert": {
+      "closes": "16:45"
+    },
+    "Écureuils": {
+      "closes": "17:30",
+      "grooming": "NOT_GROOMED"
+    },
+    "Éterlou": {
+      "closes": "16:10"
+    }
+  },
+  "pistes": {
+    "Accès Arc 1600": "unknown",
+    "Accès Arc 2000": "unknown",
+    "Accès Arcabulle": "unknown",
+    "Accès Centre de vacances Jean Franco": "unknown",
+    "Accès Peisey-Vallandry": "unknown",
+    "Accès Plan-Peisey": "unknown",
+    "Accès Stade de Slalom": "unknown",
+    "Accès Transarc": "unknown",
+    "Accès Village des Deux Têtes": "unknown",
+    "Adrets": "closed",
+    "Aigle": "closed",
+    "Aiglon / Bergerie": "unknown",
+    "Aiguille Rouge": "closed",
+    "Allée du Mont Blanc": "unknown",
+    "André Martzolf": "closed",
+    "Arandelières (Les Arcs / Peisey-Vallandry) #1": "unknown",
+    "Arandelières (Les Arcs / Peisey-Vallandry) #2": "unknown",
+    "Arc 1950": "unknown",
+    "Arolles (Belle Plagne)": "closed",
+    "Arolles (Le Bois d'Âne)": "closed",
+    "Arpette (Arc 1800)": "unknown",
+    "Arpette (Le Bois d'Âne)": "unknown",
+    "Banzaï": "closed",
+    "Barmont": "closed",
+    "Bas KL": "unknown",
+    "Bauches": "closed",
+    "Belette": "closed",
+    "Belle Plagne": "closed",
+    "Bellecôte": "closed",
+    "Belvédère": "unknown",
+    "Biquet": "closed",
+    "Blanchets": "closed",
+    "Boardercross": "unknown",
+    "Bois Crozelin": "unknown",
+    "Bois de Saule": "closed",
+    "Bois de l'Ours": "closed",
+    "Bosses (Plagne Villages)": "closed",
+    "Bosses (Vallandry)": "closed",
+    "Boulevard": "closed",
+    "Bouquetin": "closed",
+    "Bovet": "closed",
+    "Bozelet": "closed",
+    "Bretelle Trieuse": "closed",
+    "Bridge": "closed",
+    "Cachette": "closed",
+    "Capella": "closed",
+    "Carina": "closed",
+    "Carreley": "closed",
+    "Carroley": "closed",
+    "Chalets": "closed",
+    "Chantel": "closed",
+    "Charmettes": "unknown",
+    "Charmettoger": "closed",
+    "Chemin de Blanche Murée": "unknown",
+    "Chemin du Front de Neige": "unknown",
+    "Chevrette": "closed",
+    "Clair Blanc": "closed",
+    "Clapet": "closed",
+    "Clocheret": "closed",
+    "Col de la Chal": "closed",
+    "Col des Frettes": "closed",
+    "Combe": "closed",
+    "Combes": "closed",
+    "Combettes": "closed",
+    "Comborcière": "closed",
+    "Coqs": "closed",
+    "Cornegidouille (La Plagne) #1": "unknown",
+    "Cornegidouille (La Plagne) #2": "unknown",
+    "Crozats": "closed",
+    "Crête-Côte": "closed",
+    "Crêtes": "closed",
+    "Dents du Peigne": "closed",
+    "Dos Rond": "closed",
+    "Dou de l'Homme": "closed",
+    "Dou de l'homme": "closed",
+    "Dou du Praz": "closed",
+    "Droset": "closed",
+    "Dérochoir": "closed",
+    "Ecureuils": "closed",
+    "Edelweiss": "closed",
+    "Edmond Blanchoz": "closed",
+    "Eldorador": "unknown",
+    "Emile Allais": "closed",
+    "Espace débutant Club Med": "unknown",
+    "Esselet": "closed",
+    "Fond Blanc": "closed",
+    "Fornelet": "closed",
+    "Frisbee": "closed",
+    "Froide Fontaine": "closed",
+    "Fun Slope": "unknown",
+    "Gavotte": "closed",
+    "Geisha": "closed",
+    "Gentil": "closed",
+    "Golf (Aime 2000)": "closed",
+    "Golf (Arc 1800)": "closed",
+    "Gollet": "closed",
+    "Grand Col": "closed",
+    "Grand Renard": "closed",
+    "Grande Pente": "closed",
+    "Grands Mélèzes": "closed",
+    "Grive": "closed",
+    "Génépi": "closed",
+    "Hara Kiri": "closed",
+    "Hara-Kiri": "closed",
+    "Jardin Millerette": "closed",
+    "Java": "closed",
+    "Jean-Marie": "closed",
+    "KL": "unknown",
+    "Kamikaze": "closed",
+    "Kilometre Lance": "unknown",
+    "L'Arpette": "closed",
+    "La Combe": "closed",
+    "La Duy": "closed",
+    "La Forêt": "unknown",
+    "La Frête": "closed",
+    "La Jaccotaz": "unknown",
+    "La Mio": "closed",
+    "La Route Bleue": "unknown",
+    "La Tome": "closed",
+    "La Vallée de la Mort": "unknown",
+    "Lac": "closed",
+    "Lanche Ronde": "closed",
+    "Lanches": "closed",
+    "Le Fornelet": "closed",
+    "Le Gentil": "closed",
+    "Le Rochu": "closed",
+    "Le Serac": "closed",
+    "Le Tunnel": "closed",
+    "Legend": "unknown",
+    "Les Adrets": "closed",
+    "Les Arolles": "closed",
+    "Les Barrieres": "closed",
+    "Les Bois": "closed",
+    "Les Borseliers": "closed",
+    "Les Cabanes": "unknown",
+    "Les Coches": "closed",
+    "Les Coqs": "closed",
+    "Les Crepines": "closed",
+    "Les Dolines": "unknown",
+    "Les Dunes": "closed",
+    "Les Granges": "closed",
+    "Les Grenouilles": "closed",
+    "Les Halles": "closed",
+    "Les Inversens": "closed",
+    "Les Laines": "closed",
+    "Les Leitchoums (La Plagne) #1": "closed",
+    "Les Leitchoums (La Plagne) #2": "closed",
+    "Les Marmottes": "closed",
+    "Les Mines": "closed",
+    "Les Ours": "closed",
+    "Les Pelées": "closed",
+    "Les Sources": "closed",
+    "Les Teppes": "closed",
+    "Les Étroits": "closed",
+    "Levasset": "unknown",
+    "Liaison Grizzly": "unknown",
+    "Liaison Mélèzes": "unknown",
+    "Liaison Plan des Violettes": "unknown",
+    "Liaison Verdons": "closed",
+    "Liaison tracé de l'ancien téléski des Leitchoums": "unknown",
+    "Lognan": "closed",
+    "Loup Garou": "closed",
+    "Lovatière": "closed",
+    "Lutins (Dou de la Ramaz)": "closed",
+    "Lutins (Le Bois d'Âne)": "closed",
+    "Lys": "closed",
+    "Maignonne": "closed",
+    "Malatray": "closed",
+    "Malgovert": "closed",
+    "Marais": "closed",
+    "Marie Chantal": "closed",
+    "Marmottes": "closed",
+    "Marsupilami": "unknown",
+    "Maïtaz": "closed",
+    "Mira": "closed",
+    "Mont Blanc": "closed",
+    "Mont Saint-Sauveur": "unknown",
+    "Mont de la Guerre": "closed",
+    "Mont-Blanc": "closed",
+    "Montalbert": "unknown",
+    "Montchavin": "closed",
+    "Morbleu": "closed",
+    "Morey": "closed",
+    "Muguet": "closed",
+    "Mur des Adrets": "closed",
+    "Murs": "closed",
+    "Myrtilles (Les Praizes-Dessous)": "closed",
+    "Myrtilles (Vallandry)": "closed",
+    "Ninja": "unknown",
+    "Ours (Belle Plagne)": "closed",
+    "Ours (Plan Peisey)": "closed",
+    "Ourson (Plagne Bellecôte)": "closed",
+    "Ourson (Plan Peisey)": "closed",
+    "Palsembleu": "closed",
+    "Passage Facile des Blanchets": "unknown",
+    "Pavane": "closed",
+    "Pentue": "closed",
+    "Petit Renard": "closed",
+    "Petite Rochette": "closed",
+    "Pierres Blanches": "closed",
+    "Piste à Steph": "unknown",
+    "Plagnettes": "closed",
+    "Plan": "closed",
+    "Plan Bois": "closed",
+    "Plan des Eaux": "closed",
+    "Plan-Vert": "closed",
+    "Planay": "unknown",
+    "Plantes": "closed",
+    "Poney": "closed",
+    "Praconduit": "closed",
+    "Prajourdan": "closed",
+    "Pralioud": "closed",
+    "Pravendue": "closed",
+    "Premiers Virages": "unknown",
+    "Pré": "unknown",
+    "Puy du Fou": "closed",
+    "Puy du fou": "closed",
+    "Quillis": "closed",
+    "Ramy": "closed",
+    "Ravines": "closed",
+    "Refuge": "closed",
+    "Renard": "closed",
+    "Replat": "closed",
+    "Reservoir": "closed",
+    "Retour Plan Peisey": "unknown",
+    "Rhodos (Arc 1800)": "closed",
+    "Rhodos (Belle Plagne)": "closed",
+    "Rhonaz": "closed",
+    "Robert Blanc": "closed",
+    "Roc du Diable": "closed",
+    "Rochette": "closed",
+    "Roclisse": "closed",
+    "Rossa Bas": "unknown",
+    "Rossa Haut": "unknown",
+    "Rossa bas": "unknown",
+    "Rouelles": "closed",
+    "Route des Bauches (Les Coches)": "closed",
+    "Route des Bauches (Les Esserts)": "closed",
+    "Route des Chalets de l'Arc": "unknown",
+    "Route des Espagnols (Les Arcs / Peisey-Vallandry) #1": "unknown",
+    "Route des Espagnols (Les Arcs / Peisey-Vallandry) #2": "unknown",
+    "Route des Lanchettes": "unknown",
+    "Rue de la Piste des Étoiles": "unknown",
+    "Réservoir": "closed",
+    "Rêches": "unknown",
+    "Saint-Jacques": "unknown",
+    "Salla": "closed",
+    "Samba": "closed",
+    "Secret": "closed",
+    "Ski de bosses": "unknown",
+    "Ski tranquille": "unknown",
+    "Soleil": "closed",
+    "Solliet": "closed",
+    "Sollières": "closed",
+    "Stade": "unknown",
+    "Stade Slalom Peisey": "unknown",
+    "Stade Vezaille": "unknown",
+    "Stade de Slalom (Arc 1800)": "unknown",
+    "Stade de Slalom (Plan Peisey)": "unknown",
+    "Stade de Slalom de Champagny": "unknown",
+    "Stade de la Buffette": "unknown",
+    "Stade de slalom Borseliers": "unknown",
+    "Stade de slalom Jean-Luc Crétier": "unknown",
+    "SuperSlalom": "unknown",
+    "Teppes": "closed",
+    "Tommelet": "unknown",
+    "Tracé de l'ancien téléski des Leitchoums": "unknown",
+    "Traversée": "unknown",
+    "Traversée 2": "closed",
+    "Trieuse": "unknown",
+    "Trieuse Bas": "closed",
+    "Tuffes": "closed",
+    "Tunnel": "closed",
+    "Vagère": "closed",
+    "Vallée de l'Arc": "unknown",
+    "Vallée de l'Arc 1": "closed",
+    "Vallée de l'Arc 2": "closed",
+    "Vallée de l'Arc 3": "closed",
+    "Variante Emile Allais": "unknown",
+    "Variante Mont de la Guerre - Liaison Les Bois": "unknown",
+    "Vega": "closed",
+    "Verdons": "closed",
+    "Vers Arc 1800": "unknown",
+    "Vers Crêtes": "unknown",
+    "Villaroger": "closed",
+    "Violettes": "unknown",
+    "Woodstock": "unknown",
+    "Écartée": "closed",
+    "École Aime 2000": "closed",
+    "École Montalbert": "closed",
+    "Écureuils": "closed",
+    "Émile Allais": "closed",
+    "Éterlou": "closed"
+  },
+  "season_open": false,
+  "sources": [
+    {
+      "error": null,
+      "id": "lumi_static",
+      "ok": true,
+      "url": "https://public.lumiplay.link/interactive-map/v1/map/e6302a83-ce5b-4717-bab8-4f282b1083d7/staticPoiData?lang=fr"
+    },
+    {
+      "error": null,
+      "id": "lumi_dynamic",
+      "ok": true,
+      "url": "https://public.lumiplay.link/interactive-map/v1/map/e6302a83-ce5b-4717-bab8-4f282b1083d7/dynamicPoiData?lang=fr"
+    }
+  ],
+  "summary": {
+    "LA": {
+      "lifts_open": 0,
+      "lifts_total": 52,
+      "pistes": {
+        "black": [
+          0,
+          18
+        ],
+        "blue": [
+          0,
+          50
+        ],
+        "green": [
+          0,
+          14
+        ],
+        "red": [
+          0,
+          38
+        ]
+      }
+    },
+    "LP": {
+      "lifts_open": 0,
+      "lifts_total": 76,
+      "pistes": {
+        "black": [
+          0,
+          19
+        ],
+        "blue": [
+          0,
+          78
+        ],
+        "green": [
+          0,
+          9
+        ],
+        "red": [
+          0,
+          33
+        ]
+      }
+    }
+  },
+  "unmatched": {
+    "lifts": [
+      "1ER VIRAGES",
+      "1ERE GLISSE",
+      "AZURE",
+      "BELLE PLAGNE",
+      "FUNICULAIRE",
+      "GENTIL.",
+      "GLACIERS 1 - Retour Roche de Mio",
+      "GLACIERS 1 - Vers Live3000",
+      "INDIENS",
+      "MONTALBERT..",
+      "PATINOIRE",
+      "PLAGNE 1800",
+      "PRE ST ESPRIT",
+      "ST JACQUES.",
+      "TELEVILLAGE",
+      "VALLANDRY"
+    ],
+    "pistes": [
+      "1ERE GLISSE 1800",
+      "1ERE GLISSE 2000",
+      "1ERE GLISSE VALLANDRY",
+      "1ERE GLISSE VILLAROGER",
+      "1ERS VIRAGES (BAS KL)",
+      "1ERS VIRAGES 1800",
+      "1ERS VIRAGES VALLANDRY",
+      "ARANDELIERES 1",
+      "ARANDELIERES 2",
+      "ARPETTE 1",
+      "ARPETTE 2",
+      "ARPETTE 3",
+      "BELLE PLAGNE DÉBUTANT",
+      "BELVEDERE 1",
+      "BELVEDERE 2",
+      "BELVEDERE 3",
+      "BELVEDERE 4",
+      "BERGERIE",
+      "BIJOLIN",
+      "BOARDER 2000 BLEU",
+      "BOARDER 2000 ROUGE",
+      "BOARDER CROSS CHAMPAGNY",
+      "BOARDER CROSS RIDERS NATION",
+      "BOIS CROIZELIN",
+      "BOSSE DE LA FLAMME",
+      "CABRI",
+      "EDMOND BLANCHOZ BAS",
+      "FORET 1",
+      "FORET 2",
+      "FORNELET BAS",
+      "INDIENS",
+      "JARSEY",
+      "L'ALPAGE",
+      "LAC DES COMBES",
+      "LES CROES",
+      "LEVASSET BAS",
+      "LEVASSET HAUT",
+      "MIRA BAS",
+      "MONT ST SAUVEUR",
+      "MONTALBERT BAS",
+      "MONTALBERT HAUT",
+      "MOUFLON",
+      "PARCHEY",
+      "PERDRIX",
+      "PISTE DES ANIMAUX",
+      "PISTE À STEF",
+      "PLAN BOIS",
+      "Piste des Minis",
+      "RECHES 1",
+      "RECHES 2",
+      "RETOUR LAC NOIR",
+      "RIDERS NATION",
+      "ROC",
+      "ROSSA",
+      "SAPINS",
+      "ST JACQUES",
+      "STADE DE SLALOM TETRAS",
+      "Spark (ligne bleue)",
+      "Spark (ligne noire)",
+      "Spark (ligne rouge)",
+      "TETRAS",
+      "TRAVERSEE 1",
+      "TRAVERSEE 3",
+      "TRIEUSE HAUT",
+      "VALLEE DE L'ARC 4",
+      "VEZAILLE"
+    ]
+  },
+  "v": 1
+}

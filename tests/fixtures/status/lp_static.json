@@ -1,0 +1,2998 @@
+{
+  "poi": [
+    {
+      "id": "502",
+      "name": "CHAMPAGNY EN VANOISE",
+      "lifts": [
+        {
+          "id": "3659",
+          "name": "CHAMPAGNY",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1244,
+          "arrivalAltitude": 1959,
+          "length": 1850
+        },
+        {
+          "id": "3658",
+          "name": "BORSELIERS.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1820,
+          "arrivalAltitude": 2104,
+          "length": 959
+        },
+        {
+          "id": "3661",
+          "name": "ROSSA",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 2080,
+          "arrivalAltitude": 2395,
+          "length": 1567
+        },
+        {
+          "id": "3662",
+          "name": "VERDONS SUD",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1830,
+          "arrivalAltitude": 2480,
+          "length": 1674
+        },
+        {
+          "id": "3656",
+          "name": "AIGLON",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1971,
+          "arrivalAltitude": 1990,
+          "length": 123
+        },
+        {
+          "id": "3657",
+          "name": "BORSELIERS III",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1955,
+          "arrivalAltitude": 2100,
+          "length": 485
+        },
+        {
+          "id": "3660",
+          "name": "ETERLOU.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1980,
+          "arrivalAltitude": 2065,
+          "length": 435
+        }
+      ],
+      "trails": [
+        {
+          "id": "3638",
+          "name": "BERGERIE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 2005,
+          "arrivalAltitude": 1975,
+          "length": 202
+        },
+        {
+          "id": "12112",
+          "name": "BOUQUETINS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3641",
+          "name": "BOZELET",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2475,
+          "arrivalAltitude": 1825,
+          "length": 4318
+        },
+        {
+          "id": "3642",
+          "name": "CREPINES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2375,
+          "arrivalAltitude": 2115,
+          "length": 1461
+        },
+        {
+          "id": "3643",
+          "name": "ETERLOU",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2060,
+          "arrivalAltitude": 1980,
+          "length": 563
+        },
+        {
+          "id": "3644",
+          "name": "GEISHA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2285,
+          "arrivalAltitude": 1820,
+          "length": 3015
+        },
+        {
+          "id": "3648",
+          "name": "LEVASSET BAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2305,
+          "arrivalAltitude": 1875,
+          "length": 2411
+        },
+        {
+          "id": "3649",
+          "name": "LIAISON VERDONS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1860,
+          "arrivalAltitude": 1835,
+          "length": 289
+        },
+        {
+          "id": "3651",
+          "name": "RAVINE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1830,
+          "arrivalAltitude": 1815,
+          "length": 290
+        },
+        {
+          "id": "3653",
+          "name": "ROSSA ",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2370,
+          "arrivalAltitude": 1960,
+          "length": 2322
+        },
+        {
+          "id": "3654",
+          "name": "SERAC",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2375,
+          "arrivalAltitude": 2065,
+          "length": 1673
+        },
+        {
+          "id": "3655",
+          "name": "TOME",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2375,
+          "arrivalAltitude": 2305,
+          "length": 536
+        },
+        {
+          "id": "3639",
+          "name": "BORSELIERS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2105,
+          "arrivalAltitude": 1855,
+          "length": 847
+        },
+        {
+          "id": "3645",
+          "name": "HARA-KIRI",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2445,
+          "arrivalAltitude": 1835,
+          "length": 1929
+        },
+        {
+          "id": "3646",
+          "name": "KAMIKAZE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2440,
+          "arrivalAltitude": 2000,
+          "length": 1371
+        },
+        {
+          "id": "3650",
+          "name": "MONT DE LA GUERRE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2260,
+          "arrivalAltitude": 1250,
+          "length": 6895
+        },
+        {
+          "id": "11041",
+          "name": "ROC",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3652",
+          "name": "TETRAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1955,
+          "arrivalAltitude": 1820,
+          "length": 456
+        },
+        {
+          "id": "3640",
+          "name": "BOSSES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2475,
+          "arrivalAltitude": 2150,
+          "length": 931
+        },
+        {
+          "id": "3647",
+          "name": "LES BOIS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 1820,
+          "arrivalAltitude": 1250,
+          "length": 2804
+        },
+        {
+          "id": "11094",
+          "name": "BOARDER CROSS CHAMPAGNY",
+          "type": "TRAIL",
+          "trailType": "BOARDERCROSS",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 612
+        },
+        {
+          "id": "12077",
+          "name": "STADE DE CHAMPAGNY",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "509",
+      "name": "FOND ET PIETONS ALTITUDE",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3773",
+          "name": "DOU DU PRAZ 4km AR",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2000
+        },
+        {
+          "id": "3767",
+          "name": "LES MAIRIERS 12km AR",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 5000
+        },
+        {
+          "id": "3766",
+          "name": "LES FRASSES 12km AR",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 6000
+        },
+        {
+          "id": "11932",
+          "name": "LUGE DOU DU PRAZ",
+          "type": "TRAIL",
+          "trailType": "SLEDDING_HILL",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3765",
+          "name": "CAVARD - PLAGNE 1800 2km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2000
+        },
+        {
+          "id": "12084",
+          "name": "LA CLAIRIERE DE CAVARD 2km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2000
+        },
+        {
+          "id": "12085",
+          "name": "LA LOVATIERE 2,6km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2600
+        },
+        {
+          "id": "11921",
+          "name": "LES LEITCHOUMS",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3768",
+          "name": "PLAGNE 1800 - PLAGNE AIME 2000 2km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2000
+        },
+        {
+          "id": "3769",
+          "name": "PLAGNE 1800 - PLAGNE CENTRE 1,5km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1500
+        },
+        {
+          "id": "3770",
+          "name": "PLAGNE BELLECOTE - CAVARD 2km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2000
+        },
+        {
+          "id": "3771",
+          "name": "PLAGNE BELLECOTE - DOU DU PRAZ 2,6km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2600
+        },
+        {
+          "id": "3772",
+          "name": "PLAGNE CENTRE - DOU DU PRAZ 3km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3000
+        }
+      ]
+    },
+    {
+      "id": "2798",
+      "name": "FOND ET PIETONS CHAMPAGNY",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "9479",
+          "name": "PISTE INITIATION 1km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1000
+        },
+        {
+          "id": "9480",
+          "name": "ROSAY 5km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 5000
+        },
+        {
+          "id": "9474",
+          "name": "CANADA 5km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 5000
+        },
+        {
+          "id": "9478",
+          "name": "PIERRA NEVA 2,2km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2200
+        },
+        {
+          "id": "9476",
+          "name": "LA CHAPELLE 1km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1000
+        },
+        {
+          "id": "9477",
+          "name": "LAISONNAY 8km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 8000
+        },
+        {
+          "id": "9475",
+          "name": "CHAMP DU PONT 2,2km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2200
+        },
+        {
+          "id": "9482",
+          "name": "L'EPENA 7km AR",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3500
+        },
+        {
+          "id": "9481",
+          "name": "LA COMBA DAMON 3,6km AR",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1800
+        },
+        {
+          "id": "9484",
+          "name": "LA TAILLETTE 1,9km AR",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1900
+        },
+        {
+          "id": "9486",
+          "name": "LES TEPPES 1,6km AR",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1600
+        },
+        {
+          "id": "9483",
+          "name": "L'EVETTA 1km AR",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1000
+        },
+        {
+          "id": "9485",
+          "name": "LES CHARDES 6km AR",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3000
+        }
+      ]
+    },
+    {
+      "id": "510",
+      "name": "FOND ET PIETONS MONTALBERT",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3780",
+          "name": "BOUCLE DE PRAJOURDAN 3km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3000
+        },
+        {
+          "id": "3774",
+          "name": "BOUCLE DU GENTIL 0,5km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 500
+        },
+        {
+          "id": "3775",
+          "name": "L'ADRAY 2,5km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2500
+        },
+        {
+          "id": "3776",
+          "name": "LE CREY 2,5km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2500
+        },
+        {
+          "id": "3777",
+          "name": "LES MAIRIERS 12km AR",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 6000
+        },
+        {
+          "id": "12086",
+          "name": "BOIS DES FORNETTES",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12087",
+          "name": "CHEMIN DE LA BIODIVERSITE",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12088",
+          "name": "CHEMIN DE LE BOIS",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12089",
+          "name": "LA CHAPELLE DE LA SUPERGA",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12090",
+          "name": "LE BIEF BOVET",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12091",
+          "name": "SENTIER DES ALPAGES ENCHANTES",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3779",
+          "name": "CHEMIN DE MONTGESIN",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3000
+        },
+        {
+          "id": "3778",
+          "name": "CHEMIN DE PRAVENDU",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3200
+        },
+        {
+          "id": "9363",
+          "name": "CHEMIN DU PATRIMOINE",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "9364",
+          "name": "CHEMIN DU REVERS",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "511",
+      "name": "FOND ET PIETONS MONTCHAVIN",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3782",
+          "name": "BOUCLE DE PLAN BOIS 1km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1000
+        },
+        {
+          "id": "3781",
+          "name": "FONTAINE FROIDE 3,5km",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3500
+        },
+        {
+          "id": "3783",
+          "name": "LES FRASSES 12km AR",
+          "type": "TRAIL",
+          "trailType": "CROSS_COUNTRY_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 6000
+        },
+        {
+          "id": "12092",
+          "name": "BOUCLE DE PIERRES BLANCHES 0,6km",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 600
+        },
+        {
+          "id": "59872",
+          "name": "CHALET DES BAUCHES 8km",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 8000
+        },
+        {
+          "id": "12093",
+          "name": "CREVAILLET 3km AR",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 1500
+        },
+        {
+          "id": "12095",
+          "name": "LA DUY 2,3km",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2300
+        },
+        {
+          "id": "12096",
+          "name": "LE VANOISE EXPRESS - LA CHANTON 2km",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 2000
+        },
+        {
+          "id": "12097",
+          "name": "MONTCHAVIN - LES COCHES PAR PRAZ SALVARD 8km",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 8000
+        },
+        {
+          "id": "12098",
+          "name": "PLAN BOIS - LES COCHES PAR PRAZ SALVARD 7km",
+          "type": "TRAIL",
+          "trailType": "SNOWSHOE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 7000
+        },
+        {
+          "id": "12094",
+          "name": "LA BOUCLE DE MONTORLIN 3km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3000
+        },
+        {
+          "id": "3784",
+          "name": "LA PIERRA 3,4km",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3400
+        },
+        {
+          "id": "3785",
+          "name": "PIETON MONTCHAVIN",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 6000
+        }
+      ]
+    },
+    {
+      "id": "508",
+      "name": "ITINERAIRES SKI DE RANDONNEE",
+      "lifts": [],
+      "trails": [
+        {
+          "id": "3758",
+          "name": "CHAMPAGNY - LA PORCIERE 6km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 6000
+        },
+        {
+          "id": "3759",
+          "name": "LA ROCHE - FORNELET 3,5km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3500
+        },
+        {
+          "id": "3760",
+          "name": "LES COCHES - PLAN BOIS 3,7km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 3700
+        },
+        {
+          "id": "3761",
+          "name": "MONTALBERT - FORNELET 5km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 5000
+        },
+        {
+          "id": "3762",
+          "name": "MONTCHAVIN - PIERRES BLANCHES 6km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 6000
+        },
+        {
+          "id": "3763",
+          "name": "PLAGNE BELLECOTE - COL DE FORCLE 5km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 5000
+        },
+        {
+          "id": "3764",
+          "name": "PLAGNE CENTRE - COL DE FORCLE 4km",
+          "type": "TRAIL",
+          "trailType": "SKI_TOURING",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 4000
+        }
+      ]
+    },
+    {
+      "id": "501",
+      "name": "LIVE 3000",
+      "lifts": [
+        {
+          "id": "12864",
+          "name": "GLACIERS 1 - Retour Roche de Mio",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12837",
+          "name": "GLACIERS 1 - Vers Live3000",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 2734,
+          "arrivalAltitude": 3080,
+          "length": 0
+        },
+        {
+          "id": "12865",
+          "name": "GLACIERS 2",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 2734,
+          "arrivalAltitude": 3080,
+          "length": 0
+        },
+        {
+          "id": "3635",
+          "name": "CHALET DE BELLECÔTE",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 2278,
+          "arrivalAltitude": 2565,
+          "length": 890
+        }
+      ],
+      "trails": [
+        {
+          "id": "3631",
+          "name": "FRETE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2565,
+          "arrivalAltitude": 2280,
+          "length": 389
+        },
+        {
+          "id": "3628",
+          "name": "COMBE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 3110,
+          "arrivalAltitude": 2515,
+          "length": 3662
+        },
+        {
+          "id": "3632",
+          "name": "LANCHE RONDE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2565,
+          "arrivalAltitude": 2360,
+          "length": 778
+        },
+        {
+          "id": "3626",
+          "name": "BELLECOTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2945,
+          "arrivalAltitude": 2295,
+          "length": 2392
+        },
+        {
+          "id": "3629",
+          "name": "DEROCHOIR",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2280,
+          "arrivalAltitude": 1845,
+          "length": 2151
+        },
+        {
+          "id": "3633",
+          "name": "ROCHU",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 3000,
+          "arrivalAltitude": 2280,
+          "length": 2508
+        },
+        {
+          "id": "12835",
+          "name": "DECOUVERTE 3000",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12836",
+          "name": "LES CREUX DE LA FOUDRE",
+          "type": "TRAIL",
+          "trailType": "PEDESTRIAN",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "503",
+      "name": "MONTCHAVIN - LES COCHES",
+      "lifts": [
+        {
+          "id": "3706",
+          "name": "VANOISE EXPRESS MONTCHAVIN",
+          "type": "SKI_LIFT",
+          "liftType": "TRAM",
+          "departureAltitude": 1548,
+          "arrivalAltitude": 1612,
+          "length": 1840
+        },
+        {
+          "id": "10221",
+          "name": "VANOISE EXPRESS PEISEY",
+          "type": "SKI_LIFT",
+          "liftType": "TRAM",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3690",
+          "name": "COCHES.",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1225,
+          "arrivalAltitude": 1442,
+          "length": 640
+        },
+        {
+          "id": "3694",
+          "name": "LAC NOIR.",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1440,
+          "arrivalAltitude": 1886,
+          "length": 1747
+        },
+        {
+          "id": "3705",
+          "name": "TÉLÉBUFFETTE",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1376,
+          "arrivalAltitude": 1439,
+          "length": 276
+        },
+        {
+          "id": "3689",
+          "name": "BIJOLIN.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1818,
+          "arrivalAltitude": 2285,
+          "length": 1555
+        },
+        {
+          "id": "3691",
+          "name": "CROZATS.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 2066,
+          "arrivalAltitude": 2377,
+          "length": 1033
+        },
+        {
+          "id": "3695",
+          "name": "MONTCHAVIN.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1250,
+          "arrivalAltitude": 1709,
+          "length": 1622
+        },
+        {
+          "id": "3699",
+          "name": "PIERRES BLANCHES.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1660,
+          "arrivalAltitude": 2122,
+          "length": 1367
+        },
+        {
+          "id": "3700",
+          "name": "PLAN BOIS.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1376,
+          "arrivalAltitude": 1881,
+          "length": 1763
+        },
+        {
+          "id": "3688",
+          "name": "BAUCHES.",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 1791,
+          "arrivalAltitude": 2081,
+          "length": 794
+        },
+        {
+          "id": "3692",
+          "name": "DOS ROND.",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 2116,
+          "arrivalAltitude": 2341,
+          "length": 1032
+        },
+        {
+          "id": "3703",
+          "name": "SALLA.",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 2196,
+          "arrivalAltitude": 2349,
+          "length": 565
+        },
+        {
+          "id": "3693",
+          "name": "ECUREUILS",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1825,
+          "arrivalAltitude": 1891,
+          "length": 439
+        },
+        {
+          "id": "3697",
+          "name": "PETIT SAUGET",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1430,
+          "arrivalAltitude": 1515,
+          "length": 398
+        },
+        {
+          "id": "3701",
+          "name": "PLAN LESCHAUX",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2100,
+          "arrivalAltitude": 2273,
+          "length": 865
+        },
+        {
+          "id": "3698",
+          "name": "PETITS LOUPS",
+          "type": "SKI_LIFT",
+          "liftType": "MAGIC_CARPET",
+          "departureAltitude": 1866,
+          "arrivalAltitude": 1880,
+          "length": 116
+        },
+        {
+          "id": "3696",
+          "name": "PATINOIRE",
+          "type": "SKI_LIFT",
+          "liftType": "ROPE_TOW",
+          "departureAltitude": 1937,
+          "arrivalAltitude": 1944,
+          "length": 72
+        },
+        {
+          "id": "3702",
+          "name": "REPLAT..",
+          "type": "SKI_LIFT",
+          "liftType": "ROPE_TOW",
+          "departureAltitude": 2289,
+          "arrivalAltitude": 2290,
+          "length": 244
+        },
+        {
+          "id": "3704",
+          "name": "SUCETTE DE MONTCHAVIN",
+          "type": "SKI_LIFT",
+          "liftType": "ROPE_TOW",
+          "departureAltitude": 1242,
+          "arrivalAltitude": 1248,
+          "length": 68
+        }
+      ],
+      "trails": [
+        {
+          "id": "3663",
+          "name": "BARRIERES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2370,
+          "arrivalAltitude": 2295,
+          "length": 604
+        },
+        {
+          "id": "3664",
+          "name": "BAUCHES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2075,
+          "arrivalAltitude": 1790,
+          "length": 2427
+        },
+        {
+          "id": "3665",
+          "name": "BIJOLIN",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1880,
+          "arrivalAltitude": 1820,
+          "length": 290
+        },
+        {
+          "id": "3666",
+          "name": "CARROLEY",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2285,
+          "arrivalAltitude": 2065,
+          "length": 1256
+        },
+        {
+          "id": "12074",
+          "name": "DOS ROND",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3675",
+          "name": "MONT BLANC",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2335,
+          "arrivalAltitude": 1210,
+          "length": 7693
+        },
+        {
+          "id": "3677",
+          "name": "MOUFLON",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1510,
+          "arrivalAltitude": 1440,
+          "length": 650
+        },
+        {
+          "id": "3678",
+          "name": "MYRTILLES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2050,
+          "arrivalAltitude": 1875,
+          "length": 1075
+        },
+        {
+          "id": "3680",
+          "name": "PIERRES BLANCHES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2120,
+          "arrivalAltitude": 1730,
+          "length": 2325
+        },
+        {
+          "id": "3681",
+          "name": "PLAN BOIS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1890,
+          "arrivalAltitude": 1825,
+          "length": 420
+        },
+        {
+          "id": "3682",
+          "name": "REPLAT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2340,
+          "arrivalAltitude": 2285,
+          "length": 795
+        },
+        {
+          "id": "3683",
+          "name": "RETOUR LAC NOIR",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1890,
+          "arrivalAltitude": 1880,
+          "length": 150
+        },
+        {
+          "id": "3684",
+          "name": "ROUTE DES BAUCHES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1790,
+          "arrivalAltitude": 1580,
+          "length": 3372
+        },
+        {
+          "id": "3685",
+          "name": "SALLA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2325,
+          "arrivalAltitude": 2215,
+          "length": 400
+        },
+        {
+          "id": "3687",
+          "name": "TEPPES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2370,
+          "arrivalAltitude": 2161,
+          "length": 1195
+        },
+        {
+          "id": "3667",
+          "name": "COCHES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1750,
+          "arrivalAltitude": 1380,
+          "length": 1805
+        },
+        {
+          "id": "3670",
+          "name": "ESSELET",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1960,
+          "arrivalAltitude": 1690,
+          "length": 1059
+        },
+        {
+          "id": "3671",
+          "name": "LA DUY",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1875,
+          "arrivalAltitude": 1775,
+          "length": 485
+        },
+        {
+          "id": "3674",
+          "name": "MARMOTTES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2345,
+          "arrivalAltitude": 2200,
+          "length": 908
+        },
+        {
+          "id": "3676",
+          "name": "MONTCHAVIN",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1625,
+          "arrivalAltitude": 1210,
+          "length": 1637
+        },
+        {
+          "id": "3668",
+          "name": "CROZATS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2200,
+          "arrivalAltitude": 1825,
+          "length": 1753
+        },
+        {
+          "id": "3672",
+          "name": "LES MURS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2055,
+          "arrivalAltitude": 1850,
+          "length": 800
+        },
+        {
+          "id": "3673",
+          "name": "MALATRAY",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2135,
+          "arrivalAltitude": 1815,
+          "length": 1090
+        },
+        {
+          "id": "3679",
+          "name": "PELEES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 1885,
+          "arrivalAltitude": 1650,
+          "length": 841
+        },
+        {
+          "id": "11042",
+          "name": "RIDERS NATION",
+          "type": "TRAIL",
+          "trailType": "SNOWPARK",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12081",
+          "name": "BOARDER CROSS RIDERS NATION",
+          "type": "TRAIL",
+          "trailType": "BOARDERCROSS",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 37000
+        },
+        {
+          "id": "3686",
+          "name": "STADE DE LA BUFFETTE",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 1695,
+          "arrivalAltitude": 1500,
+          "length": 665
+        },
+        {
+          "id": "71744",
+          "name": "STADE LESCHAUX",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "3796",
+      "name": "PLAGNE AIME 2000",
+      "lifts": [
+        {
+          "id": "11215",
+          "name": "TÉLÉMETRO",
+          "type": "SKI_LIFT",
+          "liftType": "TRAM",
+          "departureAltitude": 1968,
+          "arrivalAltitude": 2100,
+          "length": 1043
+        },
+        {
+          "id": "11206",
+          "name": "BÉCOIN",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1990,
+          "arrivalAltitude": 2341,
+          "length": 1149
+        },
+        {
+          "id": "11210",
+          "name": "GOLF.",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 1990,
+          "arrivalAltitude": 2123,
+          "length": 640
+        },
+        {
+          "id": "11211",
+          "name": "PLAGNE 1800",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 1800,
+          "arrivalAltitude": 2003,
+          "length": 600
+        },
+        {
+          "id": "11205",
+          "name": "AIME LA PLAGNE",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2060,
+          "arrivalAltitude": 2094,
+          "length": 173
+        },
+        {
+          "id": "11207",
+          "name": "CRETES",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2330,
+          "arrivalAltitude": 2405,
+          "length": 322
+        },
+        {
+          "id": "11208",
+          "name": "DROMADAIRE",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2018,
+          "arrivalAltitude": 2100,
+          "length": 398
+        },
+        {
+          "id": "11212",
+          "name": "PRACONDUIT.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1823,
+          "arrivalAltitude": 1847,
+          "length": 138
+        },
+        {
+          "id": "11214",
+          "name": "STADE",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2079,
+          "arrivalAltitude": 2120,
+          "length": 237
+        }
+      ],
+      "trails": [
+        {
+          "id": "11186",
+          "name": "ECOLE AIME 2000",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 2110,
+          "arrivalAltitude": 2075,
+          "length": 224
+        },
+        {
+          "id": "11201",
+          "name": "PRACONDUIT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 1840,
+          "arrivalAltitude": 1820,
+          "length": 301
+        },
+        {
+          "id": "11184",
+          "name": "EDMOND BLANCHOZ",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2005,
+          "arrivalAltitude": 1520,
+          "length": 0
+        },
+        {
+          "id": "12079",
+          "name": "EDMOND BLANCHOZ BAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2005,
+          "arrivalAltitude": 1520,
+          "length": 2976
+        },
+        {
+          "id": "11190",
+          "name": "GOLF",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2115,
+          "arrivalAltitude": 1995,
+          "length": 719
+        },
+        {
+          "id": "11192",
+          "name": "HALLES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1855,
+          "arrivalAltitude": 1795,
+          "length": 215
+        },
+        {
+          "id": "11194",
+          "name": "JEAN MARIE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1990,
+          "arrivalAltitude": 1835,
+          "length": 775
+        },
+        {
+          "id": "11195",
+          "name": "LOUP GAROU",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1950,
+          "arrivalAltitude": 1845,
+          "length": 525
+        },
+        {
+          "id": "11198",
+          "name": "MONT ST SAUVEUR",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2315,
+          "arrivalAltitude": 1990,
+          "length": 1362
+        },
+        {
+          "id": "11200",
+          "name": "PAVANE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2340,
+          "arrivalAltitude": 2020,
+          "length": 2060
+        },
+        {
+          "id": "11202",
+          "name": "RESERVOIR",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2225,
+          "arrivalAltitude": 2120,
+          "length": 551
+        },
+        {
+          "id": "11204",
+          "name": "SAPINS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2115,
+          "arrivalAltitude": 2000,
+          "length": 628
+        },
+        {
+          "id": "11182",
+          "name": "ANDRE MARTZOLF",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1985,
+          "arrivalAltitude": 1520,
+          "length": 1463
+        },
+        {
+          "id": "11187",
+          "name": "EMILE ALLAIS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2100,
+          "arrivalAltitude": 1710,
+          "length": 1692
+        },
+        {
+          "id": "12108",
+          "name": "GAVOTTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2400,
+          "arrivalAltitude": 2125,
+          "length": 1496
+        },
+        {
+          "id": "11193",
+          "name": "JAVA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2345,
+          "arrivalAltitude": 2055,
+          "length": 868
+        },
+        {
+          "id": "11197",
+          "name": "LES MINES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1925,
+          "arrivalAltitude": 1845,
+          "length": 395
+        },
+        {
+          "id": "11196",
+          "name": "LOVATIERE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2030,
+          "arrivalAltitude": 1915,
+          "length": 843
+        },
+        {
+          "id": "11203",
+          "name": "SAMBA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2250,
+          "arrivalAltitude": 2035,
+          "length": 838
+        },
+        {
+          "id": "11183",
+          "name": "COQS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2285,
+          "arrivalAltitude": 1860,
+          "length": 968
+        },
+        {
+          "id": "11185",
+          "name": "CRETE COTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2010,
+          "arrivalAltitude": 1855,
+          "length": 487
+        },
+        {
+          "id": "12107",
+          "name": "ETROITS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2395,
+          "arrivalAltitude": 1950,
+          "length": 1629
+        },
+        {
+          "id": "12109",
+          "name": "GRANDE PENTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2385,
+          "arrivalAltitude": 2240,
+          "length": 971
+        },
+        {
+          "id": "11580",
+          "name": "MORBLEU",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12110",
+          "name": "PALSEMBLEU",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2165,
+          "arrivalAltitude": 1840,
+          "length": 936
+        },
+        {
+          "id": "11680",
+          "name": "SLALOM YUGE",
+          "type": "TRAIL",
+          "trailType": "FUN_ZONE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "71746",
+          "name": "STADE DROMADAIRE",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12068",
+          "name": "STADE JEAN-LUC CRETIER",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "500",
+      "name": "PLAGNE BELLECOTE",
+      "lifts": [
+        {
+          "id": "3614",
+          "name": "BELLE PLAGNE.",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1925,
+          "arrivalAltitude": 2071,
+          "length": 944
+        },
+        {
+          "id": "72059",
+          "name": "ROCHE DE MIO 1",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1938,
+          "arrivalAltitude": 2277,
+          "length": 1939
+        },
+        {
+          "id": "72060",
+          "name": "ROCHE DE MIO 2",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 2277,
+          "arrivalAltitude": 2719,
+          "length": 2594
+        },
+        {
+          "id": "3613",
+          "name": "ARPETTE.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1935,
+          "arrivalAltitude": 2346,
+          "length": 1810
+        },
+        {
+          "id": "3616",
+          "name": "BLANCHETS",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1934,
+          "arrivalAltitude": 2372,
+          "length": 2317
+        },
+        {
+          "id": "3617",
+          "name": "CARELLA",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 2294,
+          "arrivalAltitude": 2710,
+          "length": 2802
+        },
+        {
+          "id": "3619",
+          "name": "COLOSSES",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1936,
+          "arrivalAltitude": 2254,
+          "length": 1595
+        },
+        {
+          "id": "3620",
+          "name": "INVERSENS.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 2204,
+          "arrivalAltitude": 2716,
+          "length": 1928
+        },
+        {
+          "id": "3623",
+          "name": "QUILLIS.",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 2300,
+          "arrivalAltitude": 2366,
+          "length": 219
+        },
+        {
+          "id": "3618",
+          "name": "COL DE FORCLE",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2060,
+          "arrivalAltitude": 2288,
+          "length": 1390
+        },
+        {
+          "id": "3625",
+          "name": "TYROLIEN",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2097,
+          "arrivalAltitude": 2140,
+          "length": 184
+        },
+        {
+          "id": "3612",
+          "name": "ANGE",
+          "type": "SKI_LIFT",
+          "liftType": "MAGIC_CARPET",
+          "departureAltitude": 2317,
+          "arrivalAltitude": 2344,
+          "length": 190
+        },
+        {
+          "id": "3615",
+          "name": "BELLE PLAGNE",
+          "type": "SKI_LIFT",
+          "liftType": "MAGIC_CARPET",
+          "departureAltitude": 2066,
+          "arrivalAltitude": 2086,
+          "length": 148
+        },
+        {
+          "id": "3621",
+          "name": "OURSON",
+          "type": "SKI_LIFT",
+          "liftType": "MAGIC_CARPET",
+          "departureAltitude": 1925,
+          "arrivalAltitude": 1940,
+          "length": 116
+        },
+        {
+          "id": "3622",
+          "name": "PLATEAU DE CARELLA",
+          "type": "SKI_LIFT",
+          "liftType": "ROPE_TOW",
+          "departureAltitude": 1929,
+          "arrivalAltitude": 1935,
+          "length": 170
+        }
+      ],
+      "trails": [
+        {
+          "id": "12189",
+          "name": "BELLE PLAGNE DÉBUTANT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3605",
+          "name": "OURSON",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 1965,
+          "arrivalAltitude": 1925,
+          "length": 198
+        },
+        {
+          "id": "3592",
+          "name": "AROLLES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2250,
+          "arrivalAltitude": 1930,
+          "length": 2259
+        },
+        {
+          "id": "3593",
+          "name": "ARPETTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2345,
+          "arrivalAltitude": 1925,
+          "length": 2621
+        },
+        {
+          "id": "3594",
+          "name": "BELLE PLAGNE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2240,
+          "arrivalAltitude": 1935,
+          "length": 2285
+        },
+        {
+          "id": "3595",
+          "name": "BLANCHETS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2365,
+          "arrivalAltitude": 2165,
+          "length": 1355
+        },
+        {
+          "id": "3596",
+          "name": "BRETELLE TRIEUSE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2140,
+          "arrivalAltitude": 2050,
+          "length": 486
+        },
+        {
+          "id": "3597",
+          "name": "DUNES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2340,
+          "arrivalAltitude": 2200,
+          "length": 871
+        },
+        {
+          "id": "3599",
+          "name": "LAINES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2280,
+          "arrivalAltitude": 2105,
+          "length": 3270
+        },
+        {
+          "id": "3600",
+          "name": "LEITCHOUMS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2275,
+          "arrivalAltitude": 1975,
+          "length": 2017
+        },
+        {
+          "id": "3601",
+          "name": "LEVASSET HAUT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2710,
+          "arrivalAltitude": 2300,
+          "length": 2796
+        },
+        {
+          "id": "3604",
+          "name": "OURS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2230,
+          "arrivalAltitude": 1930,
+          "length": 2445
+        },
+        {
+          "id": "3606",
+          "name": "QUILLIS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2370,
+          "arrivalAltitude": 2305,
+          "length": 418
+        },
+        {
+          "id": "3607",
+          "name": "RHODOS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2105,
+          "arrivalAltitude": 1965,
+          "length": 1090
+        },
+        {
+          "id": "3608",
+          "name": "ROC DU DIABLE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2355,
+          "arrivalAltitude": 2275,
+          "length": 765
+        },
+        {
+          "id": "3610",
+          "name": "TRIEUSE BAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2100,
+          "arrivalAltitude": 1935,
+          "length": 740
+        },
+        {
+          "id": "3611",
+          "name": "TUNNEL",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2630,
+          "arrivalAltitude": 2130,
+          "length": 3013
+        },
+        {
+          "id": "12111",
+          "name": "INVERSENS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2590,
+          "arrivalAltitude": 2200,
+          "length": 1561
+        },
+        {
+          "id": "3602",
+          "name": "LOGNAN",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2305,
+          "arrivalAltitude": 2075,
+          "length": 1071
+        },
+        {
+          "id": "3609",
+          "name": "SOURCES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2610,
+          "arrivalAltitude": 2170,
+          "length": 2417
+        },
+        {
+          "id": "3603",
+          "name": "MIO",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2715,
+          "arrivalAltitude": 2490,
+          "length": 1018
+        },
+        {
+          "id": "72057",
+          "name": "PENTUE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2705,
+          "arrivalAltitude": 2575,
+          "length": 250
+        },
+        {
+          "id": "11181",
+          "name": "FUN SLOPE",
+          "type": "TRAIL",
+          "trailType": "FUN_ZONE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 2340,
+          "arrivalAltitude": 2135,
+          "length": 1450
+        },
+        {
+          "id": "12070",
+          "name": "STADE DE BELLE PLAGNE",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "498",
+      "name": "PLAGNE CENTRE",
+      "lifts": [
+        {
+          "id": "11140",
+          "name": "FUNIPLAGNE GRANDE ROCHETTE",
+          "type": "SKI_LIFT",
+          "liftType": "FUNITEL",
+          "departureAltitude": 1990,
+          "arrivalAltitude": 2500,
+          "length": 1659
+        },
+        {
+          "id": "11142",
+          "name": "TÉLÉBUS",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1960,
+          "arrivalAltitude": 2041,
+          "length": 464
+        },
+        {
+          "id": "11133",
+          "name": "BERGERIE.",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1948,
+          "arrivalAltitude": 2184,
+          "length": 1292
+        },
+        {
+          "id": "11137",
+          "name": "COLORADO",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1984,
+          "arrivalAltitude": 2292,
+          "length": 1320
+        },
+        {
+          "id": "11143",
+          "name": "LOVATIÈRE",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 2124,
+          "arrivalAltitude": 2480,
+          "length": 1293
+        },
+        {
+          "id": "11135",
+          "name": "BOULEVARD.",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 1946,
+          "arrivalAltitude": 2000,
+          "length": 456
+        },
+        {
+          "id": "11141",
+          "name": "MÉLÈZES",
+          "type": "SKI_LIFT",
+          "liftType": "CHAIRLIFT",
+          "departureAltitude": 1841,
+          "arrivalAltitude": 1952,
+          "length": 398
+        },
+        {
+          "id": "11132",
+          "name": "AOLLETS",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2074,
+          "arrivalAltitude": 2292,
+          "length": 1276
+        },
+        {
+          "id": "11134",
+          "name": "BIQUET.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2045,
+          "arrivalAltitude": 2055,
+          "length": 115
+        },
+        {
+          "id": "11136",
+          "name": "CHEVRETTE.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2055,
+          "arrivalAltitude": 2110,
+          "length": 217
+        },
+        {
+          "id": "11138",
+          "name": "DOU DU PRAZ.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 2065,
+          "arrivalAltitude": 2139,
+          "length": 386
+        },
+        {
+          "id": "11139",
+          "name": "FRANCE",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1980,
+          "arrivalAltitude": 1995,
+          "length": 100
+        },
+        {
+          "id": "11144",
+          "name": "INDIENS",
+          "type": "SKI_LIFT",
+          "liftType": "MAGIC_CARPET",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "11153",
+          "name": "SOLU",
+          "type": "SKI_LIFT",
+          "liftType": "ROPE_TOW",
+          "departureAltitude": 2050,
+          "arrivalAltitude": 2060,
+          "length": 105
+        }
+      ],
+      "trails": [
+        {
+          "id": "11110",
+          "name": "BIQUET",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 2055,
+          "arrivalAltitude": 2050,
+          "length": 95
+        },
+        {
+          "id": "11107",
+          "name": "INDIENS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 2005,
+          "arrivalAltitude": 1995,
+          "length": 122
+        },
+        {
+          "id": "11112",
+          "name": "BOULEVARD",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2005,
+          "arrivalAltitude": 1955,
+          "length": 590
+        },
+        {
+          "id": "11114",
+          "name": "BRIDGE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2120,
+          "arrivalAltitude": 2040,
+          "length": 571
+        },
+        {
+          "id": "11115",
+          "name": "CAPELLA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2305,
+          "arrivalAltitude": 2005,
+          "length": 1519
+        },
+        {
+          "id": "11117",
+          "name": "CHEVRETTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2115,
+          "arrivalAltitude": 2065,
+          "length": 256
+        },
+        {
+          "id": "11118",
+          "name": "DOU DU PRAZ",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2140,
+          "arrivalAltitude": 1950,
+          "length": 1029
+        },
+        {
+          "id": "11119",
+          "name": "ECARTEE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2165,
+          "arrivalAltitude": 1955,
+          "length": 1580
+        },
+        {
+          "id": "11121",
+          "name": "LES CROES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2100,
+          "arrivalAltitude": 2060,
+          "length": 222
+        },
+        {
+          "id": "11122",
+          "name": "MARIE CHANTAL",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2190,
+          "arrivalAltitude": 1995,
+          "length": 936
+        },
+        {
+          "id": "11123",
+          "name": "MIRA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2500,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "12080",
+          "name": "MIRA BAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 2065,
+          "length": 2086
+        },
+        {
+          "id": "11124",
+          "name": "PETITE ROCHETTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2400,
+          "arrivalAltitude": 2285,
+          "length": 1194
+        },
+        {
+          "id": "11125",
+          "name": "PUY DU FOU",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2290,
+          "arrivalAltitude": 2010,
+          "length": 1402
+        },
+        {
+          "id": "11126",
+          "name": "RAMY",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2295,
+          "arrivalAltitude": 2015,
+          "length": 1931
+        },
+        {
+          "id": "11128",
+          "name": "SOLEIL",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2120,
+          "arrivalAltitude": 2060,
+          "length": 240
+        },
+        {
+          "id": "11129",
+          "name": "TRIEUSE HAUT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2250,
+          "arrivalAltitude": 2100,
+          "length": 1346
+        },
+        {
+          "id": "11130",
+          "name": "VEGA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2115,
+          "arrivalAltitude": 2005,
+          "length": 523
+        },
+        {
+          "id": "11131",
+          "name": "VERDONS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 2475,
+          "arrivalAltitude": 1990,
+          "length": 2327
+        },
+        {
+          "id": "11108",
+          "name": "BANZAÏ",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2445,
+          "arrivalAltitude": 2405,
+          "length": 103
+        },
+        {
+          "id": "11116",
+          "name": "CARINA",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 2500,
+          "arrivalAltitude": 2292,
+          "length": 764
+        },
+        {
+          "id": "11120",
+          "name": "FRISBEE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 2470,
+          "arrivalAltitude": 2125,
+          "length": 1364
+        },
+        {
+          "id": "11414",
+          "name": "ROCHETTE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLACK",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "11096",
+          "name": "BUFFALO KIDS",
+          "type": "TRAIL",
+          "trailType": "FUN_ZONE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "11151",
+          "name": "BUFFALO PARK",
+          "type": "TRAIL",
+          "trailType": "FUN_ZONE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 2280,
+          "arrivalAltitude": 2185,
+          "length": 497
+        },
+        {
+          "id": "11231",
+          "name": "COLORADO LUGE",
+          "type": "TRAIL",
+          "trailType": "FUN_ZONE",
+          "trailLevel": "YELLOW",
+          "departureAltitude": 2295,
+          "arrivalAltitude": 1990,
+          "length": 1581
+        },
+        {
+          "id": "71748",
+          "name": "STADE DE LA CHEVRETTE",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "71747",
+          "name": "STADE DES AOLLETS",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "71745",
+          "name": "STADE PLAGNE VILLAGES",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        }
+      ]
+    },
+    {
+      "id": "504",
+      "name": "PLAGNE MONTALBERT.",
+      "lifts": [
+        {
+          "id": "3728",
+          "name": "MONTALBERT.",
+          "type": "SKI_LIFT",
+          "liftType": "GONDOLA",
+          "departureAltitude": 1359,
+          "arrivalAltitude": 1979,
+          "length": 2209
+        },
+        {
+          "id": "11209",
+          "name": "ENVERS",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1795,
+          "arrivalAltitude": 2126,
+          "length": 864
+        },
+        {
+          "id": "11213",
+          "name": "ROCHE",
+          "type": "SKI_LIFT",
+          "liftType": "DETACHABLE_CHAIRLIFT",
+          "departureAltitude": 1522,
+          "arrivalAltitude": 2121,
+          "length": 1867
+        },
+        {
+          "id": "3725",
+          "name": "GENTIL.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1539,
+          "arrivalAltitude": 1612,
+          "length": 265
+        },
+        {
+          "id": "3726",
+          "name": "GRANGETTE",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1356,
+          "arrivalAltitude": 1615,
+          "length": 837
+        },
+        {
+          "id": "3727",
+          "name": "GRENOUILLES.",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1940,
+          "arrivalAltitude": 1969,
+          "length": 293
+        },
+        {
+          "id": "3729",
+          "name": "MONTALBERT..",
+          "type": "SKI_LIFT",
+          "liftType": "SURFACE_LIFT",
+          "departureAltitude": 1360,
+          "arrivalAltitude": 1409,
+          "length": 306
+        }
+      ],
+      "trails": [
+        {
+          "id": "3710",
+          "name": "ECOLE MONTALBERT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 1415,
+          "arrivalAltitude": 1360,
+          "length": 296
+        },
+        {
+          "id": "3719",
+          "name": "PRAJOURDAN",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "GREEN",
+          "departureAltitude": 1970,
+          "arrivalAltitude": 1940,
+          "length": 250
+        },
+        {
+          "id": "3707",
+          "name": "ADRETS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1975,
+          "arrivalAltitude": 1785,
+          "length": 1747
+        },
+        {
+          "id": "3712",
+          "name": "GENTIL",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1615,
+          "arrivalAltitude": 1395,
+          "length": 1757
+        },
+        {
+          "id": "71375",
+          "name": "JARSEY",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1657,
+          "arrivalAltitude": 1630,
+          "length": 159
+        },
+        {
+          "id": "3714",
+          "name": "LUTINS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1775,
+          "arrivalAltitude": 1745,
+          "length": 310
+        },
+        {
+          "id": "12076",
+          "name": "MONTALBERT BAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 0,
+          "arrivalAltitude": 0,
+          "length": 0
+        },
+        {
+          "id": "3716",
+          "name": "MONTALBERT HAUT",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1975,
+          "arrivalAltitude": 1420,
+          "length": 3029
+        },
+        {
+          "id": "3718",
+          "name": "PLANTES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1570,
+          "arrivalAltitude": 1480,
+          "length": 775
+        },
+        {
+          "id": "3720",
+          "name": "PRALIOUD",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1820,
+          "arrivalAltitude": 1640,
+          "length": 1969
+        },
+        {
+          "id": "3721",
+          "name": "PRAVENDUE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "BLUE",
+          "departureAltitude": 1705,
+          "arrivalAltitude": 1410,
+          "length": 2718
+        },
+        {
+          "id": "3708",
+          "name": "BOIS CROIZELIN",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1785,
+          "arrivalAltitude": 1445,
+          "length": 1210
+        },
+        {
+          "id": "3709",
+          "name": "BOVET",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1670,
+          "arrivalAltitude": 1615,
+          "length": 290
+        },
+        {
+          "id": "3711",
+          "name": "FORNELET",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1960,
+          "arrivalAltitude": 1355,
+          "length": 2381
+        },
+        {
+          "id": "12082",
+          "name": "FORNELET BAS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 0,
+          "arrivalAltitude": 1355,
+          "length": 0
+        },
+        {
+          "id": "3713",
+          "name": "GRENOUILLES",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1975,
+          "arrivalAltitude": 1790,
+          "length": 1290
+        },
+        {
+          "id": "3715",
+          "name": "MAIGNONNE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1750,
+          "arrivalAltitude": 1655,
+          "length": 538
+        },
+        {
+          "id": "3717",
+          "name": "MUR DES ADRETS",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1875,
+          "arrivalAltitude": 1795,
+          "length": 260
+        },
+        {
+          "id": "3722",
+          "name": "ROCLISSE",
+          "type": "TRAIL",
+          "trailType": "DOWNHILL_SKIING",
+          "trailLevel": "RED",
+          "departureAltitude": 1655,
+          "arrivalAltitude": 1430,
+          "length": 821
+        },
+        {
+          "id": "3723",
+          "name": "STADE DE MONTALBERT",
+          "type": "TRAIL",
+          "trailType": "UNDEF",
+          "trailLevel": "UNDEF",
+          "departureAltitude": 1575,
+          "arrivalAltitude": 1315,
+          "length": 480
+        }
+      ]
+    }
+  ],
+  "sectors": [
+    "498",
+    "500",
+    "3796",
+    "501",
+    "502",
+    "503",
+    "504",
+    "508",
+    "509",
+    "510",
+    "511",
+    "2798"
+  ],
+  "levels": [
+    "513",
+    "512",
+    "514"
+  ]
+}
