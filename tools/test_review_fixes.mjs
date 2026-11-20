@@ -30,39 +30,43 @@ const assets = [], maps = [];
 class FakeMap {
   constructor(){ this.handlers = {}; this.removed = 0; maps.push(this); }
   addControl(){}
+  addSource(){}
+  addLayer(){}
+  getSource(){return {setData(){}};}
+  easeTo(){}
   once(name, fn){ this.handlers[name] = fn; }
   on(name, fn){ this.handlers[name] = fn; }
   remove(){ this.removed++; }
 }
-const lib = {Map:FakeMap,NavigationControl:class {}};
+const lib = {Map:FakeMap,NavigationControl:class {}, addProtocol(){}};
 const c = vm.createContext({window:{}, document:{
-  createElement(tag){ return {tag,remove(){this.removed=true;}}; },
+  createElement(tag){ return {tag,setAttribute(){},remove(){this.removed=true;}}; },
   head:{appendChild(el){assets.push(el);}}
 }});
 vm.runInContext(fs.readFileSync(new URL('../map3d.js', import.meta.url),'utf8'),c);
 const api = c.window.FC3D, opts = {center:[1,2],zoom:12};
-let pending = api.open({},opts);
+let pending = api.open({appendChild(){}},opts);
 assets[1].onerror();
 await assert.rejects(pending);
 assert.ok(assets.every(a=>a.removed));
-pending = api.open({},opts);
+pending = api.open({appendChild(){}},opts);
 assert.equal(assets.length,4);
 api.close();
 c.window.maplibregl = c.maplibregl = lib;
 assets[2].onload(); assets[3].onload();
 await pending;
 assert.equal(maps.length,0);
-pending = api.open({},opts);
+pending = api.open({appendChild(){}},opts);
 await new Promise(setImmediate);
 api.close();
 await pending;
 assert.equal(maps[0].removed,1);
-pending = api.open({},opts);
+pending = api.open({appendChild(){}},opts);
 await new Promise(setImmediate);
 maps[1].handlers.error({error:new Error('terrain unavailable')});
 await assert.rejects(pending,/terrain unavailable/);
 assert.equal(maps[1].removed,1);
-pending = api.open({},opts);
+pending = api.open({appendChild(){}},opts);
 await new Promise(setImmediate);
 maps[2].handlers.load();
 await pending;

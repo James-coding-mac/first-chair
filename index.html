@@ -74,12 +74,17 @@ button.secondary{background:var(--card-2);color:var(--ink);border:1px solid var(
 .fc-compass{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card);font:700 11px 'Barlow Condensed',sans-serif}
 .fc-compass svg{transition:transform .15s}
 .map-label{width:0!important;height:0!important;margin:0!important;pointer-events:none;background:none;border:0}
-.map-label span{position:absolute;transform:translate(-50%,-50%) rotate(var(--fc-bearing,0deg));font:600 11px Inter,sans-serif;white-space:nowrap;color:inherit;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+.map-label span{position:absolute;transform:translate(-50%,-50%);font:600 11px Inter,sans-serif;white-space:nowrap;color:inherit;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
 .map-label{color:#16283C}
 .map-label.lift{font-style:italic;color:#16283C}.map-label.g-green{color:#1f5c39}.map-label.g-blue{color:#1d4f86}.map-label.g-red{color:#9b2a1f}.map-label.g-offpiste{color:#8a6417}
+.map3d-label{font:600 12px Inter,sans-serif;white-space:nowrap;color:#16283C;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;pointer-events:none}
+.map3d-label.lift{font-style:italic}
 .lift-arrow span{display:block;font-size:12px;line-height:16px;text-align:center;color:#16283C;text-shadow:0 0 2px #fff}
 .steep-legend{background:var(--card);color:var(--ink);padding:4px 8px;border-radius:8px;font-size:11px;box-shadow:var(--shadow);margin-bottom:56px!important}
 .steep-legend span{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 3px 0 6px;vertical-align:-1px}
+.map3d-steep{position:absolute;bottom:12px;left:12px;z-index:2;width:auto!important;box-shadow:var(--shadow)}
+.map3d-steep[aria-pressed="true"]{background:#C0392B;color:#fff}
+.map3d-legend{position:absolute;bottom:60px;left:12px;z-index:2;margin:0!important}
 #map3d{position:absolute;inset:0;z-index:1100;border-radius:inherit;overflow:hidden;background:#DCEAF5}
 .map3d-close{position:absolute;top:var(--space-3);left:var(--space-3);z-index:1200;width:auto!important;border-radius:var(--radius-pill);box-shadow:var(--shadow)}
 .fc-3d{font:700 13px 'Barlow Condensed',sans-serif!important;letter-spacing:.04em}.fc-compass.heading{background:var(--glacier);color:#fff}
@@ -603,19 +608,24 @@ function setupRotation(){
       return a;
     } });
   if(window.FC3D) new ThreeD().addTo(map);   // appears once map3d.js is shipped
+  rotor.onChange(()=>orientLabels());
   rotor.onChange((b, fromUser)=>{
     el.querySelector("svg").style.transform = `rotate(${-b}deg)`;
     if(fromUser && headingMode) stopHeading();
   });
 }
-async function open3D(){
+async function open3D(replayOptions = null){
   const box = document.getElementById("map3d"), close = document.getElementById("map3d-close");
   if(!window.FC3D){ alert("3D view isn't installed yet."); return; }
   box.hidden = false; close.hidden = false;
   const c = map.getCenter();
   try{
     await FC3D.open(box, { center:[c.lat, c.lng], zoom: Math.max(11, map.getZoom() - 0.5),
-      geojson: vecData[resortId] || null, path: null, esc });
+      geojson: vecData[resortId] || null, labels: labelInfo, labelAngle, path: replayOptions ? replayOptions.path : currentRouteLine,
+      bearing: rotor ? rotor.getBearing() : 0, replay: replayOptions, esc });
+    if(FC3D.isOpen() && latestPosition && Date.now() - latestPosition.timestamp < 120000){
+      const p = latestPosition.coords; FC3D.setPosition(p.latitude, p.longitude, p.accuracy);
+    }
   }catch(e){
     box.hidden = true; close.hidden = true;
     alert((e && e.message) || "3D needs a data connection and a phone that supports WebGL.");
@@ -1033,38 +1043,66 @@ function compactPath(points){
 let replay = null;
 function stopReplay(){
   if(!replay) return;
-  cancelAnimationFrame(replay.raf); if(mapReady) map.removeLayer(replay.layer);
+  replay.stop(); if(mapReady && replay.layer) map.removeLayer(replay.layer);
   document.getElementById("replay-card").hidden = true; replay = null;
 }
-function replayDay(entry){
+function replayDay(entry, in3D = false){
   stopReplay();
   if(entry.resort && entry.resort!==resortId && RESORTS[entry.resort]){ document.getElementById("resortsel").value = entry.resort; switchResort(entry.resort); }
   document.querySelector('nav button[data-t="map"]').click();
   if(!mapReady) return;
   const path = (Array.isArray(entry.track?.path) ? entry.track.path : []).filter(p=>Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Number.isFinite(p[3]));
   if(path.length < 2) return;
+  if(in3D){
+    open3D({path, start: update => {
+      startDayReplay(entry, path, update);
+      const active = replay;
+      return () => { if(replay === active) stopReplay(); };
+    }});
+    return;
+  }
+  if(window.FC3D) FC3D.close();
+  document.getElementById('map3d').hidden = true; document.getElementById('map3d-close').hidden = true;
   const layer = L.layerGroup().addTo(map), ll = path.map(p=>[p[0],p[1]]);
   L.polyline(ll, { color:"#16283C", weight:3, opacity:.25 }).addTo(layer);
   const trail = L.polyline([], { color:"#C0392B", weight:4, opacity:.9 }).addTo(layer);
   const dot = L.circleMarker(ll[0], { radius:7, color:"#fff", weight:2, fillColor:"#C0392B", fillOpacity:1 }).addTo(layer);
   map.fitBounds(ll, { padding:[24,24] });
+  let last = -1;
+  startDayReplay(entry, path, (p, i)=>{
+    while(last < i) trail.addLatLng(ll[++last]);
+    dot.setLatLng([p[0],p[1]]);
+  }, layer);
+}
+
+// Both map modes use the same saved timestamps, 120× clock and pause controls.
+function replayClock(entry, path, update){
+  const speed = 120, total = Math.max(0, path[path.length-1][3]), start = new Date(typeof entry.track.t0==="number" && Number.isFinite(new Date(entry.track.t0).valueOf()) ? entry.track.t0 : typeof entry.id==="number" && Number.isFinite(new Date(entry.id).valueOf()) ? entry.id : Date.parse(entry.date+"T09:00"));
+  let i = 0, t = 0, prev = performance.now(), raf = 0, stopped = false;
+  const control = {paused:false, stop(){ stopped = true; cancelAnimationFrame(raf); }};
+  const frame = () => {
+    while(i < path.length-1 && path[i+1][3] <= t) i++;
+    const clock = new Date(start.valueOf() + path[i][3]*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    update(path[i], i, `${clock} · ${Math.round(100*Math.min(t,total)/(total||1))}%${path[i][2]!==null ? ` · ${path[i][2]} m` : ""}`);
+  };
+  const step = now=>{
+    if(stopped) return;
+    if(!control.paused) t += (now - prev) / 1000 * speed;
+    prev = now; frame();
+    if(t < total) raf = requestAnimationFrame(step);
+  };
+  frame();
+  if(total > 0) raf = requestAnimationFrame(step);
+  return control;
+}
+function startDayReplay(entry, path, update, layer = null){
+  stopReplay();
   const card = document.getElementById("replay-card"), label = document.getElementById("replay-label");
   card.hidden = false;
-  const speed = 120, total = path[path.length-1][3], start = new Date(typeof entry.track.t0==="number" && Number.isFinite(new Date(entry.track.t0).valueOf()) ? entry.track.t0 : typeof entry.id==="number" && Number.isFinite(new Date(entry.id).valueOf()) ? entry.id : Date.parse(entry.date+"T09:00"));
-  let i = 0, t = 0, prev = performance.now();
-  replay = { layer, raf:0, paused:false };
-  const step = now=>{
-    if(!replay) return;
-    if(!replay.paused) t += (now - prev) / 1000 * speed;
-    prev = now;
-    while(i < path.length-1 && path[i+1][3] <= t){ i++; trail.addLatLng(ll[i]); }
-    dot.setLatLng(ll[i]);
-    const clock = new Date(start.valueOf() + path[i][3]*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
-    label.textContent = `${clock} · ${Math.round(100*Math.min(t,total)/(total||1))}%${path[i][2]!==null ? ` · ${path[i][2]} m` : ""}`;
-    if(t < total) replay.raf = requestAnimationFrame(step);
-  };
-  replay.raf = requestAnimationFrame(step);
-  document.getElementById("replay-pause").onclick = e=>{ if(!replay) return; replay.paused = !replay.paused; e.target.textContent = replay.paused ? "▶ Play" : "⏸ Pause"; };
+  replay = replayClock(entry, path, (p, i, text)=>{update(p, i); label.textContent = text;});
+  replay.layer = layer;
+  const pause = document.getElementById("replay-pause"); pause.textContent = "⏸ Pause";
+  pause.onclick = e=>{ if(!replay) return; replay.paused = !replay.paused; e.target.textContent = replay.paused ? "▶ Play" : "⏸ Pause"; };
   document.getElementById("replay-stop").onclick = stopReplay;
 }
 
@@ -1193,8 +1231,23 @@ function syncLabels(){
     if(z < 15 || seen.has(x.kind+x.name)) continue;
     seen.add(x.kind+x.name); n++;
     L.marker(x.mid, { interactive:false, keyboard:false,
-      icon: L.divIcon({ className:"map-label "+(x.kind==="lift"?"lift":"g-"+x.grade), iconSize:[0,0], html:`<span>${esc(x.name)}</span>` }) }).addTo(labelGroup);
+      icon: L.divIcon({ className:"map-label "+(x.kind==="lift"?"lift":"g-"+x.grade), iconSize:[0,0], html:`<span data-b="${x.bearing.toFixed(1)}">${esc(x.name)}</span>` }) }).addTo(labelGroup);
   }
+  orientLabels();
+}
+/* labels lie along their line and always read left-to-right, whatever the map rotation */
+function labelAngle(lineBearing, mapBearing){
+  let a = ((lineBearing - 90 - mapBearing) % 360 + 540) % 360 - 180;   // text direction on screen, -180..180
+  if(a > 90) a -= 180; else if(a <= -90) a += 180;                       // never upside down
+  return a;
+}
+function orientLabels(){
+  if(!labelGroup) return;
+  const b = rotor ? rotor.getBearing() : 0;
+  document.querySelectorAll(".map-label span[data-b]").forEach(sp=>{
+    // the label sits inside the rotated map layer (rotate(-b)), so add b back
+    sp.style.transform = `translate(-50%,-50%) rotate(${(labelAngle(Number(sp.dataset.b), b) + b).toFixed(1)}deg)`;
+  });
 }
 
 function showVectors(){
@@ -1241,11 +1294,12 @@ function showVectors(){
 /* Routing is transient; only the difficulty preference is persisted. */
 let routePref=store.get('fc_route_pref','all');
 if(!['all','red','blue','green'].includes(routePref)) routePref='all';
-let routeGeneration=0, routeLayer=null, routeDestination=null, latestPosition=null;
+let routeGeneration=0, routeLayer=null, routeDestination=null, latestPosition=null, currentRouteLine=null;
 const routeCache=new Map();
 function clearRoute(){
   routeGeneration++;
-  routeDestination=null;
+  routeDestination=null; currentRouteLine=null;
+  if(window.FC3D) FC3D.setPath(null);
   if(routeLayer){routeLayer.remove();routeLayer=null;}
   document.getElementById('route-result').hidden=true;
 }
@@ -1393,6 +1447,8 @@ async function takeRoute(destination){
       if(mapReady) L.polyline(line,{pane:'routes',color:kind==='lift'?'#16283C':'#3D7FB8',weight:6,opacity:.95,
         dashArray:kind==='lift'?'10 7':null}).addTo(routeLayer);
     }
+    currentRouteLine = bounds.map(p=>p.slice());
+    if(window.FC3D) FC3D.setPath(currentRouteLine);
     if(mapReady){
       [start,end].forEach((n,i)=>{
         const at=graph.nodes[n].slice(0,2);bounds.push(at);
@@ -1662,6 +1718,7 @@ function onGeoErr(e){
 }
 function onPos(pos){
   latestPosition=pos;
+  if(window.FC3D?.isOpen()) FC3D.setPosition(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
   if(sosOpen) renderSOS();
   const c=pos.coords, here=[c.latitude, c.longitude];
   if(mapReady){
@@ -2007,14 +2064,15 @@ function renderLog(){
       ${Array.isArray(entry.track?.rides)&&entry.track.rides.some(r=>r&&r.name)?`<p class="muted">Lifts: ${entry.track.rides.filter(r=>r && typeof r==="object" && !Array.isArray(r)).map(r=>r&&r.name?esc(String(r.name)):"?").join(" → ")}</p>`:''}
       ${photoThumbs(entry)}
       ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
-      ${Array.isArray(entry.track?.path)&&entry.track.path.length>1?`<button class="secondary sharebtn replaybtn">▶ Replay day on map</button>`:''}
+      ${Array.isArray(entry.track?.path)&&entry.track.path.length>1?`<button class="secondary sharebtn replaybtn">▶ Replay day on map</button><button class="secondary replay3dbtn">▶ Replay in 3D</button>`:''}
       ${Array.isArray(entry.track?.runs)?entry.track.runs.filter(r=>r && typeof r==="object" && !Array.isArray(r)).map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h${Array.isArray(run.pistes)&&run.pistes.length?' · '+run.pistes.join(', '):''}`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
-    const share = card.querySelector(".sharebtn");
+    const share = card.querySelector(".sharebtn:not(.replaybtn)");
     if(share) share.addEventListener("click", ()=>shareDayCard(entry));
     card.querySelectorAll(".logphotos img").forEach(img=>img.addEventListener("click", ()=>openPhoto(Number(img.dataset.id))));
     const rep = card.querySelector(".replaybtn");
     if(rep) rep.addEventListener("click", ()=>replayDay(entry));
+    card.querySelector(".replay3dbtn")?.addEventListener("click", ()=>replayDay(entry, true));
     card.querySelector(".del").addEventListener("click", ()=>{
       if(!confirm("Delete this day?")) return;
       daylog = daylog.filter(x=>x.id!==entry.id);

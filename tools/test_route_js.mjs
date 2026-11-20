@@ -69,7 +69,9 @@ const el=id=>{
  return elements.get(id);
 };
 let resolveFetch, requests=0;
-const ui=vm.createContext({FCRoute:api,Map,Set,Date,Number,Math,
+let path3D;
+const FC3D={setPath(path){path3D=path;}};
+const ui=vm.createContext({FCRoute:api,Map,Set,Date,Number,Math,window:{FC3D},FC3D,
  store:{get:()=> 'all',set(){}},R:{graphData:'local.json',base:{name:'<base>',at:[0,0]}},
  document:{getElementById:el,querySelector:()=>({click(){}})},mapReady:false,
  esc:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),diffSym:()=> '●',
@@ -83,6 +85,9 @@ resolveFetch({ok:true,json:async()=>fixture});await pending;
 assert.match(el('route-details').innerHTML,/From &lt;base&gt;/);
 assert.match(el('route-details').innerHTML,/&lt;destination&gt;/);
 assert.match(el('route-details').innerHTML,/Map unavailable/);
+assert.equal(path3D.length,2,'route geometry forwarded to 3D');
+assert.equal(path3D[1][1],.001);
+ui.clearRoute();assert.equal(path3D,null,'clear also clears 3D');
 vm.runInContext('latestPosition={timestamp:Date.now(),coords:{latitude:0,longitude:.002,accuracy:20}}',ui);
 await ui.takeRoute(destination);
 assert.match(el('route-details').innerHTML,/From your position/);

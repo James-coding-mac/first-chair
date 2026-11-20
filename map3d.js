@@ -11,6 +11,70 @@
   let currentContainer = null;
   let isOpenFlag = false;
   let generation = 0, cancelLoad = null;
+  let position = null, path = null, stopAnimation = null;
+  let protocolRegistered = false;
+  const tileRequests = new Set();
+  const empty = () => ({ type:'FeatureCollection', features:[] });
+  const feature = (type, coordinates) => ({type:'Feature', properties:{}, geometry:{type, coordinates}});
+
+  function registerSteepness() {
+    if(protocolRegistered) return;
+    maplibregl.addProtocol('steep', async (params, controller) => {
+      const match = /^steep:\/\/(\d+)\/(\d+)\/(\d+)\.png$/.exec(params.url);
+      if(!match) throw new Error('Invalid terrain tile');
+      const [, z, x, y] = match.map(Number);
+      tileRequests.add(controller);
+      const canvas = document.createElement('canvas'); canvas.width = canvas.height = 256;
+      const ctx = canvas.getContext('2d', {willReadFrequently:true});
+      let bitmap;
+      try {
+        try {
+          const response = await fetch(`https://elevation-tiles-prod.s3.amazonaws.com/terrarium/${z}/${x}/${y}.png`, {signal:controller.signal});
+          if(!response.ok) throw new Error('Terrain unavailable');
+          bitmap = await createImageBitmap(await response.blob());
+          if(controller.signal.aborted) throw new Error('Cancelled');
+          ctx.drawImage(bitmap, 0, 0);
+          const elev = FCSteep.decode(ctx.getImageData(0, 0, 256, 256).data);
+          const mpp = 156543.034 * Math.cos(FCSteep.tileLat(y + 0.5, z) * Math.PI / 180) / 2 ** z;
+          const slopes = FCSteep.slopes(elev, mpp), out = ctx.createImageData(256, 256);
+          for(let i = 0; i < slopes.length; i++) {
+            const rgb = FCSteep.band(slopes[i]);
+            if(rgb) out.data.set([...rgb, 255], i * 4);
+          }
+          ctx.putImageData(out, 0, 0);
+        } catch(error) {
+          if(controller.signal.aborted) throw error;
+          ctx.fillStyle = '#E5E7EB'; ctx.fillRect(0, 0, 256, 256);
+          ctx.strokeStyle = '#9CA3AF'; ctx.lineWidth = 2; ctx.beginPath();
+          for(let x = -256; x < 256; x += 16){ ctx.moveTo(x, 0); ctx.lineTo(x + 256, 256); }
+          ctx.stroke();
+        }
+        const blob = await new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('PNG encoding failed')), 'image/png'));
+        const data = await blob.arrayBuffer();
+        if(controller.signal.aborted) throw new Error('Cancelled');
+        return {data};
+      } finally { if(bitmap) bitmap.close(); tileRequests.delete(controller); }
+    });
+    protocolRegistered = true;
+  }
+
+  function drawPosition() {
+    if(!isOpenFlag || !position) return;
+    const [lat, lon, accuracy] = position, ring = [], rad = Math.PI / 180;
+    const distance = accuracy / 6371000, phi = lat * rad;
+    for(let i = 0; i < 48; i++) {
+      const bearing = i * 2 * Math.PI / 48;
+      const p = Math.asin(Math.sin(phi)*Math.cos(distance) + Math.cos(phi)*Math.sin(distance)*Math.cos(bearing));
+      const l = lon*rad + Math.atan2(Math.sin(bearing)*Math.sin(distance)*Math.cos(phi), Math.cos(distance)-Math.sin(phi)*Math.sin(p));
+      ring.push([l/rad, p/rad]);
+    }
+    ring.push(ring[0]);
+    mapInstance.getSource('accuracy').setData(feature('Polygon', [ring]));
+    mapInstance.getSource('position').setData(feature('Point', [lon, lat]));
+  }
+  function drawPath() {
+    if(isOpenFlag) mapInstance.getSource('path').setData(path && path.length > 1 ? feature('LineString', path.map(p => [p[1],p[0]])) : empty());
+  }
 
   async function ensureMapLibre() {
     if (window.maplibregl && !assetsFailed) return;
@@ -62,10 +126,33 @@
   const widthInterp = ['interpolate', ['linear'], ['zoom'], 12, 2, 16, 5];
   const gradeLabels = { green: 'Green', blue: 'Blue', red: 'Red', black: 'Black', offpiste: 'Off-piste', lift: 'Lift', unknown: 'Unknown' };
 
+  /* piste/lift names lying flat along their line on the terrain, re-angled on rotate so they always read
+     left-to-right (HTML markers: no font server needed). opts.labels from index.html buildLabelInfo(). */
+  function addLabels(instance, opts){
+    if(!Array.isArray(opts.labels) || typeof opts.labelAngle !== 'function') return;
+    const seen = new Set(), items = [];
+    for(const x of opts.labels){
+      if(items.length >= 120) break;
+      if(!x || !x.name || !Array.isArray(x.mid) || !Number.isFinite(x.bearing) || seen.has(x.kind + x.name)) continue;
+      seen.add(x.kind + x.name);
+      const el = document.createElement('div');
+      el.className = 'map3d-label' + (x.kind === 'lift' ? ' lift' : '');
+      el.textContent = x.name;                       // textContent: OSM names never become HTML
+      const m = new maplibregl.Marker({ element: el, rotationAlignment: 'map', pitchAlignment: 'map' })
+        .setLngLat([x.mid[1], x.mid[0]]).addTo(instance);   // labelInfo mid is [lat, lon]
+      items.push({ m, el, b: x.bearing });
+    }
+    const orient = () => { const mb = instance.getBearing(); for(const it of items) it.m.setRotation(opts.labelAngle(it.b, mb) + mb); };
+    const zoomVis = () => { const on = instance.getZoom() >= 13; for(const it of items) it.el.style.display = on ? '' : 'none'; };
+    orient(); zoomVis();
+    instance.on('rotate', orient); instance.on('zoom', zoomVis);
+  }
+
   window.FC3D = {
     async open(container, opts) {
       this.close();
       const gen = generation;
+      path = opts.path || null;
       let instance = null;
       try {
         await ensureMapLibre();
@@ -80,8 +167,8 @@
           style: baseStyle,
           center: [lon, lat],
           zoom: opts.zoom,
-          pitch: 62,
-          bearing: -20,
+          pitch: 0,
+          bearing: opts.bearing || 0,
           maxPitch: 80,
           antialias: true
         });
@@ -121,12 +208,43 @@
           });
         }
 
-        if (opts.path && opts.path.length > 1) {
-          instance.addSource('path', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: opts.path.map(p => [p[1], p[0]]) } } });
-          instance.addLayer({ id: 'path-line', type: 'line', source: 'path', paint: { 'line-color': '#C0392B', 'line-width': 4 } });
-        }
-
+        registerSteepness();
+        instance.addSource('steepness', {type:'raster', tiles:['steep://{z}/{x}/{y}.png'], tileSize:256, maxzoom:14});
+        instance.addLayer({id:'steepness', type:'raster', source:'steepness', layout:{visibility:'none'}, paint:{'raster-opacity':0.5}}, opts.geojson ? 'piste-fill' : undefined);
+        const toggle = document.createElement('button');
+        toggle.className = 'secondary map3d-steep'; toggle.textContent = '⚠ Avalanche terrain: off';
+        toggle.setAttribute('aria-pressed', 'false');
+        toggle.title = '30–35° yellow · 35–40° orange · 40–45° red · 45°+ purple. Grey hatch: terrain unavailable.';
+        let steep = false;
+        const legend = document.createElement('div');
+        legend.className = 'steep-legend map3d-legend'; legend.hidden = true;
+        legend.innerHTML = '<span style="background:#F1C40F"></span>30–35° <span style="background:#E67E22"></span>35–40° <span style="background:#C0392B"></span>40–45° <span style="background:#7B4FB8"></span>45°+<br>grey hatch = no data (needs signal)';
+        toggle.onclick = () => {
+          steep = !steep; toggle.setAttribute('aria-pressed', String(steep));
+          toggle.textContent = '⚠ Avalanche terrain: ' + (steep ? 'on' : 'off');
+          legend.hidden = !steep;
+          instance.setLayoutProperty('steepness', 'visibility', steep ? 'visible' : 'none');
+        };
+        container.appendChild(toggle); container.appendChild(legend);
+        for(const id of ['path', 'accuracy', 'position', 'replay']) instance.addSource(id, {type:'geojson', data:empty()});
+        instance.addLayer({id:'path-line', type:'line', source:'path', paint:{'line-color':'#C0392B','line-width':4}});
+        instance.addLayer({id:'accuracy-fill', type:'fill', source:'accuracy', paint:{'fill-color':'#3D7FB8','fill-opacity':0.12}});
+        instance.addLayer({id:'accuracy-line', type:'line', source:'accuracy', paint:{'line-color':'#3D7FB8','line-width':1}});
+        for(const id of ['position', 'replay']) instance.addLayer({id:id+'-dot', type:'circle', source:id, paint:{'circle-radius':7,'circle-color':id === 'position' ? '#3D7FB8' : '#C0392B','circle-stroke-color':'#fff','circle-stroke-width':2}});
         isOpenFlag = true;
+        drawPath(); drawPosition();
+        addLabels(instance, opts);
+        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if(opts.replay) {
+          const coords = opts.replay.path.map(p => [p[1],p[0]]);
+          const bounds = coords.reduce((b,p) => b.extend(p), new maplibregl.LngLatBounds(coords[0],coords[0]));
+          instance.fitBounds(bounds, {padding:48, pitch:60, duration:reduced ? 0 : 800});
+          stopAnimation = opts.replay.start(p => {
+            if(gen === generation && isOpenFlag) instance.getSource('replay').setData(feature('Point', [p[1],p[0]]));
+          });
+        } else if(reduced) instance.jumpTo({pitch:60});
+        else instance.easeTo({pitch:60, duration:800});
+
       } catch(error) {
         if(gen !== generation) return;
         this.close();
@@ -136,6 +254,10 @@
 
     close() {
       generation++;
+      if(stopAnimation){ const stop = stopAnimation; stopAnimation = null; stop(); }
+      for(const controller of tileRequests) controller.abort();
+      tileRequests.clear();
+      position = null; path = null;
       if(cancelLoad){ cancelLoad(); cancelLoad = null; }
       if (mapInstance) {
         try { mapInstance.remove(); } catch (_) {}
@@ -146,6 +268,15 @@
       isOpenFlag = false;
     },
 
+    setPosition(lat, lon, accuracyM) {
+      if(!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat)>90 || Math.abs(lon)>180) return;
+      position = [lat, lon, Number.isFinite(accuracyM) ? Math.max(0, accuracyM) : 20];
+      drawPosition();
+    },
+    setPath(value) {
+      path = Array.isArray(value) ? value.filter(p => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1])) : null;
+      drawPath();
+    },
     isOpen() {
       return isOpenFlag;
     }
