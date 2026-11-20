@@ -1,6 +1,6 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v7";
+const VERSION = "v8";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
 const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
 const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)
@@ -87,6 +87,17 @@ self.addEventListener("fetch", event => {
           return res;
         }catch(e){ return hit || Response.error(); }
       })
+    );
+    return;
+  }
+
+  // Live lift/piste status: network-first (it changes all day), last copy when offline.
+  if(url.origin === self.location.origin && url.pathname.includes("/data/status/")){
+    event.respondWith(
+      fetch(req).then(res => {
+        if(res.ok){ const copy = res.clone(); caches.open(SHELL).then(c => c.put(req, copy)); }
+        return res;
+      }).catch(() => caches.match(req).then(hit => hit || Response.error()))
     );
     return;
   }

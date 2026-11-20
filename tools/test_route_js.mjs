@@ -73,6 +73,8 @@ const ui=vm.createContext({FCRoute:api,Map,Set,Date,Number,Math,
  store:{get:()=> 'all',set(){}},R:{graphData:'local.json',base:{name:'<base>',at:[0,0]}},
  document:{getElementById:el,querySelector:()=>({click(){}})},mapReady:false,
  esc:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),diffSym:()=> '●',
+ // lift/piste status helpers live outside this slice; stub them as "no live status"
+ statusFresh:()=>false,routeClosures:()=>({blocked:null,liftAt:{}}),coordKey:(a,b)=>a+','+b,statusData:null,
  fetch:()=>{requests++;return new Promise(r=>{resolveFetch=r;});}});
 vm.runInContext(uiSource,ui);
 const destination={name:'<destination>',at:[0,.001]};

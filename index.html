@@ -98,6 +98,13 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 .diff{display:inline-flex;align-items:center;justify-content:center;font-size:20px;width:32px;min-height:32px;flex-shrink:0;line-height:1;letter-spacing:-3px}
 .diff.green{color:var(--green)}.diff.blue{color:var(--blue)}.diff.red{color:var(--red)}.diff.black,.diff.dblack{color:var(--black)}.diff.offpiste{color:var(--gold)}
 .unv{display:inline-block;padding:0 var(--space-1);margin-left:var(--space-1);border:1px solid var(--gold);border-radius:var(--radius-pill);font:600 9px/1.6 var(--font-body);letter-spacing:.04em;color:var(--gold);vertical-align:1px}
+.stag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:999px;font-size:10.5px;font-weight:600;vertical-align:1px}
+.stag.open{background:rgba(46,125,79,.14);color:#2E7D4F}.stag.closed{background:rgba(192,57,43,.12);color:#C0392B}
+#status-card .st-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+#status-card .st-row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)}
+#status-card .st-name{font-weight:600;min-width:9em}#status-card .st-val{font-variant-numeric:tabular-nums}
+#status-card .st-pistes{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+#status-card .st-note{margin-top:6px;font-size:12px}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -159,6 +166,7 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <button id="route-home" class="secondary">Home · base</button>
     <div id="route-chips" class="chips" aria-label="Maximum route difficulty"></div>
   </div>
+  <div id="status-card" class="card" hidden></div>
   <div id="route-result" class="card" hidden>
     <div id="route-details" role="status" aria-live="polite"></div>
     <button id="route-clear" class="secondary">Clear route</button>
@@ -481,8 +489,98 @@ function gradeLabel(g){
   const d = DIFF.eu.find(x=>x.v===g);
   return d ? d.label+" piste" : "Piste (grade not in OSM)";
 }
+/* =========================================================
+   LIFT / PISTE STATUS  (data/status/*.json, written by the scraper's GitHub Action)
+   ========================================================= */
+let statusData = null, statusFor = null;
+const STATUS_FRESH_MS = 3*3600*1000;   // older than this: shown, but not used to block routes
+function statusAgeMs(){ const t = statusData && Date.parse(statusData.fetched_at); return Number.isFinite(t) ? Date.now()-t : Infinity; }
+function statusLive(){ return !!statusData && statusData.season_open===true; }
+function statusFresh(){ return statusLive() && statusAgeMs() < STATUS_FRESH_MS; }
+function liftStatus(m, n){ return (statusData && statusData.lifts && statusData.lifts[m+"|"+n]) || "unknown"; }
+function liftInfo(m, n){ return (statusData && statusData.lift_info && statusData.lift_info[m+"|"+n]) || {}; }
+function runStatus(name){ return (statusData && statusData.pistes && statusData.pistes[name]) || "unknown"; }
+function runInfo(name){ return (statusData && statusData.piste_info && statusData.piste_info[name]) || {}; }
+function ageText(ms){
+  const m = Math.max(0, Math.round(ms/60000));
+  return m<60 ? m+" min ago" : m<1440 ? Math.round(m/60)+" h ago" : Math.round(m/1440)+" d ago";
+}
+function statusLine(st, info){
+  if(!statusLive() || st==="unknown") return "";
+  const label = st==="open" ? "Open" : st==="scheduled" ? "Opening later" : "Closed";
+  const closes = info.closes && st==="open" ? ` · closes ${esc(info.closes)}` : "";
+  const msg = info.message ? `<br><em>${esc(info.message)}</em>` : "";
+  return `<br><strong>${label}</strong>${closes}${msg}`;
+}
+function runStatusTag(name){
+  if(!statusLive()) return "";
+  const st = runStatus(name), info = runInfo(name);
+  if(st==="unknown") return "";
+  const groomed = info.grooming && /GROOM/.test(info.grooming) && st==="open" ? " · groomed" : "";
+  return `<span class="stag ${st==="open"?"open":"closed"}">${st==="open"?"Open":"Closed"}${groomed}</span>`;
+}
+function renderStatusCard(){
+  const el = document.getElementById("status-card");
+  if(!R.statusData || !statusData){ el.hidden = true; return; }
+  el.hidden = false;
+  const s = statusData.summary || {}, age = statusAgeMs();
+  const sector = (id, label) => {
+    const x = s[id] || {}, p = x.pistes || {};
+    const pistes = ["green","blue","red","black"].map(c => (p[c] && p[c][1]) ? `${esc(diffSym(c))} ${Number(p[c][0])||0}/${Number(p[c][1])}` : "").filter(Boolean).join(" ");
+    return `<div class="st-row"><span class="st-name">${esc(label)}</span><span class="st-val">Lifts ${Number(x.lifts_open)||0}/${Number(x.lifts_total)||0}</span><span class="st-pistes">${pistes}</span></div>`;
+  };
+  const head = statusData.season_open===false
+    ? "Season not open yet: everything shows closed."
+    : statusFresh() ? "Live from the resort’s lift system. Routes avoid closed lifts and pistes."
+    : "Status may be out of date, so routes ignore it.";
+  el.innerHTML = `<div class="st-head"><span class="label">Lifts &amp; pistes</span><span class="muted">as of ${Number.isFinite(age)?esc(ageText(age)):"—"}</span></div>`+
+    sector("LP","La Plagne") + sector("LA","Les Arcs / Peisey") + `<p class="muted st-note">${esc(head)}</p>`;
+}
+function loadStatus(){
+  if(!R.statusData){ statusData = null; renderStatusCard(); return; }
+  const forId = resortId;
+  fetch(R.statusData, { cache:"no-cache" }).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d=>{
+      if(resortId!==forId || !d || typeof d!=="object") return;
+      statusData = d; statusFor = forId;
+      renderStatusCard(); renderRuns();
+      if(mapReady) vecGroup.eachLayer(l=>l.setStyle && l.setStyle(vecStyle));
+    })
+    .catch(()=>{ if(resortId===forId){ statusData = null; renderStatusCard(); } });
+}
+setInterval(()=>{ if(!document.hidden && R.statusData) loadStatus(); }, 10*60*1000);
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && R.statusData) loadStatus(); });
+
+/* map route-graph edges to status: lifts by their end coordinates, pistes by OSM name */
+function coordKey(lat, lon){ return lat.toFixed(4)+","+lon.toFixed(4); }
+function routeClosures(graph){
+  if(!statusFresh()) return { blocked:null, liftAt:{} };
+  const liftAt = {};
+  (R.lifts||[]).forEach(l=>{ const k = l.mtn+"|"+l.name; liftAt[coordKey(...l.bottom)] = k; liftAt[coordKey(...l.top)] = k; });
+  const baseName = n => n.replace(/\s*(\([^)]*\))?\s*(#\d+)?\s*$/, "");
+  const runSt = {};
+  (R.runs||[]).forEach(r=>{ const b = baseName(r.name); (runSt[b] = runSt[b] || []).push(runStatus(r.name)); });
+  const blocked = new Set();
+  graph.edges.forEach((e,i)=>{
+    const kind = graph.kinds[e[2]];
+    if(kind==="lift" && e[7].length>=2){
+      const k = liftAt[coordKey(e[7][0], e[7][1])];
+      if(k && statusData.lifts[k]==="closed") blocked.add(i);
+    } else if(kind==="piste"){
+      const sts = runSt[graph.names[e[4]]];
+      if(sts && sts.every(s=>s==="closed")) blocked.add(i);   // only if every run with that name is closed
+    }
+  });
+  return { blocked, liftAt };
+}
+
 function vecStyle(f){
-  if(f.properties.k==="lift") return { color:"#16283C", weight:1.6, opacity:.9 };
+  if(f.properties.k==="lift"){
+    const st = statusLive() ? liftStatus(f.properties.m, f.properties.n) : "unknown";
+    return st==="closed" ? { color:"#C0392B", weight:1.6, opacity:.85, dashArray:"4 5" }
+         : st==="open"   ? { color:"#16283C", weight:2.4, opacity:1 }
+         : { color:"#16283C", weight:1.6, opacity:.9 };
+  }
   const c = GRADE_COLOUR[f.properties.g] || GRADE_COLOUR.unknown;
   if(f.geometry.type==="Polygon") return { color:c, weight:1, opacity:.5, fillColor:c, fillOpacity:.12 };
   return f.properties.g==="offpiste"
@@ -491,7 +589,7 @@ function vecStyle(f){
 }
 function vecPopup(f){
   const p = f.properties;
-  if(p.k==="lift") return `<strong>${esc(p.n || "Unnamed lift")}</strong><br>${esc(p.t)}`;
+  if(p.k==="lift") return `<strong>${esc(p.n || "Unnamed lift")}</strong><br>${esc(p.t)}${statusLine(liftStatus(p.m,p.n), liftInfo(p.m,p.n))}`;
   return `<strong>${esc(p.n || "Unnamed piste")}</strong><br>${esc(gradeLabel(p.g))}`;
 }
 function syncEatLayer(){
@@ -593,9 +691,12 @@ async function takeRoute(destination){
     const end=destination.at?router.nearestNode(...destination.at,300):null;
     const heading=`<h2>${esc(destination.name)}</h2><p>${esc(origin)}</p>`;
     if(start===null || end===null){body.innerHTML=heading+`<p>${start===null?'Base':'Destination'} has no graph node within 300 m.</p>`;return;}
-    const result=router.route(start,end,{maxGrade:routePref});
+    const {blocked, liftAt}=routeClosures(graph);
+    const result=router.route(start,end,{maxGrade:routePref,blocked});
     if(!result){
-      const harder=routePref!=='all' && router.route(start,end,{});
+      const open=blocked && router.route(start,end,{maxGrade:routePref});
+      const harder=routePref!=='all' && router.route(start,end,{blocked});
+      if(open){body.innerHTML=heading+'<p>No route with everything that’s open right now (a lift or piste on the way is closed).</p>';return;}
       body.innerHTML=heading+`<p>${harder?'No route with this filter — try a harder filter':'Not connected in the OSM data'}</p>`;return;
     }
     const groups=[], bounds=[];
@@ -606,7 +707,10 @@ async function takeRoute(destination){
     for(const id of result.edges){
       const e=graph.edges[id], kind=graph.kinds[e[2]], name=graph.names[e[4]], grade=graph.grades[e[3]];
       let group=groups[groups.length-1];
-      if(!group || group.kind!==kind || group.name!==name){group={kind,name,grades:new Set(),time:0,length:0};groups.push(group);}
+      if(!group || group.kind!==kind || group.name!==name){
+        group={kind,name,grades:new Set(),time:0,length:0,startAt:groups.reduce((t,g)=>t+g.time,0)};groups.push(group);
+        if(kind==='lift' && e[7].length>=2) group.key=liftAt[coordKey(e[7][0],e[7][1])];
+      }
       if(kind==='piste') group.grades.add(grade);
       group.time+=e[6];group.length+=e[5];
       const line=[];
@@ -625,14 +729,28 @@ async function takeRoute(destination){
       map.invalidateSize();map.fitBounds(bounds,{padding:[24,24],maxZoom:16});
     }
     const minutes=s=>`${Math.max(1,Math.round(s/60))} min`;
+    // last-lift check: would we reach a lift after it closes today?
+    const warnings=[];
+    if(statusFresh()){
+      const now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+      groups.filter(g=>g.kind==='lift' && g.key).forEach(g=>{
+        const closes=(statusData.lift_info[g.key]||{}).closes;
+        const m=/^(\d{2}):(\d{2})$/.exec(closes||'');
+        if(!m) return;
+        const arrive=nowMin+g.startAt/60, close=+m[1]*60+ +m[2];
+        if(arrive>close-10) warnings.push(`${g.name} closes ${closes} — you'd get there around ${String(Math.floor(arrive/60)%24).padStart(2,'0')}:${String(Math.round(arrive%60)).padStart(2,'0')}.`);
+      });
+    }
     body.innerHTML=heading+`<p><strong>${result.time?minutes(result.time):'0 min'} estimated total</strong></p>`+
+      warnings.map(w=>`<p class="warn">⚠ ${esc(w)}</p>`).join('')+
+      (statusFresh()?'<p class="muted">Avoids lifts and pistes reported closed.</p>':'')+
       (groups.length?'<ol>'+groups.map(g=>{
         const grades=[...g.grades].sort((a,b)=>graph.grades.indexOf(a)-graph.grades.indexOf(b));
         const label=g.kind==='walk'?`Walk ${Math.round(g.length)} m`:g.kind==='lift'?`▲ ${g.name||'Unnamed lift'}`:
           `${diffSym(grades[grades.length-1])} ${g.name||'Unnamed piste'} (${grades.join('/')})`;
         return `<li><span class="route-dot" aria-hidden="true">${g.kind==='lift'?'▲':g.kind==='walk'?'↗':esc(diffSym(grades[grades.length-1]))}</span><span class="route-label">${esc(label)}</span>${g.kind==='walk'?'':`<span class="route-time">${minutes(g.time)}</span>`}</li>`;
       }).join('')+'</ol>':'<p>Start and destination snap to the same graph node.</p>')+
-      '<p class="muted">Unverified OSM route; unknown grades are allowed with every filter. Times exclude distances to snapped nodes and do not reflect current closures.</p>'+
+      '<p class="muted">Unverified OSM route; unknown grades are allowed with every filter. Times exclude distances to snapped nodes.</p>'+
       (mapReady?'':'<p class="muted">Map unavailable; route steps are available above.</p>');
   }catch(e){if(gen===routeGeneration) body.textContent="Couldn't load offline routing. Open the app once with signal to save the graph, then try again.";}
 }
@@ -985,7 +1103,7 @@ function renderRuns(){
     row.innerHTML =
       `<div class="rowhead">
         <span class="diff ${r.diff}">${diffSym(r.diff)}</span>
-        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}</div></span>
+        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}${runStatusTag(r.name)}</div></span>
         <button type="button" aria-label="Favourite ${esc(r.name)}" aria-pressed="${favs[resortId].includes(r.name)}" class="fav ${favs[resortId].includes(r.name)?"on":""}">★</button>
       </div>
       <div class="rowbody">
@@ -1194,7 +1312,7 @@ function switchResort(id){
   setRunsNote();
   buildMtnChips(); buildDiffChips();
   renderRuns(); renderEats(); renderLog();
-  setupRouting(); recenterMap(); renderWeather();
+  setupRouting(); recenterMap(); renderWeather(); loadStatus();
 }
 
 /* =========================================================
@@ -1226,6 +1344,7 @@ renderRuns();
 renderEats();
 renderLog();
 renderWeather();
+loadStatus();
 restoreTracking();
 
 /* register the service worker so the app shell works offline */

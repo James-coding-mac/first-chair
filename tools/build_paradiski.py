@@ -220,7 +220,7 @@ def main():
             continue
         for p in pts:
             ski_pts.add(p)
-        f = feature(pts, {"k": "lift", "n": t.get("name", ""), "t": LIFT_TYPES[kind]})
+        f = feature(pts, {"k": "lift", "n": t.get("name", ""), "t": LIFT_TYPES[kind], "m": sid})
         if f:
             map_lifts.append(f)
         if not t.get("name"):
@@ -410,6 +410,7 @@ def main():
         "map": {"center": r5(base_pt), "zoom": 13},
         "mapData": "data/build/paradiski-map.geojson",
         "graphData": "data/build/paradiski-graph.json",
+        "statusData": "data/status/paradiski.json",   # written by tools/scrape_status.py (GitHub Action)
         "base": {"name": BASE_NAME, "at": r5(base_pt), "osm": "%s/%d" % (base[0]["type"], base[0]["id"])},
         "mountains": [{"id": "LP", "name": "La Plagne"}, {"id": "LA", "name": "Les Arcs / Peisey"}],
         "dataNote": "Generated from OpenStreetMap (© OSM contributors, ODbL). NOT yet checked against "

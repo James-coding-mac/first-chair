@@ -37,7 +37,8 @@
       });
       return best;
     }
-    function route(from,to,{maxGrade=null}={}){
+    // blocked: optional Set of edge ids to skip (e.g. lifts/pistes reported closed)
+    function route(from,to,{maxGrade=null,blocked=null}={}){
       if(maxGrade==='all') maxGrade=null;
       const ranks=['green','blue','red','black'];
       if(maxGrade!==null && !ranks.includes(maxGrade)) throw new Error('Invalid maximum grade');
@@ -51,7 +52,7 @@
         if(node===to) break;
         for(const id of adj[node]){
           const e=edges[id], grade=grades[e[3]];
-          if(grade==='offpiste') continue;
+          if(grade==='offpiste' || (blocked && blocked.has(id))) continue;
           if(kinds[e[2]]==='piste' && grade!=='unknown' && (!ranks.includes(grade)||ranks.indexOf(grade)>limit)) continue;
           const next=cost+e[6];
           if(next<dist[e[1]]){dist[e[1]]=next;prev[e[1]]=id;heap.push([next,e[1]]);}
