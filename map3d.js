@@ -130,22 +130,35 @@
      left-to-right (HTML markers: no font server needed). opts.labels from index.html buildLabelInfo(). */
   function addLabels(instance, opts){
     if(!Array.isArray(opts.labels) || typeof opts.labelAngle !== 'function') return;
-    const seen = new Set(), items = [];
-    for(const x of opts.labels){
-      if(items.length >= 120) break;
-      if(!x || !x.name || !Array.isArray(x.mid) || !Number.isFinite(x.bearing) || seen.has(x.kind + x.name)) continue;
-      seen.add(x.kind + x.name);
-      const el = document.createElement('div');
-      el.className = 'map3d-label' + (x.kind === 'lift' ? ' lift' : '');
-      el.textContent = x.name;                       // textContent: OSM names never become HTML
-      const m = new maplibregl.Marker({ element: el, rotationAlignment: 'map', pitchAlignment: 'map' })
-        .setLngLat([x.mid[1], x.mid[0]]).addTo(instance);   // labelInfo mid is [lat, lon]
-      items.push({ m, el, b: x.bearing });
-    }
+    const pool = opts.labels.filter(x => x && x.name && Array.isArray(x.mid) && Number.isFinite(x.bearing));
+    let items = [];
     const orient = () => { const mb = instance.getBearing(); for(const it of items) it.m.setRotation(opts.labelAngle(it.b, mb) + mb); };
-    const zoomVis = () => { const on = instance.getZoom() >= 13; for(const it of items) it.el.style.display = on ? '' : 'none'; };
-    orient(); zoomVis();
-    instance.on('rotate', orient); instance.on('zoom', zoomVis);
+    // label what's actually in view (longest first, one per name), like the 2D map
+    const refresh = () => {
+      for(const it of items) it.m.remove();
+      items = [];
+      if(instance.getZoom() < 13) return;
+      // tilted view: bounds reach the horizon, so pick the names nearest the centre of the view first
+      const b = instance.getBounds(), c = instance.getCenter(), k = Math.cos(c.lat * Math.PI / 180), seen = new Set();
+      const near = pool.filter(x => b.contains([x.mid[1], x.mid[0]]))
+        .map(x => ({ x, d: (x.mid[0] - c.lat) ** 2 + ((x.mid[1] - c.lng) * k) ** 2 }))
+        .sort((p, q) => p.d - q.d).map(p => p.x);
+      for(const x of near){
+        if(items.length >= 60) break;
+        if(seen.has(x.kind + x.name)) continue;
+        seen.add(x.kind + x.name);
+        const el = document.createElement('div');
+        el.className = 'map3d-label' + (x.kind === 'lift' ? ' lift' : '');
+        el.textContent = x.name;                   // textContent: OSM names never become HTML
+        // opacityWhenCovered 1: labels lie on the surface; MapLibre's terrain occlusion test fades them wrongly
+        const m = new maplibregl.Marker({ element: el, rotationAlignment: 'map', pitchAlignment: 'map', opacityWhenCovered: '1' })
+          .setLngLat([x.mid[1], x.mid[0]]).addTo(instance);   // labelInfo mid is [lat, lon]
+        items.push({ m, el, b: x.bearing });
+      }
+      orient();
+    };
+    refresh();
+    instance.on('moveend', refresh); instance.on('rotate', orient);
   }
 
   window.FC3D = {
