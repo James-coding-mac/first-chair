@@ -48,3 +48,11 @@ Still open:
 - No copyrighted piste map artwork in the public repo
 - Don't break existing localStorage keys without migrating them — my logged data lives there
 - Test locally before every push
+
+## v4 (Nov 2026): Paradiski trip build. Read these too
+- Working copy is now `~/code/first-chair` (the old `~/Downloads/Skiing App` is gone).
+- `docs/STATUS.md` (current state), `docs/PLAN.md` (steps to 12 Dec), `docs/DECISIONS.md`, `docs/AI-TEAM.md`, `docs/SECURITY.md`, `docs/DATA-SOURCES.md`. Codex reads `AGENTS.md`.
+- **No spending and no big decisions without asking James.**
+- **No invented data**: Paradiski names come from OSM (`tools/fetch_paradiski.sh`) and are flagged `verified:false` until checked against the official 2026–27 piste map.
+- Helpers: `tools/qwen.sh "instruction" [file ...]` (local Qwen via LM Studio :1234), `~/.local/bin/codex`, `tools/token_usage.py` (feeds the desktop token ticker).
+- One plan step per session; before ending, update `docs/STATUS.md` and add a note in `docs/sessions/`.
