@@ -18,10 +18,10 @@ opts = {
 Requirements:
 1. Load MapLibre lazily the first time open() is called: insert <link rel="stylesheet"> and <script> tags for
    https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css and https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js
-   Put the constant strings SRI_CSS = "__SRI_CSS__" and SRI_JS = "__SRI_JS__" at the top of the file and set link.integrity / script.integrity to them, with crossOrigin = "anonymous". Return a Promise that resolves when loaded, rejects on error; cache the promise so it only loads once.
+   Put the constant strings SRI_CSS = "sha256-V2sIX92Uh6ZaGSFTKMHghsB85b9toJtmazgG09AI2uk=" and SRI_JS = "sha256-vpYzxNhw4m+zfxz+XFp3GBZnEUAD6hYgeseFDY2ordE=" at the top of the file and set link.integrity / script.integrity to them, with crossOrigin = "anonymous". Return a Promise that resolves when loaded, rejects on error; cache the promise so it only loads once.
 2. Style object (no external style URL): version 8, glyphs NOT needed (no text labels), sources:
    - "osm": raster, tiles ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize 256, maxzoom 18, attribution "© OpenStreetMap contributors"
-   - "dem": raster-dem, tiles ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], encoding "terrarium", tileSize 256, maxzoom 14, attribution "Terrain: Mapzen/AWS Terrain Tiles"
+   - "dem": raster-dem, tiles ["https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png"], encoding "terrarium", tileSize 256, maxzoom 14, attribution "Terrain: Mapzen/AWS Terrain Tiles"
    layers: background (#DCEAF5), raster "osm", hillshade from "dem" (exaggeration 0.35).
    terrain: { source: "dem", exaggeration: 1.4 }. Also sky not required.
 3. Map: center from opts (note MapLibre wants [lon,lat]), zoom, pitch 62, bearing -20, maxPitch 80, antialias true. Add NavigationControl({visualizePitch:true}).
