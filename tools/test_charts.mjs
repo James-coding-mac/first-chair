@@ -1,0 +1,41 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const ctx = vm.createContext({window:{}});
+vm.runInContext(fs.readFileSync(new URL('../charts.js', import.meta.url), 'utf8'), ctx);
+const {dayChart,speeds} = ctx.window.FCCharts;
+const points = Array.from({length:1200}, (_,i)=>[45+i/100000,6,2000-i,i*2]);
+assert.equal(speeds([]).length,0);
+assert.equal(speeds(points).length,points.length);
+assert.equal(speeds(points)[0],0);
+assert.ok(Math.abs(speeds(points)[20]-2.0015)<0.01);
+assert.ok(speeds([[0,0,0,0],[1,1,0,1],[2,2,0,2]]).every(v=>v<=130));
+assert.deepEqual(Array.from(speeds([[0,0,0,2],[1,1,0,2],[2,2,0,1]])),[0,0,0]);
+for(const path of [[],[points[0]],points,points.map(p=>[p[0],p[1],null,p[3]]),[null,[],['<script>',0,0,1]]]){
+ const svg=dayChart(path);
+ assert.ok(svg.startsWith('<svg')); assert.ok(!/<script|NaN|Infinity/.test(svg));
+ if(path.length<2) assert.match(svg,/Not enough GPS data/);
+}
+const svg=dayChart(points,{runs:[[10,30],null,['<script>',40]],dark:true,startClock:'23:59'});
+assert.match(svg,/fill-opacity="0.10"/);assert.match(svg,/#E8EEF4/);assert.match(svg,/>00:/);
+const paths=[...svg.matchAll(/<path d="([^"]*)"/g)].map(m=>m[1]);
+assert.ok(paths.every(p=>(p.match(/[ML]/g)||[]).length<=602));
+const gap=dayChart([[0,0,100,0],[0,.001,null,10],[0,.002,120,20]]);
+const alt=[...gap.matchAll(/<path d="([^"]*)"/g)][2][1];
+assert.equal((alt.match(/M/g)||[]).length,2);
+assert.ok(!dayChart(points,{width:'<script>',height:'" onload="evil',startClock:'<script>'}).includes('<script'));
+// Exercise the actual log renderer's chart toggle, including timestamp units and collapse.
+const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+let click, options;
+const panel={hidden:true,innerHTML:''}, button={addEventListener:(_,fn)=>click=fn,setAttribute:(k,v)=>button[k]=v};
+const card={querySelector:s=>s==='.chartbtn'?button:s==='.day-chart'?panel:{addEventListener(){}},querySelectorAll:()=>[]};
+const t0=Date.UTC(2026,10,20,8,12);
+Object.assign(ctx,{document:{getElementById:()=>({appendChild(){}}),createElement:()=>card},renderSeasonStats(){},renderFriends(){},photoThumbs:()=>'',esc:String,fmtDur:String,RESORTS:{},daylog:[{date:'2026-11-20',track:{t0,path:points,runs:[{start:t0+10000,end:t0+30000}]}}],FCCharts:{dayChart:(p,o)=>(options=o,dayChart(p,o))}});
+ctx.window.matchMedia=()=>({matches:true});
+vm.runInContext(html.slice(html.indexOf('function renderLog(){'),html.indexOf('document.getElementById("logadd")')),ctx);
+vm.runInContext('renderLog()',ctx);click();
+assert.equal(options.startClock,'09:12');assert.deepEqual(JSON.parse(JSON.stringify(options.runs)),[[10,30]]);
+assert.equal(panel.hidden,false);assert.equal(button['aria-expanded'],'true');assert.ok(panel.innerHTML.startsWith('<svg'));
+click();assert.equal(panel.hidden,true);
+ctx.FCCharts.dayChart=()=>'<script>bad</script>';panel.innerHTML='';click();assert.equal(panel.innerHTML,'');
+console.log('PASS: charts numeric safety, smoothing, sampling, gaps, shading, and log toggle integration');

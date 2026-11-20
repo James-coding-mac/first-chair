@@ -42,3 +42,5 @@
 
 ## Pending: needs James
 - (none)
+
+- Map styles (20 Nov 2026): use EOX Sentinel-2 cloudless 2016 for Satellite / Satellite only in 2D and 3D; both candidates passed browser-header tile checks, but Esri's subscription/offline terms do not fit this app. EOX is keyless CC BY 4.0 with attribution; allow `tiles.maps.eox.at` for capped viewed-tile caching. Piste map and Detailed preserve clean/osm preferences. See DATA-SOURCES.md for evidence.

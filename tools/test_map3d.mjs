@@ -78,3 +78,21 @@ c.fetch=(_url,{signal})=>new Promise((_resolve,reject)=>signal.addEventListener(
 const tileController=new AbortController();const tilePending=protocol({url:'steep://12/2100/1500.png'},tileController);
 api.close();await assert.rejects(tilePending,/aborted/);assert.equal(tileController.signal.aborted,true);
 console.log('PASS: open forwards bearing/route/fresh GPS; close aborts protocol requests');
+for(const key of ['clean','osm','satellite','satonly']){
+  m=await open({basemap:key,geojson:{type:'FeatureCollection',features:[]}});
+  const style=m.options.style;
+  if(key.startsWith('sat')){
+    assert.equal(style.sources.imagery.tileSize,256);
+    assert.match(style.sources.imagery.tiles[0],/g\/\{z\}\/\{y\}\/\{x\}/);
+    assert.match(style.sources.imagery.attribution,/Copernicus Sentinel data 2016/);
+    assert.equal(style.layers.find(l=>l.id==='hillshade').paint['hillshade-exaggeration'],0.15);
+  }
+  assert.equal(!!m.sources.pistes,key!=='satonly');
+  assert.equal(m.layers.find(l=>l.id==='steepness').before,key==='satonly'?undefined:'piste-fill');
+  api.close();
+}
+for(const key of ['satellite','satonly']){
+  integration.basemapKey=()=>key;integration.R.places=[{n:'Test',at:[45,6]}];
+  await integration.open3D();assert.equal(opened.basemap,key);assert.equal(opened.places.length,1);
+}
+console.log('PASS: four 3D basemaps, imagery attribution and hillshade, satellite-only vector suppression, place forwarding');

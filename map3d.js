@@ -113,7 +113,11 @@
     ? { ...baseStyle, sources: { dem: baseStyle.sources.dem },
         layers: [ { id: 'background', type: 'background', paint: { 'background-color': '#F7FAFC' } },
                   { id: 'hillshade', type: 'hillshade', source: 'dem', paint: { 'hillshade-exaggeration': 0.6, 'hillshade-shadow-color': '#6F8299', 'hillshade-highlight-color': '#FFFFFF', 'hillshade-accent-color': '#8FA3B8' } } ] }
-    : baseStyle;
+    : key === 'satellite' || key === 'satonly'
+      ? { ...baseStyle, sources: { dem:baseStyle.sources.dem, imagery:{type:'raster', tiles:['https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg'], tileSize:256, maxzoom:16,
+          attribution:'Sentinel-2 cloudless – <a href="https://s2maps.eu">https://s2maps.eu</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016)'} },
+          layers:[{id:'imagery',type:'raster',source:'imagery'}, {id:'hillshade',type:'hillshade',source:'dem',paint:{'hillshade-exaggeration':0.15}}] }
+      : baseStyle;
   const baseStyle = {
     version: 8,
     sources: {
@@ -136,7 +140,7 @@
      left-to-right (HTML markers: no font server needed). opts.labels from index.html buildLabelInfo(). */
   function addLabels(instance, opts){
     if(!Array.isArray(opts.labels) || typeof opts.labelAngle !== 'function') return;
-    const pool = opts.labels.filter(x => x && x.name && Array.isArray(x.mid) && Number.isFinite(x.bearing));
+    const pool = (opts.basemap === 'satonly' ? [] : opts.labels).filter(x => x && x.name && Array.isArray(x.mid) && Number.isFinite(x.bearing));
     let items = [];
     const orient = () => { const mb = instance.getBearing(); for(const it of items) if(it.b !== null) it.m.setRotation(opts.labelAngle(it.b, mb) + mb); };
     // label what's actually in view (longest first, one per name), like the 2D map
@@ -223,7 +227,7 @@
         if(gen !== generation) return;
         cancelLoad = null;
 
-        if (opts.geojson) {
+        if (opts.geojson && opts.basemap !== 'satonly') {
           instance.addSource('pistes', { type: 'geojson', data: opts.geojson });
           instance.addLayer({ id: 'piste-fill', type: 'fill', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'Polygon'], ['==', ['get', 'k'], 'piste']], paint: { 'fill-color': gradeMatch, 'fill-opacity': 0.15 } });
           instance.addLayer({ id: 'piste-line', type: 'line', source: 'pistes', filter: ['all', ['==', ['geometry-type'], 'LineString'], ['==', ['get', 'k'], 'piste'], ['!=', ['get', 'g'], 'offpiste']], paint: { 'line-color': gradeMatch, 'line-width': widthInterp } });
@@ -244,7 +248,7 @@
 
         registerSteepness();
         instance.addSource('steepness', {type:'raster', tiles:['steep://{z}/{x}/{y}.png'], tileSize:256, maxzoom:14});
-        instance.addLayer({id:'steepness', type:'raster', source:'steepness', layout:{visibility:'none'}, paint:{'raster-opacity':0.5}}, opts.geojson ? 'piste-fill' : undefined);
+        instance.addLayer({id:'steepness', type:'raster', source:'steepness', layout:{visibility:'none'}, paint:{'raster-opacity':0.5}}, opts.geojson && opts.basemap !== 'satonly' ? 'piste-fill' : undefined);
         const toggle = document.createElement('button');
         toggle.className = 'secondary map3d-steep'; toggle.textContent = '⚠ Avalanche terrain: off';
         toggle.setAttribute('aria-pressed', 'false');
