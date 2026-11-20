@@ -177,5 +177,35 @@
       return order.filter(n=>{const st=stat.get(n);return st.len>=150 && st.count/(st.last-st.first+1)>=0.6;});
     });
   }
-  window.FCTrack={analyse,distance,acceptPoint,thin,matchPistes};
+  /* Which lift was each ride? rides: from analyse().lifts ({start,end}); lines: [{name, coords:[[lat,lon],...]}].
+     The lift whose line most ride points lie within 40 m of (>= 50% of the points) wins. Returns [name|null, ...]. */
+  function matchLifts(points,rides,lines){
+    const kx=lat=>Math.cos(lat*Math.PI/180)*111320, ky=110540;
+    function distTo(p,coords){
+      let best=Infinity; const k=kx(p.lat);
+      for(let i=0;i+1<coords.length;i++){
+        const a=coords[i], b=coords[i+1];
+        const ax=(a[1]-p.lon)*k, ay=(a[0]-p.lat)*ky, bx=(b[1]-p.lon)*k, by=(b[0]-p.lat)*ky;
+        const dx=bx-ax, dy=by-ay, L2=dx*dx+dy*dy, t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0;
+        best=Math.min(best,Math.hypot(ax+t*dx,ay+t*dy));
+      }
+      return best;
+    }
+    const named=(lines||[]).filter(l=>l && l.name && Array.isArray(l.coords) && l.coords.length>1);
+    return (rides||[]).map(r=>{
+      const pts=(points||[]).filter(p=>p.t>=r.start && p.t<=r.end && Number.isFinite(p.lat) && Number.isFinite(p.lon));
+      if(!pts.length) return null;
+      const sample=pts.filter((p,i)=>i%Math.max(1,Math.floor(pts.length/40))===0);
+      // only lines near the ride's middle point are candidates
+      const mid=sample[Math.floor(sample.length/2)];
+      let best=null, bestN=0;
+      for(const l of named){
+        if(distTo(mid,l.coords)>300) continue;
+        const n=sample.filter(p=>distTo(p,l.coords)<=40).length;
+        if(n>bestN){bestN=n;best=l.name;}
+      }
+      return bestN>=sample.length*0.5?best:null;
+    });
+  }
+  window.FCTrack={analyse,distance,acceptPoint,thin,matchPistes,matchLifts};
 }());

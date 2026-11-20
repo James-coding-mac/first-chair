@@ -73,6 +73,13 @@ button.secondary{background:var(--card-2);color:var(--ink);border:1px solid var(
 .fc-rotor .leaflet-popup-content-wrapper{transform:rotate(var(--fc-bearing,0deg));transform-origin:50% 100%}
 .fc-compass{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card);font:700 11px 'Barlow Condensed',sans-serif}
 .fc-compass svg{transition:transform .15s}
+.map-label{width:0!important;height:0!important;margin:0!important;pointer-events:none;background:none;border:0}
+.map-label span{position:absolute;transform:translate(-50%,-50%);font:600 11px Inter,sans-serif;white-space:nowrap;color:inherit;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+.map-label{color:#16283C}
+.map-label.lift{font-style:italic;color:#16283C}.map-label.g-green{color:#1f5c39}.map-label.g-blue{color:#1d4f86}.map-label.g-red{color:#9b2a1f}.map-label.g-offpiste{color:#8a6417}
+.lift-arrow span{display:block;font-size:12px;line-height:16px;text-align:center;color:#16283C;text-shadow:0 0 2px #fff}
+.steep-legend{background:var(--card);color:var(--ink);padding:4px 8px;border-radius:8px;font-size:11px;box-shadow:var(--shadow);margin-bottom:56px!important}
+.steep-legend span{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 3px 0 6px;vertical-align:-1px}
 #map3d{position:absolute;inset:0;z-index:1100;border-radius:inherit;overflow:hidden;background:#DCEAF5}
 .map3d-close{position:absolute;top:var(--space-3);left:var(--space-3);z-index:1200;width:auto!important;border-radius:var(--radius-pill);box-shadow:var(--shadow)}
 .fc-3d{font:700 13px 'Barlow Condensed',sans-serif!important;letter-spacing:.04em}.fc-compass.heading{background:var(--glacier);color:#fff}
@@ -130,6 +137,7 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 #photoview img,#w-passimg img{max-width:100%;border-radius:12px;display:block}
 .lb{list-style:none;padding:0;margin:0}.lb li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
 .lb li.me{font-weight:600}.lb li span:last-child{color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right}
+.home-big{font:700 30px 'Barlow Condensed',sans-serif;letter-spacing:.02em;margin:4px 0}.home-big.soon{color:#B7791F}.home-big.late{color:#C0392B}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -198,6 +206,11 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <div id="route-chips" class="chips" aria-label="Maximum route difficulty"></div>
   </div>
   <div id="status-card" class="card" hidden></div>
+  <div id="home-card" class="card" hidden>
+    <div class="st-head"><span class="label">⏱ Last lift home</span><span class="muted" id="home-to"></span></div>
+    <div id="home-body"><p class="muted">When must you start back so you don't miss a lift on the way home?</p></div>
+    <button class="secondary" id="home-btn">Work it out from where I am</button>
+  </div>
   <div id="replay-card" class="card" hidden>
     <div class="st-head"><span class="label">Day replay (120×)</span><span class="muted" id="replay-label"></span></div>
     <div class="sos-row"><button class="secondary" id="replay-pause">⏸ Pause</button><button class="secondary" id="replay-stop">Close</button></div>
@@ -311,6 +324,7 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
 <script src="sun.js"></script>
 <script src="rotate.js"></script>
 <script src="map3d.js"></script>
+<script src="steep.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -525,7 +539,7 @@ function setRunsNote(){
    MAP  (Leaflet: OSM tiles + OpenSnowMap overlay online;
          resorts with R.mapData also get bundled piste/lift vectors that work offline)
    ========================================================= */
-let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0, skiedGroup, svcGroup, svcMarkers = [];
+let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0, skiedGroup, svcGroup, svcMarkers = [], labelGroup, labelInfo = [];
 const EATS_MIN_ZOOM = 15;   // restaurant dots only when zoomed in, to keep the map readable
 const MAPNOTE_ONLINE  = "Live pistes & lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom. Needs a data signal — the other tabs work offline.";
 const MAPNOTE_OFFLINE = "Pistes, lifts and restaurants are drawn from bundled OpenStreetMap data and work with no signal. The background map needs signal (areas you've viewed are cached). Tap a line for its name. Unverified: check the official piste map.";
@@ -547,7 +561,19 @@ function initMap(){
   vecGroup = L.layerGroup().addTo(map);
   eatGroup = L.layerGroup().addTo(map);   // the layers menu switches this on/off; zoom fills/empties it
   layersCtl = L.control.layers(null, { "OpenSnowMap (online)": snow }, { collapsed:true }).addTo(map);
+  if(window.FCSteep){
+    // FATMAP-style slope angle from free elevation tiles (viewed areas are cached for offline)
+    const steep = new (FCSteep.layer(L))();
+    layersCtl.addOverlay(steep, "Steepness 30°+ (avalanche terrain)");
+    const legend = L.control({ position:"bottomleft" });
+    legend.onAdd = ()=>{ const d = L.DomUtil.create("div", "steep-legend");
+      d.innerHTML = '<span style="background:#F1C40F"></span>30–35° <span style="background:#E67E22"></span>35–40° <span style="background:#C0392B"></span>40–45° <span style="background:#7B4FB8"></span>45°+';
+      return d; };
+    map.on("overlayadd", e=>{ if(e.layer===steep) legend.addTo(map); });
+    map.on("overlayremove", e=>{ if(e.layer===steep) legend.remove(); });
+  }
   map.on("zoomend", syncEatLayer);
+  map.on("moveend", ()=>syncLabels());
   mapReady = true;
   setupRotation();
   showVectors();
@@ -773,6 +799,7 @@ function syncEatLayer(){
     if(show && !svcGroup.getLayers().length) svcMarkers.forEach(m=>svcGroup.addLayer(m));
     if(!show) svcGroup.clearLayers();
   }
+  syncLabels();
 }
 /* pistes skied (from tracked runs matched to the offline piste lines) */
 function baseRunName(n){ return String(n).replace(/\s*(\([^)]*\))?\s*(#\d+)?\s*$/, ""); }
@@ -1134,6 +1161,41 @@ document.getElementById("sun-toggle").addEventListener("click", e=>{
   sunShown = !sunShown; e.target.textContent = sunShown ? "Hide sunny pistes" : "Show sunny pistes on map"; renderSun();
 });
 
+/* names along pistes/lifts when zoomed in; lift direction arrows (bottom -> top) */
+function buildLabelInfo(data){
+  const kx = Math.cos(45.5*Math.PI/180)*111320, ky = 110540, out = [];
+  data.features.forEach(f=>{
+    if(f.geometry.type!=="LineString" || !f.properties.n) return;
+    const c = f.geometry.coordinates; let total = 0; const seg = [];
+    for(let i=0;i+1<c.length;i++){ const d = Math.hypot((c[i+1][0]-c[i][0])*kx, (c[i+1][1]-c[i][1])*ky); seg.push(d); total += d; }
+    if(total < 120) return;
+    let acc = 0, i = 0; while(i < seg.length-1 && acc + seg[i] < total/2){ acc += seg[i]; i++; }
+    const t = seg[i] ? (total/2 - acc)/seg[i] : 0, a = c[i], b = c[i+1];
+    const mid = [a[1]+(b[1]-a[1])*t, a[0]+(b[0]-a[0])*t];
+    const bearing = Math.atan2((b[0]-a[0])*kx, (b[1]-a[1])*ky)*180/Math.PI;   // OSM lifts run bottom -> top
+    out.push({ name:f.properties.n, kind:f.properties.k, grade:f.properties.g, mid, bearing, len:total });
+  });
+  return out.sort((x,y)=>y.len-x.len);
+}
+function syncLabels(){
+  if(!mapReady) return;
+  if(!labelGroup) labelGroup = L.layerGroup().addTo(map);
+  labelGroup.clearLayers();
+  const z = map.getZoom();
+  if(z < 14 || !R.mapData || !labelInfo.length || !map.hasLayer(vecGroup)) return;
+  const b = map.getBounds(), seen = new Set(); let n = 0;
+  for(const x of labelInfo){
+    if(n >= 150) break;
+    if(!b.contains(x.mid)) continue;
+    if(x.kind==="lift") L.marker(x.mid, { interactive:false, keyboard:false,
+      icon: L.divIcon({ className:"lift-arrow", iconSize:[16,16], html:`<span style="transform:rotate(${x.bearing.toFixed(0)}deg)">▲</span>` }) }).addTo(labelGroup);
+    if(z < 15 || seen.has(x.kind+x.name)) continue;
+    seen.add(x.kind+x.name); n++;
+    L.marker(x.mid, { interactive:false, keyboard:false,
+      icon: L.divIcon({ className:"map-label "+(x.kind==="lift"?"lift":"g-"+x.grade), iconSize:[0,0], html:`<span>${esc(x.name)}</span>` }) }).addTo(labelGroup);
+  }
+}
+
 function showVectors(){
   document.getElementById("mapnote").textContent = R.mapData ? MAPNOTE_OFFLINE : MAPNOTE_ONLINE;
   if(!mapReady) return;
@@ -1164,6 +1226,7 @@ function showVectors(){
     svcMarkers = (R.services||[]).filter(x=>Array.isArray(x.at)).map(x=>
       L.circleMarker(x.at, { radius:4.5, color:"#fff", weight:1.5, fillColor:SVC_COLOUR[x.type] || "#3D7FB8", fillOpacity:1 })
         .bindPopup(`<strong>${esc(x.type)}</strong>${x.name?`<br>${esc(x.name)}`:""}<br><small>OpenStreetMap · unverified</small>`));
+    labelInfo = buildLabelInfo(data);
     syncEatLayer();
     drawSkied(data);
   };
@@ -1219,6 +1282,63 @@ function loadRouteGraph(url){
   }).then(graph=>({graph,router:FCRoute.load(graph)})).catch(e=>{routeCache.delete(url);throw e;}));
   return routeCache.get(url);
 }
+/* ---------- last lift home: latest departure so every lift on the way home is still running ---------- */
+let homeTimer = null;
+function liftKeyByCoord(){
+  const at = {};
+  (R.lifts||[]).forEach(l=>{ const k = l.mtn+"|"+l.name; at[coordKey(...l.bottom)] = k; at[coordKey(...l.top)] = k; });
+  return at;
+}
+function hhmm(min){ min = ((Math.round(min) % 1440) + 1440) % 1440; return String(Math.floor(min/60)).padStart(2,"0")+":"+String(min%60).padStart(2,"0"); }
+async function lastLiftHome(){
+  const body = document.getElementById("home-body");
+  if(!R.graphData || !R.base) return;
+  const pos = latestPosition, fresh = pos && Date.now() - pos.timestamp < 180000;
+  if(!fresh){ body.innerHTML = `<p>Getting your position… (tap again in a moment)</p>`; ensureWatch(); return; }
+  try{
+    const { graph, router } = await loadRouteGraph(R.graphData);
+    const start = router.nearestNode(pos.coords.latitude, pos.coords.longitude, 500), end = router.nearestNode(...R.base.at, 300);
+    if(start===null){ body.innerHTML = `<p>You're not near a mapped piste or lift.</p>`; return; }
+    const { blocked } = routeClosures(graph);
+    const res = router.route(start, end, { maxGrade: routePref, blocked });
+    if(!res){ body.innerHTML = `<p>No route home with ${routePref==="all"?"the open lifts":"this difficulty filter"}.</p>`; return; }
+    const at = liftKeyByCoord(), info = (statusData && statusData.lift_info) || {};
+    let t = 0, deadline = Infinity, crit = null; const lifts = [];
+    let lastName = null;
+    for(const id of res.edges){
+      const e = graph.edges[id];
+      if(graph.kinds[e[2]]==="lift" && e[7].length>=2){
+        const k = at[coordKey(e[7][0], e[7][1])], name = graph.names[e[4]];
+        if(k && name!==lastName){
+          lifts.push(name);
+          const m = /^(\d{2}):(\d{2})$/.exec((info[k]||{}).closes||"");
+          if(m){ const leaveBy = +m[1]*60 + +m[2] - t/60 - 5;   // 5 min margin to board
+            if(leaveBy < deadline){ deadline = leaveBy; crit = { name, closes: m[0] }; } }
+        }
+        lastName = name;
+      } else lastName = null;
+      t += e[6];
+    }
+    const now = new Date(), nowMin = now.getHours()*60 + now.getMinutes(), mins = Math.round(res.time/60);
+    const via = lifts.length ? ` via ${lifts.slice(0,4).map(esc).join(" → ")}${lifts.length>4?" …":""}` : " (no lifts needed)";
+    if(!crit){ body.innerHTML = `<p><strong>${mins} min</strong> home${via}.</p><p class="muted">No closing times known for these lifts${statusData?.season_open===false?" (season not open)":""}.</p>`; return; }
+    const spare = deadline - nowMin;
+    body.innerHTML = `<p class="home-big ${spare<15?"late":spare<45?"soon":""}">${spare<0?"Too late: you needed to leave by":"Leave by"} ${esc(hhmm(deadline))}</p>`+
+      `<p>${spare<0?`You'd miss <strong>${esc(crit.name)}</strong> (closes ${esc(crit.closes)}). Check alternatives or a taxi/bus.`:`${Math.floor(spare/60)?Math.floor(spare/60)+" h ":""}${spare%60} min spare · <strong>${esc(crit.name)}</strong> closes ${esc(crit.closes)} and is the tightest.`}</p>`+
+      `<p class="muted">${mins} min home${via}. Scheduled closing times; check the status card for changes.</p>`;
+  }catch(e){ body.textContent = "Couldn't load offline routing. Open the app once with signal."; }
+}
+document.getElementById("home-btn").addEventListener("click", ()=>{
+  lastLiftHome();
+  clearInterval(homeTimer); homeTimer = setInterval(()=>{ if(!document.hidden) lastLiftHome(); }, 5*60*1000);
+});
+function setupHome(){
+  const card = document.getElementById("home-card");
+  card.hidden = !(R.graphData && R.base);
+  document.getElementById("home-to").textContent = R.base ? "to " + R.base.name : "";
+  if(card.hidden){ clearInterval(homeTimer); homeTimer = null; }
+}
+
 async function takeRoute(destination){
   if(!R.graphData) return;
   clearRoute(); routeDestination=destination;
@@ -1607,7 +1727,12 @@ function finishTracking(){
     // Stable id makes retry safe if writing the log succeeds but clearing recovery fails.
     const lines=pisteLines(trkResort), matched=lines.length?FCTrack.matchPistes(track,a.runs,lines):[];
     const runs=a.runs.map((r,i)=>matched[i]&&matched[i].length?{...r,pistes:matched[i]}:r);
-    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),track:{totals:a.totals,runs,path:compactPath(track)}};
+    const liftLines=(vecData[trkResort]?.features||[]).filter(f=>f.properties?.k==='lift'&&f.properties.n&&f.geometry.type==='LineString')
+      .map(f=>({name:f.properties.n,coords:f.geometry.coordinates.map(c=>[c[1],c[0]])}));
+    const liftNames=liftLines.length?FCTrack.matchLifts(track,a.lifts||[],liftLines):[];
+    const rides=(a.lifts||[]).map((r,i)=>({start:r.start,end:r.end,name:liftNames[i]||null}));
+    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),
+      track:{totals:a.totals,runs,rides,t0:track.length?track[0].t:trkStart,path:compactPath(track)}};
     const next=[...daylog.filter(e=>e.id!==entry.id),entry];
     try { store.set('fc_log',next); }
     catch(e){ document.getElementById('trkmessage').textContent='Could not save the log. Free device storage and try again; the session is still here.'; return; }
@@ -1873,6 +1998,7 @@ function renderLog(){
     card.innerHTML = `<strong>${nice}</strong> <span class="cond">· ${esc(entry.cond)}</span>
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
+      ${Array.isArray(entry.track?.rides)&&entry.track.rides.some(r=>r&&r.name)?`<p class="muted">Lifts: ${entry.track.rides.map(r=>r&&r.name?esc(String(r.name)):"?").join(" → ")}</p>`:''}
       ${photoThumbs(entry)}
       ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
       ${Array.isArray(entry.track?.path)&&entry.track.path.length>1?`<button class="secondary sharebtn replaybtn">▶ Replay day on map</button>`:''}
@@ -2012,7 +2138,7 @@ function switchResort(id){
   setRunsNote();
   buildMtnChips(); buildDiffChips(); buildSortChips();
   renderRuns(); renderEats(); renderLog();
-  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks(); renderWallet(); drawPhotos(); renderFriends();
+  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks(); renderWallet(); drawPhotos(); renderFriends(); setupHome();
 }
 
 /* =========================================================
@@ -2051,6 +2177,7 @@ renderLinks();
 renderWallet();
 loadPhotos();
 renderFriends();
+setupHome();
 showSharedSpot();
 restoreTracking();
 

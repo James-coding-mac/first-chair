@@ -56,3 +56,16 @@ assert.deepEqual([...res[0]], []);
 assert.deepEqual([...matchPistes(null, null, null)], []);
 assert.deepEqual([...matchPistes([], [{ start: 0, end: 1 }], [])[0]], []);
 console.log(`PASS: pistes skied (follows "${target.name}", offset, perpendicular, outside run window, junk)`);
+
+// lift rides -> lift names (same real geometry)
+const { matchLifts } = ctx.window.FCTrack;
+const liftLines = geo.features.filter(f => f.properties.k === 'lift' && f.properties.n && f.geometry.type === 'LineString')
+  .map(f => ({ name: f.properties.n, coords: f.geometry.coordinates.map(c => [c[1], c[0]]) }));
+const lift = liftLines.filter(l => len(l) > 800)[0];
+let lp = walk(lift.coords);
+let lr = matchLifts(lp, [run(lp)], liftLines);
+assert.equal(lr[0], lift.name, `lift ride should match ${lift.name}`);
+lp = walk(lift.coords, 400);
+assert.notEqual(matchLifts(lp, [run(lp)], [lift])[0], lift.name, 'ride 400 m away must not match');
+assert.deepEqual([...matchLifts([], [{ start: 0, end: 1 }], liftLines)], [null]);
+console.log(`PASS: lift rides matched to lift names ("${lift.name}", offset, empty)`);
