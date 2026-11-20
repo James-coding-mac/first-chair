@@ -12,7 +12,7 @@ for f in files:
     prompt += f"\n\n--- {f} ---\n" + open(f).read()
 body = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}], "temperature": 0.2}).encode()
 req = urllib.request.Request("http://localhost:1234/v1/chat/completions", body, {"Content-Type": "application/json"})
-resp = json.load(urllib.request.urlopen(req, timeout=900))
+resp = json.load(urllib.request.urlopen(req, timeout=3600))
 usage = resp.get("usage") or {}
 with open(log, "a") as f:
     f.write(json.dumps({"t": int(time.time()), "model": model, **{k: usage.get(k, 0) for k in ("prompt_tokens", "completion_tokens", "total_tokens")}}) + "\n")

@@ -69,6 +69,10 @@ button.secondary{background:var(--card-2);color:var(--ink);border:1px solid var(
 .leaflet-bar a{min-width:44px;min-height:44px;line-height:44px;border-color:var(--border)}
 .leaflet-control-attribution{background:var(--card)!important;color:var(--ink-2)!important;font-size:10px}.leaflet-control-attribution a,.leaflet-container a.leaflet-popup-close-button{color:var(--accent-text)}
 .leaflet-popup-content-wrapper{border-radius:var(--radius-card)}
+/* rotation: keep popups upright inside the rotated map */
+.fc-rotor .leaflet-popup-content-wrapper{transform:rotate(var(--fc-bearing,0deg));transform-origin:50% 100%}
+.fc-compass{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card);font:700 11px 'Barlow Condensed',sans-serif}
+.fc-compass svg{transition:transform .15s}.fc-compass.heading{background:var(--glacier);color:#fff}
 .trkbtns{display:flex;gap:var(--space-2)}.map-hero>.trkbtns{position:absolute;z-index:1000;left:var(--space-3);right:var(--space-3);bottom:var(--space-8);pointer-events:none}
 .trkbtns button{flex:1;min-width:0;pointer-events:auto;border-radius:var(--radius-pill);background:var(--card);box-shadow:var(--shadow)}
 button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
@@ -105,7 +109,7 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 #status-card .st-name{font-weight:600;min-width:9em}#status-card .st-val{font-variant-numeric:tabular-nums}
 #status-card .st-pistes{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
 #status-card .st-note{margin-top:6px;font-size:12px}
-.trkbtns .sosbtn{flex:0 0 72px!important;width:72px;color:#C0392B!important;border:1.5px solid #C0392B!important;font-weight:700}
+.trkbtns .sosbtn{flex:0 0 60px!important;width:60px;color:#C0392B!important;border:1.5px solid #C0392B!important;font-weight:700}
 .sos .sos-coords{font:600 22px/1.3 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em;user-select:all}
 .sos .sos-call{display:block;text-align:center;background:#C0392B;color:#fff;border-radius:12px;padding:14px;margin:12px 0 8px;
   font:700 22px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-decoration:none}
@@ -118,7 +122,7 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 .rlinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .rlinks a{display:block;padding:10px 12px;border-radius:12px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:13.5px}
 .rlinks a small{display:block;color:var(--ink-2);font-size:11.5px}
-.trkbtns .photobtn{flex:0 0 52px!important;width:52px;padding-left:0;padding-right:0}
+.trkbtns .photobtn{flex:0 0 46px!important;width:46px;padding-left:0;padding-right:0}
 .logphotos{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.logphotos img{width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer}
 #photoview img,#w-passimg img{max-width:100%;border-radius:12px;display:block}
 .lb{list-style:none;padding:0;margin:0}.lb li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
@@ -172,8 +176,8 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
   <div class="map-hero">
     <div id="map"></div>
     <div class="trkbtns">
-      <button class="secondary" id="locbtn">⌖ Locate me</button>
-      <button class="secondary" id="trackbtn">▶ Track day</button>
+      <button class="secondary" id="locbtn">⌖ Locate</button>
+      <button class="secondary" id="trackbtn">▶ Track</button>
       <button class="secondary sosbtn" id="sosbtn" aria-label="Emergency: where am I">SOS</button>
       <button class="secondary photobtn" id="photobtn" aria-label="Take a photo">📷</button>
       <input type="file" id="photofile" accept="image/*" capture="environment" hidden>
@@ -300,6 +304,7 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
 <script src="route.js"></script>
 <script src="stats.js"></script>
 <script src="sun.js"></script>
+<script src="rotate.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -538,8 +543,60 @@ function initMap(){
   layersCtl = L.control.layers(null, { "OpenSnowMap (online)": snow }, { collapsed:true }).addTo(map);
   map.on("zoomend", syncEatLayer);
   mapReady = true;
+  setupRotation();
   showVectors();
 }
+/* ---------- rotation: two-finger twist, compass (tap = north up, tap again = follow phone heading) ---------- */
+let rotor = null, headingMode = false, headingFn = null;
+function setupRotation(){
+  if(!window.FCRotate) return;
+  rotor = FCRotate.enable(map);
+  const Compass = L.Control.extend({ options:{ position:"topleft" },
+    onAdd(){
+      const a = L.DomUtil.create("a", "leaflet-bar fc-compass");
+      a.href = "#"; a.title = "North up · tap again to follow your phone's heading"; a.setAttribute("role","button");
+      a.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2l4 10h-8z" fill="#C0392B"/><path d="M12 22l-4-10h8z" fill="currentColor" opacity=".55"/></svg>`;
+      L.DomEvent.disableClickPropagation(a);
+      L.DomEvent.on(a, "click", e=>{ L.DomEvent.preventDefault(e); compassTap(); });
+      return a;
+    } });
+  const ctl = new Compass().addTo(map), el = ctl.getContainer();
+  rotor.onChange((b, fromUser)=>{
+    el.querySelector("svg").style.transform = `rotate(${-b}deg)`;
+    if(fromUser && headingMode) stopHeading();
+  });
+}
+function compassTap(){
+  if(!rotor) return;
+  if(rotor.getBearing() !== 0 && !headingMode){ rotor.setBearing(0); return; }
+  if(headingMode){ stopHeading(); rotor.setBearing(0); return; }
+  startHeading();
+}
+async function startHeading(){
+  try{
+    if(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function"){
+      if(await DeviceOrientationEvent.requestPermission() !== "granted") return;
+    }
+  }catch(e){ return; }
+  headingMode = true; document.querySelector(".fc-compass")?.classList.add("heading");
+  let smooth = null;
+  headingFn = e=>{
+    // iOS gives a true compass heading; elsewhere use absolute alpha (counter-clockwise from north)
+    const h = Number.isFinite(e.webkitCompassHeading) ? e.webkitCompassHeading : (e.absolute && Number.isFinite(e.alpha) ? 360 - e.alpha : null);
+    if(h === null) return;
+    if(smooth === null) smooth = h;
+    let d = h - smooth; if(d > 180) d -= 360; if(d < -180) d += 360;
+    smooth = (smooth + d * 0.2 + 360) % 360;              // smooth jitter
+    rotor.setBearing(smooth, false);
+  };
+  window.addEventListener("deviceorientation", headingFn, true);
+  window.addEventListener("deviceorientationabsolute", headingFn, true);
+}
+function stopHeading(){
+  headingMode = false; document.querySelector(".fc-compass")?.classList.remove("heading");
+  if(headingFn){ window.removeEventListener("deviceorientation", headingFn, true); window.removeEventListener("deviceorientationabsolute", headingFn, true); headingFn = null; }
+}
+
 function recenterMap(){ if(mapReady){ map.setView(R.map.center, R.map.zoom); showVectors(); } }
 
 /* bundled vectors for the active resort (fetched once, then served by the service worker offline) */
@@ -1471,7 +1528,7 @@ function updateTrkStats(){
 function setTrackBtn(on){
   const b=document.getElementById('trackbtn');
   b.classList.toggle('on-track',on);
-  b.textContent=on?'⏹ Stop':'▶ Track day';
+  b.textContent=on?'⏹ Stop':'▶ Track';
   b.disabled=!on && trkPending;
 }
 function resumeTracking(){
