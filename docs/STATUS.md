@@ -1,7 +1,7 @@
 # Status
 
 **Updated:** 20 Nov 2026
-**Current step:** Steps 1–3 live. Step 4 (tracking) implemented locally, awaiting Claude review and iPhone field testing. Step 5a (route graph) implemented. Step 5b (routing UI) implemented locally, awaiting Claude review and iPhone offline testing; Step 5c (UI polish) implemented locally, awaiting Claude review and browser/iPhone visual checks. Step 6 needs James's decision.
+**Current step:** Steps 1–5c LIVE (Paradiski, offline map, altitude weather, day tracking, routing, premium redesign). Queue (briefs in docs/sessions/briefs/): 6a scraper finish (Codex hit its usage limit mid-task; fixtures + .github/workflows/status.yml exist, scraper not finished; Lumiplan public JSON has per-lift/piste status for all Paradiski) → 6b status in app (closed lifts on map, routing avoids them, closing times if available) → D emergency card + season stats + share card → E pistes skied → F sun on slopes → resort-app research (docs/sessions/briefs/research-resort-apps.md) then implement feasible features. Codex usage resets 7:13 PM 20 Nov.
 
 - Live at https://james-coding-mac.github.io/first-chair/. James still to check on the iPhone: Paradiski, offline map in airplane mode, altitude weather.
 - **Paradiski** is in the resort switcher: 293 runs (La Plagne + Les Arcs/Peisey), 211 restaurants (47 on the mountain, 164 village), 152 lifts in the data (drawn on the map; no lift list screen). Every record shows an UNVERIFIED tag.
