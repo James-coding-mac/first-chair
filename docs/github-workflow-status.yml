@@ -1,0 +1,46 @@
+name: Paradiski status
+on:
+  schedule:
+    - cron: '*/15 7-16 * * *'
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: paradiski-status
+  cancel-in-progress: false
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Scrape and decide whether to publish
+        id: scrape
+        shell: bash
+        run: |
+          old_status="$RUNNER_TEMP/paradiski-before.json"
+          if test -f data/status/paradiski.json; then
+            cp data/status/paradiski.json "$old_status"
+          fi
+          python3 tools/scrape_status.py
+          changed=$(python3 tools/scrape_status.py --commit-check "$old_status" data/status/paradiski.json)
+          echo "publish=$changed" >> "$GITHUB_OUTPUT"
+      - name: Commit status snapshot
+        if: steps.scrape.outputs.publish == 'true'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- data/status/paradiski.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'status: update Paradiski lift/piste status'
+          git pull --rebase origin main
+          git push origin HEAD:main
