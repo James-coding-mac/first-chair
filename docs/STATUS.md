@@ -1,9 +1,9 @@
 # Status
 
 **Updated:** 20 Nov 2026
-**Current step:** Step 2 (offline map) built and tested locally; see docs/sessions/2026-11-20-step2-offline-map.md. Next is Step 3 (weather by altitude).
+**Current step:** Steps 1–3 live. Step 5a (route graph) in progress with Codex; then Step 4 (tracking), 5b (routing UI), 5c (UI polish). Step 6 needs James's decision.
 
-- Live at https://james-coding-mac.github.io/first-chair/ (Paradiski included once the push has gone through; James to check on the iPhone).
+- Live at https://james-coding-mac.github.io/first-chair/. James still to check on the iPhone: Paradiski, offline map in airplane mode, altitude weather.
 - **Paradiski** is in the resort switcher: 293 runs (La Plagne + Les Arcs/Peisey), 211 restaurants (47 on the mountain, 164 village), 152 lifts in the data (drawn on the map; no lift list screen). Every record shows an UNVERIFIED tag.
 - Data pipeline: `tools/fetch_paradiski.sh` (Overpass → `data/raw/`, gitignored) → `python3 tools/build_paradiski.py` → `data/build/paradiski.js` (committed, loaded by `index.html`, precached by `sw.js`). **After rebuilding, bump `VERSION` in `sw.js`, and read the builder's WARNING list: names key saved notes (DECISIONS.md → Known risk).**
 - Base = Plagne Bellecôte, 45.51389, 6.69709, from OSM `place=hamlet` way 1427752417. Map centre and weather point use it.
@@ -12,3 +12,5 @@
 - Codex CLI: `~/.local/bin/codex` (logged in). Qwen: LM Studio :1234, `tools/qwen.sh`.
 - Token ticker: Übersicht widget `first-chair-tokens`; numbers come from `tools/token_usage.py`.
 - Offline map (Step 2): Paradiski pistes/lifts/restaurants drawn from `data/build/paradiski-map.geojson` (canvas vectors); Leaflet precached by the SW. No bulk tile prefetch (OSM tile policy), so the background map offline = tiles you've already viewed.
+
+- Weather by altitude (Step 3): Paradiski village/summit forecasts include wind/gusts/direction, hourly freezing level and 3-day snow/max temperature. Separate `fc_weather_alt` cache shows forecast age offline or on refresh failure; other resorts retain the existing weather path. Elevations come from the local elevation cache; SW shell version is `v4`. Summit = top of Aiguille Rouge (highest lift top on the DEM). Reviewed + live-API tested by Claude.

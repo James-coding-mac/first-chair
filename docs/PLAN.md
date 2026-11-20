@@ -10,6 +10,7 @@ v3 is live (offline shell, weather, GPS tracking, runs/restaurants/log). v4 adds
 | 3 | Weather by altitude (village vs summit) + freezing level + wind | Shows cached forecast + its age offline | 29 Nov |
 | 4 | Tracking upgrade: runs auto-split on lift vs piste, vertical, day totals | Tested on a walk/drive | 2 Dec |
 | 5 | **Routing**: piste/lift graph, fastest route to a restaurant/lift, difficulty filter | 10 test routes look sensible | 6 Dec |
+| 5c | **UI polish** (polished lift-signage, see DECISIONS) | Looks premium on iPhone, light + dark | 7 Dec |
 | 6 | Lift/piste open status (scheduled GitHub Action scrape → JSON) | Shows status + "as of" time | 8 Dec |
 | 7 | James verifies names against the official map; polish | — | 10 Dec |
 | 8 | Freeze: fixes only | — | 11 Dec |

@@ -99,6 +99,14 @@ button.secondary{
 .wx .fc .d .tmax{font-size:12px;color:var(--ink2)}
 .wx .stamp{font-size:11px;color:var(--ink2);margin-top:8px}
 
+.wx .alt-points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wx .alt-point{min-width:0}
+.wx .alt-label{font-size:13px;font-weight:600;overflow-wrap:anywhere;margin-bottom:6px}
+.wx .alt-point .now{gap:6px;flex-wrap:wrap}
+.wx .alt-point .desc{font-size:12px}
+.wx .alt-point .fc{gap:3px}
+.wx .alt-point .fc .d{min-width:0;padding:7px 2px}
+
 /* gps tracker */
 .trkbtns{display:flex;gap:8px}
 .trkbtns button{flex:1}
@@ -554,6 +562,7 @@ function wmo(c){ return WMO[c] || ["—","🌡"]; }
 let wxCache = store.get("fc_weather", {});   // { resortId: { data, at } }
 
 function renderWeather(){
+  if(R.weatherPoints) return renderAltitudeWeather();
   const el = document.getElementById("weather");
   const cached = wxCache[resortId];
   if(cached) paintWeather(cached.data, cached.at, false);
@@ -574,6 +583,91 @@ function renderWeather(){
     else { el.className = "wx loading"; el.textContent = "Weather needs a data signal — it'll load next time you're online."; }
   });
 }
+// Altitude forecasts deliberately use a separate cache: preserve the v3 weather schema.
+let wxAltCache = store.get("fc_weather_alt", {});
+if(!wxAltCache || typeof wxAltCache!=="object" || Array.isArray(wxAltCache)) wxAltCache = {};
+function wxNumber(value){
+  if(value===null || value===undefined || value==="" || !["number","string"].includes(typeof value)) return NaN;
+  return Number(value);
+}
+function wxRounded(value){
+  const n = wxNumber(value);
+  return Number.isFinite(n) ? String(Math.round(n)) : "—";
+}
+function validAltitudeWeather(data){
+  return data && data.current && typeof data.current==="object" && data.daily &&
+    Array.isArray(data.daily.time) && data.hourly && Array.isArray(data.hourly.time) &&
+    Array.isArray(data.hourly.freezing_level_height);
+}
+function renderAltitudeWeather(){
+  const el = document.getElementById("weather"), forId = resortId, points = R.weatherPoints;
+  const entry = wxAltCache[forId];
+  const cached = entry && Array.isArray(entry.points) && entry.points.length===points.length &&
+    entry.points.every(validAltitudeWeather) && Number.isFinite(wxNumber(entry.at)) ? entry : null;
+  const unavailable = ()=>{
+    if(resortId!==forId) return;
+    if(cached) paintAltitudeWeather(points, cached, navigator.onLine ? "stale" : "offline");
+    else { el.className = "wx loading"; el.textContent = "Weather needs a data signal — it'll load next time you're online."; }
+  };
+  if(cached) paintAltitudeWeather(points, cached, navigator.onLine ? "cached" : "offline");
+  else { el.className = "wx loading"; el.textContent = "Loading weather…"; }
+  if(!navigator.onLine){ unavailable(); return; }
+  Promise.all(points.map(point=>{
+    const [lat,lon] = point.at;
+    const elevation = wxNumber(point.ele);
+    const url = "https://api.open-meteo.com/v1/forecast?latitude="+Number(lat)+"&longitude="+Number(lon)+
+      (Number.isFinite(elevation) ? "&elevation="+elevation : "")+
+      "&current=temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m"+
+      "&hourly=freezing_level_height&daily=weather_code,temperature_2m_max,snowfall_sum"+
+      "&forecast_days=3&timezone=auto&wind_speed_unit=kmh";
+    return fetch(url).then(response=>{
+      if(!response.ok) throw new Error("weather request failed");
+      return response.json();
+    }).then(data=>{
+      if(!validAltitudeWeather(data)) throw new Error("bad altitude weather payload");
+      return data;
+    });
+  })).then(data=>{
+    const fresh = {points:data, at:Date.now()};
+    wxAltCache[forId] = fresh;
+    store.set("fc_weather_alt", wxAltCache);
+    if(resortId===forId) paintAltitudeWeather(points, fresh, "fresh");
+  }).catch(unavailable);
+}
+function paintAltitudeWeather(points, cached, state){
+  const el = document.getElementById("weather");
+  const columns = points.map((point,p)=>{
+    const data = cached.points[p], cur = data.current, daily = data.daily;
+    const [condition,emoji] = wmo(wxNumber(cur.weather_code));
+    const direction = wxNumber(cur.wind_direction_10m);
+    const compass = Number.isFinite(direction) ? ["N","NE","E","SE","S","SW","W","NW"][Math.round(((direction%360+360)%360)/45)%8] : "—";
+    // Match local ISO hours from the same response, independent of the device timezone.
+    const hour = typeof cur.time==="string" ? cur.time.slice(0,13)+":00" : "";
+    const hourIndex = data.hourly.time.indexOf(hour);
+    const freezing = hourIndex<0 ? "—" : wxRounded(data.hourly.freezing_level_height[hourIndex]);
+    const days = daily.time.slice(0,3).map((time,i)=>{
+      const date = typeof time==="string" && /^\d{4}-\d{2}-\d{2}$/.test(time) ? new Date(time+"T12:00") : null;
+      const dow = i===0 ? "Today" : date && Number.isFinite(date.getTime()) ? date.toLocaleDateString("en-GB",{weekday:"short"}) : "—";
+      const snow = wxNumber(daily.snowfall_sum?.[i]);
+      const snowText = Number.isFinite(snow) ? (snow<1 ? snow.toFixed(1) : String(Math.round(snow)))+"cm" : "—";
+      return `<div class="d"><div class="dow">${esc(dow)}</div><div class="de">${esc(wmo(wxNumber(daily.weather_code?.[i]))[1])}</div>`+
+        `<div class="snow">${esc(snowText)}</div><div class="tmax">${esc(wxRounded(daily.temperature_2m_max?.[i]))}°</div></div>`;
+    }).join("");
+    return `<div class="alt-point"><div class="alt-label">${esc(point.label)}</div>`+
+      `<div class="now"><span class="emoji">${esc(emoji)}</span><span class="temp">${esc(wxRounded(cur.temperature_2m))}°</span></div>`+
+      `<div class="desc">${esc(condition)}<br>Wind ${esc(wxRounded(cur.wind_speed_10m))} km/h ${esc(compass)}`+
+      `<br>Gusts ${esc(wxRounded(cur.wind_gusts_10m))} km/h<br>Freezing level ${esc(freezing)} m</div>`+
+      `<div class="fc">${days}</div></div>`;
+  }).join("");
+  const ageMinutes = Math.max(0, Math.floor((Date.now()-Number(cached.at))/60000));
+  const age = ageMinutes<60 ? ageMinutes+" min ago" : ageMinutes<1440 ? Math.floor(ageMinutes/60)+" h ago" : Math.floor(ageMinutes/1440)+" d ago";
+  const when = new Date(Number(cached.at)).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  const stamp = state==="fresh" ? "Updated "+when :
+    (state==="offline" ? "Offline · " : state==="stale" ? "Update unavailable · " : "Cached · ")+"forecast from "+age;
+  el.className = "wx";
+  el.innerHTML = `<div class="alt-points">${columns}</div><div class="stamp">${esc(stamp)}</div>`;
+}
+
 function paintWeather(data, at, stale){
   const el = document.getElementById("weather");
   const cur = data.current, d = data.daily;

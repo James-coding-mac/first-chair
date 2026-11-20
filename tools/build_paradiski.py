@@ -19,6 +19,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw", "paradiski-overpass.json")
 OUT = os.path.join(ROOT, "data", "build", "paradiski.js")
+ELEVATIONS = os.path.join(ROOT, "data", "raw", "elevations.json")
 MAP_OUT = os.path.join(ROOT, "data", "build", "paradiski-map.geojson")   # offline map layer (Step 2)
 
 # OSM ski-area outlines (landuse=winter_sports) -> app sector ids. Names must match OSM exactly.
@@ -229,6 +230,7 @@ def main():
             "name": t["name"], "mtn": sid, "type": LIFT_TYPES[kind],
             "seats": t.get("aerialway:occupancy") or None,
             "len_m": round(path_len(pts)),
+            "top_node": str(e["nodes"][-1]) if e.get("nodes") else None,
             "bottom": r5(pts[0]), "top": r5(pts[-1]),   # OSM draws aerialways bottom -> top
             "osm": e["id"], "source": "osm", "verified": False,
         })
@@ -413,6 +415,35 @@ def main():
                     "the official 2026–27 piste map: names and grades may be wrong or missing.",
         "runs": runs, "lifts": lifts, "eats": eats,
     }
+    if os.path.exists(ELEVATIONS):
+        elevations = json.load(open(ELEVATIONS, encoding="utf-8"))
+        elevations = {k: v for k, v in elevations.items()
+                      if isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)}
+        elevated = Grid()
+        for e in els:
+            if e["type"] == "node" and str(e["id"]) in elevations:
+                elevated.add((e["lat"], e["lon"]), elevations[str(e["id"])])
+            elif e["type"] == "way":
+                for node, point in zip(e.get("nodes", []), e.get("geometry", [])):
+                    if str(node) in elevations:
+                        elevated.add((point["lat"], point["lon"]), elevations[str(node)])
+        village, _ = elevated.nearest(base_pt, 400)
+        candidates = [lift for lift in lifts if lift["top_node"] in elevations]
+        if candidates:
+            summit = max(candidates, key=lambda lift: elevations[lift["top_node"]])
+            resort["weatherPoints"] = [
+                {"label": "Village · " + BASE_NAME, "at": r5(base_pt),
+                 "ele": village[1] if village else None},
+                {"label": "Summit · top of " + summit["name"], "at": summit["top"],
+                 "ele": elevations[summit["top_node"]]},
+            ]
+        else:
+            print("NOTE: no lift-top elevations; skipping weatherPoints.")
+    else:
+        print("NOTE: elevations.json missing; skipping weatherPoints.")
+    for lift in lifts:
+        del lift["top_node"]  # internal lookup only; preserve the public lift records
+
     # saved favourites/notes/ratings are keyed on these names: warn if a rebuild drops any
     gone = []
     if os.path.exists(OUT):

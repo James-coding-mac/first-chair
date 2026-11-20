@@ -23,5 +23,11 @@
 
 - No bulk/offline prefetch of map tiles: OSM's tile usage policy forbids it. Offline map = our bundled OSM vectors over already-viewed cached tiles. If James wants a full offline background later, it needs a source whose licence allows offline use (e.g. self-generated tiles). (Step 2)
 
+## UI (James, 20 Nov 2026)
+- Premium redesign = **"polished lift-signage"**: keep the palette and Barlow/Inter, but SVG icons instead of emoji, big map with floating controls, large-number condition cards, softer shadows, slide-up sheets, automatic dark mode. Done after Steps 3–5 (they edit the same file).
+
+## Delegation (James, 20 Nov 2026)
+- Push build work to Codex/Qwen to save Claude usage; Claude writes briefs (`docs/sessions/briefs/`), reviews, tests and commits.
+
 ## Pending: needs James
 - (none)
