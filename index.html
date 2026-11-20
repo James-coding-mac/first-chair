@@ -181,9 +181,10 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
   <div class="card" id="tracker">
     <div class="trkbtns">
       <button class="secondary" id="locbtn">📍 Locate me</button>
-      <button class="secondary" id="trackbtn">▶ Track run</button>
+      <button class="secondary" id="trackbtn">▶ Track day</button>
     </div>
     <div id="trkstats" class="trkstats" hidden></div>
+    <p id="trkmessage" class="muted" role="status"></p>
     <p class="muted" style="font-size:11px;margin-top:8px">Uses your phone's GPS. Keep the screen on while tracking — web apps can't record in the background. Descent from GPS altitude is approximate.</p>
   </div>
 </section>
@@ -245,6 +246,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <!-- Paradiski runs/lifts/restaurants, generated from OpenStreetMap by tools/build_paradiski.py -->
 <script src="data/build/paradiski.js"></script>
+<script src="track.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -695,17 +697,38 @@ function paintWeather(data, at, stale){
    GPS  (locate + session tracking — screen-on, foreground only)
    ========================================================= */
 let watchId=null, following=false, tracking=false, locMarker=null, accCircle=null;
-let track=[], topSpeedKmh=0, trkStart=0, trkDist=0, trkDescent=0;
-
-function haversine(a, b){
-  const R=6371000, toR=x=>x*Math.PI/180;
-  const dLat=toR(b[0]-a[0]), dLon=toR(b[1]-a[1]);
-  const s=Math.sin(dLat/2)**2 + Math.cos(toR(a[0]))*Math.cos(toR(b[0]))*Math.sin(dLon/2)**2;
-  return 2*R*Math.asin(Math.sqrt(s));
+let track=[], trkStart=0, trkResort=null, trkPending=false, trkBreak=false, trkStorageError='';
+const localDay=t=>{ const d=new Date(t); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+function trackingAnalysis(){
+  const features=vecData[trkResort]?.features||[];
+  const lifts=features.filter(f=>f.properties?.k==='lift').flatMap(f=>{
+    const g=f.geometry;
+    const lines=g?.type==='LineString'?[g.coordinates]:g?.type==='MultiLineString'?g.coordinates:[];
+    return lines.map(line=>line.map(c=>[Number(c[1]),Number(c[0])]));
+  });
+  return FCTrack.analyse(track,{lifts});
+}
+function persistTracking(){
+  if(!trkPending) return;
+  try {
+    store.set('fc_track_live',{start:trkStart,resort:trkResort,points:FCTrack.thin(track)});
+    trkStorageError='';
+  } catch(e){ trkStorageError='Storage is full or unavailable. Keep this page open; this session could not be backed up.'; }
+  document.getElementById('trkmessage').textContent=trkStorageError;
+}
+function clearTracking(){
+  // Remove recovery only after a successful log write (or an explicit discard).
+  try { localStorage.removeItem('fc_track_live'); }
+  catch(e){ document.getElementById('trkmessage').textContent='Could not clear the saved session. Try again before starting another day.'; return false; }
+  track=[]; trkPending=false; trkStart=0;
+  document.getElementById('trackbtn').disabled=false;
+  document.getElementById('trkstats').hidden=true;
+  document.getElementById('trkmessage').textContent='';
+  return true;
 }
 function ensureWatch(){
   if(watchId!==null) return true;
-  if(!navigator.geolocation){ alert("This device can't provide a location."); return false; }
+  if(!navigator.geolocation){ document.getElementById('trkmessage').textContent="This device can't provide a location."; return false; }
   watchId = navigator.geolocation.watchPosition(onPos, onGeoErr,
     { enableHighAccuracy:true, maximumAge:1000, timeout:20000 });
   return true;
@@ -718,96 +741,118 @@ function maybeStopWatch(){
   }
 }
 function onGeoErr(e){
-  alert(e && e.code===1
-    ? "Location permission denied — enable it in Settings to use tracking."
-    : "Couldn't get a GPS fix yet. Try again with a clear view of the sky.");
-  following=false; tracking=false;
-  document.getElementById("locbtn").classList.remove("on");
-  setTrackBtn(false); maybeStopWatch();
+  const message=e && e.code===1
+    ? 'Location permission denied — enable it in Settings to use tracking.'
+    : "Couldn't get a GPS fix yet. Try again with a clear view of the sky.";
+  if(e && e.code===1){
+    following=false; tracking=false;
+    document.getElementById('locbtn').classList.remove('on');
+    setTrackBtn(false); persistTracking(); maybeStopWatch();
+    if(trkPending) finishTracking();
+  }
+  document.getElementById('trkmessage').textContent=message;
 }
 function onPos(pos){
   const c=pos.coords, here=[c.latitude, c.longitude];
   if(mapReady){
     if(!locMarker){
-      locMarker=L.circleMarker(here,{radius:7,color:"#fff",weight:2,fillColor:"#3D7FB8",fillOpacity:1}).addTo(map);
-      accCircle=L.circle(here,{radius:c.accuracy||20,color:"#3D7FB8",weight:1,fillColor:"#3D7FB8",fillOpacity:.12}).addTo(map);
+      locMarker=L.circleMarker(here,{radius:7,color:'#fff',weight:2,fillColor:'#3D7FB8',fillOpacity:1}).addTo(map);
+      accCircle=L.circle(here,{radius:c.accuracy||20,color:'#3D7FB8',weight:1,fillColor:'#3D7FB8',fillOpacity:.12}).addTo(map);
     } else {
       locMarker.setLatLng(here); accCircle.setLatLng(here).setRadius(c.accuracy||20);
     }
     if(following) map.panTo(here,{animate:true});
   }
-  let kmh = (c.speed!=null && c.speed>=0) ? c.speed*3.6 : null;
   if(tracking){
-    const now=Date.now();
-    if(track.length){
-      const prev=track[track.length-1];
-      const d=haversine([prev.lat,prev.lon], here);
-      if(d>4 && d<300){                       // drop jitter and GPS jumps
-        trkDist+=d;
-        if(kmh==null){ const dt=(now-prev.t)/1000; if(dt>0) kmh=(d/dt)*3.6; }
-      }
-      if(c.altitude!=null && prev.alt!=null){
-        const drop=prev.alt-c.altitude; if(drop>1.5) trkDescent+=drop;
-      }
+    const p={lat:c.latitude,lon:c.longitude,alt:c.altitude,acc:c.accuracy,t:pos.timestamp};
+    const prev=track[track.length-1];
+    if(FCTrack.acceptPoint(p,prev) && (!prev || p.t-prev.t>=5000 || FCTrack.distance(prev,p)>=10)){
+      if(trkBreak){p.breakBefore=true;trkBreak=false;}
+      track.push(p);
+      updateTrkStats();
     }
-    track.push({lat:c.latitude, lon:c.longitude, alt:c.altitude, t:now});
-    if(kmh!=null && kmh>topSpeedKmh) topSpeedKmh=kmh;
+  } else if(!trkPending){
+    const el=document.getElementById('trkstats');
+    const speed=Number.isFinite(c.speed) && c.speed>=0 && c.speed*3.6<=130 && c.accuracy<=50 ? Math.round(Number(c.speed)*3.6) : '—';
+    el.hidden=false;
+    el.innerHTML=`<div class="spd">${esc(speed)}<small> km/h</small></div>`;
   }
-  updateTrkStats(kmh);
 }
 function fmtDur(ms){
-  const s=Math.floor(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=s%60;
-  return (h?h+":":"") + String(m).padStart(h?2:1,"0") + ":" + String(ss).padStart(2,"0");
+  const s=Math.floor(Number(ms)/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=s%60;
+  return (h?h+':':'') + String(m).padStart(h?2:1,'0') + ':' + String(ss).padStart(2,'0');
 }
-function updateTrkStats(kmh){
-  const el=document.getElementById("trkstats");
+function trackingSummary(a){
+  const t=a.totals;
+  return `Tracked day: ${Number(t.runs)} runs · ${t.vertical===null?'—': '~'+Math.round(Number(t.vertical))+' m'} vertical · ${(Number(t.distance)/1000).toFixed(2)} km skied · top ${Math.round(Number(t.topSpeed))} km/h · ${Number(t.liftRides)} lift rides · ${fmtDur(t.timeSkiing)} skiing`;
+}
+function updateTrkStats(){
+  const el=document.getElementById('trkstats'), a=trackingAnalysis(), t=a.totals;
   el.hidden=false;
-  const spd = kmh!=null ? Math.round(kmh) : "—";
-  let html = `<div class="spd">${spd}<small> km/h</small></div>`;
-  if(tracking){
-    html += `<div class="trkgrid">
-      <div class="m"><div class="k">Distance</div><div class="val">${(trkDist/1000).toFixed(2)}<small> km</small></div></div>
-      <div class="m"><div class="k">Time</div><div class="val">${fmtDur(Date.now()-trkStart)}</div></div>
-      <div class="m"><div class="k">Top</div><div class="val">${Math.round(topSpeedKmh)}<small> km/h</small></div></div>
-      <div class="m"><div class="k">Descent*</div><div class="val">${Math.round(trkDescent)}<small> m</small></div></div>
-    </div>`;
-  }
-  el.innerHTML=html;
+  const metrics=[['Runs',Number(t.runs)],['Vertical',t.vertical===null?'—':Math.round(Number(t.vertical))+' m'],
+    ['Skied',(Number(t.distance)/1000).toFixed(2)+' km'],['Top',Math.round(Number(t.topSpeed))+' km/h'],['Lifts',Number(t.liftRides)]];
+  el.innerHTML=`<div class="spd">${esc(a.state)}</div><div class="trkgrid">`+
+    metrics.map(([label,value])=>`<div class="m"><div class="k">${esc(label)}</div><div class="val">${esc(value)}</div></div>`).join('')+'</div>';
 }
 function setTrackBtn(on){
-  const b=document.getElementById("trackbtn");
-  b.classList.toggle("on-track", on);
-  b.textContent = on ? "⏹ Stop" : "▶ Track run";
+  const b=document.getElementById('trackbtn');
+  b.classList.toggle('on-track',on);
+  b.textContent=on?'⏹ Stop':'▶ Track day';
+  b.disabled=!on && trkPending;
+}
+function resumeTracking(){
+  if(!ensureWatch()) return;
+  trkBreak=track.length>0; tracking=true;
+  setTrackBtn(true); updateTrkStats(); persistTracking();
 }
 function finishTracking(){
-  const km=(trkDist/1000).toFixed(2), dur=fmtDur(Date.now()-trkStart);
-  const summary = `Tracked: ${km} km · ${dur} · top ${Math.round(topSpeedKmh)} km/h`
-    + (trkDescent>0 ? ` · ~${Math.round(trkDescent)} m descent` : "");
-  const el=document.getElementById("trkstats");
+  const el=document.getElementById('trkstats');
   el.hidden=false;
-  el.innerHTML = `<div class="muted" style="text-align:center">${esc(summary)}</div>`
-    + `<button class="primary trksave" id="trksavebtn">Add to today's log →</button>`;
-  document.getElementById("trksavebtn").addEventListener("click", ()=>{
-    const notes=document.getElementById("lognotes");
-    notes.value = (notes.value ? notes.value.trim()+"\n" : "") + summary;
-    document.getElementById("logdate").value = new Date().toISOString().slice(0,10);
-    document.querySelector('nav button[data-t="log"]').click();
+  el.innerHTML=`<p class="muted">${esc(localDay(trkStart))} · ${esc(trackingSummary(trackingAnalysis()))}</p>`+
+    '<div class="trkbtns trksave"><button class="secondary" id="trkresume">Resume tracking</button><button class="primary" id="trksavebtn">Save to log</button><button class="secondary" id="trkdiscard">Discard</button></div>';
+  document.getElementById('trkresume').disabled=localDay(trkStart)!==localDay(Date.now());
+  document.getElementById('trkresume').addEventListener('click',resumeTracking);
+  document.getElementById('trkdiscard').addEventListener('click',clearTracking);
+  document.getElementById('trksavebtn').addEventListener('click',()=>{
+    const a=trackingAnalysis();
+    // Stable id makes retry safe if writing the log succeeds but clearing recovery fails.
+    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),track:{totals:a.totals,runs:a.runs}};
+    const next=[...daylog.filter(e=>e.id!==entry.id),entry];
+    try { store.set('fc_log',next); }
+    catch(e){ document.getElementById('trkmessage').textContent='Could not save the log. Free device storage and try again; the session is still here.'; return; }
+    daylog=next; renderLog();
+    if(clearTracking()) document.querySelector('nav button[data-t="log"]').click();
   });
 }
-document.getElementById("locbtn").addEventListener("click", ()=>{
+function restoreTracking(){
+  const saved=store.get('fc_track_live',null);
+  if(!saved) return;
+  if(!Number.isFinite(saved.start) || !Array.isArray(saved.points) || !RESORTS[saved.resort]){
+    document.getElementById('trkmessage').textContent='The saved tracking session is unreadable. Export a backup from Log before discarding it.';
+    document.getElementById('trackbtn').disabled=true;
+    const b=document.createElement('button'); b.textContent='Discard saved session';
+    b.addEventListener('click',()=>{if(clearTracking()) b.remove();});
+    document.getElementById('trkmessage').appendChild(b); return;
+  }
+  trkStart=saved.start; trkResort=saved.resort; track=FCTrack.thin(saved.points); trkPending=true;
+  setTrackBtn(false); finishTracking();
+}
+setInterval(()=>{ if(tracking) persistTracking(); },30000);
+window.addEventListener('pagehide',persistTracking);
+document.addEventListener('visibilitychange',()=>{if(document.hidden) persistTracking();});
+document.getElementById('locbtn').addEventListener('click',()=>{
   following=!following;
-  const b=document.getElementById("locbtn");
-  b.classList.toggle("on", following);
-  if(following){ if(!ensureWatch()){ following=false; b.classList.remove("on"); } }
+  const b=document.getElementById('locbtn'); b.classList.toggle('on',following);
+  if(following){if(!ensureWatch()){following=false;b.classList.remove('on');}}
   else maybeStopWatch();
 });
-document.getElementById("trackbtn").addEventListener("click", ()=>{
+document.getElementById('trackbtn').addEventListener('click',()=>{
   if(!tracking){
-    if(!ensureWatch()) return;
-    tracking=true; track=[]; topSpeedKmh=0; trkDist=0; trkDescent=0; trkStart=Date.now();
-    setTrackBtn(true); updateTrkStats(null);
+    if(trkPending || !ensureWatch()) return;
+    track=[]; trkStart=Date.now(); trkResort=resortId; trkPending=true; trkBreak=false; tracking=true;
+    setTrackBtn(true); updateTrkStats(); persistTracking();
   } else {
-    tracking=false; setTrackBtn(false); finishTracking(); maybeStopWatch();
+    tracking=false; setTrackBtn(false); persistTracking(); finishTracking(); maybeStopWatch();
   }
 });
 
@@ -914,6 +959,7 @@ function renderLog(){
     card.innerHTML = `<strong>${nice}</strong> <span class="cond">· ${esc(entry.cond)}</span>
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
+      ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
     card.querySelector(".del").addEventListener("click", ()=>{
       if(!confirm("Delete this day?")) return;
@@ -1065,6 +1111,7 @@ renderRuns();
 renderEats();
 renderLog();
 renderWeather();
+restoreTracking();
 
 /* register the service worker so the app shell works offline */
 if("serviceWorker" in navigator){

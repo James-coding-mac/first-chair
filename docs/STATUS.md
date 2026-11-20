@@ -1,7 +1,7 @@
 # Status
 
 **Updated:** 20 Nov 2026
-**Current step:** Steps 1–3 live. Step 5a (route graph) in progress with Codex; then Step 4 (tracking), 5b (routing UI), 5c (UI polish). Step 6 needs James's decision.
+**Current step:** Steps 1–3 live. Step 4 (tracking) implemented locally, awaiting Claude review and iPhone field testing. Step 5a (route graph) in progress with Codex; then 5b (routing UI), 5c (UI polish). Step 6 needs James's decision.
 
 - Live at https://james-coding-mac.github.io/first-chair/. James still to check on the iPhone: Paradiski, offline map in airplane mode, altitude weather.
 - **Paradiski** is in the resort switcher: 293 runs (La Plagne + Les Arcs/Peisey), 211 restaurants (47 on the mountain, 164 village), 152 lifts in the data (drawn on the map; no lift list screen). Every record shows an UNVERIFIED tag.
@@ -14,3 +14,6 @@
 - Offline map (Step 2): Paradiski pistes/lifts/restaurants drawn from `data/build/paradiski-map.geojson` (canvas vectors); Leaflet precached by the SW. No bulk tile prefetch (OSM tile policy), so the background map offline = tiles you've already viewed.
 
 - Weather by altitude (Step 3): Paradiski village/summit forecasts include wind/gusts/direction, hourly freezing level and 3-day snow/max temperature. Separate `fc_weather_alt` cache shows forecast age offline or on refresh failure; other resorts retain the existing weather path. Elevations come from the local elevation cache; SW shell version is `v4`. Summit = top of Aiguille Rouge (highest lift top on the DEM). Reviewed + live-API tested by Claude.
+
+- Tracking (Step 4, local/uncommitted): `track.js` analyses a foreground Track day session into runs/lifts, smooths altitude, rejects poor fixes/jumps, and uses loaded lift geometry for confidence/no-altitude fallback. Live totals, `fc_track_live` recovery (Resume / Save / Discard), day summaries and optional per-run log details are implemented. Existing log entries remain compatible. SW shell is now `v5`, including `track.js`.
+- Step 4 verification: 12 synthetic analysis cases plus in-memory UI/storage lifecycle checks pass (`node tools/test_tracking.mjs`); syntax checks pass for track.js, sw.js and the main inline script. Three noisy cycles yield 3 runs / 3 lifts / 1,167 m vertical. No real iPhone/GPS/offline-install test yet. Downhill driving at 110 km/h counts as skiing: stop tracking before driving. See `docs/sessions/2026-11-20-step4-tracking.md` for assumptions and remaining checks.
