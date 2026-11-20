@@ -123,5 +123,59 @@
     return {totals,runs,lifts:rides,state:!last || last.gap || last.stopped?'Stopped':last.lift?'On lift':'Skiing',
       dropped:points.length-ps.length,hasAltitude};
   }
-  window.FCTrack={analyse,distance,acceptPoint,thin};
+  /* Which named pistes did each run follow?
+     points: raw track points {lat,lon,t}; runs: from analyse(); lines: [{name, coords:[[lat,lon],...]}].
+     A piste counts for a run when >= 150 m of the run (sampled every ~20 m) lies within 25 m of it,
+     moving along the line (angle < 60 deg, either drawing direction), and those samples are >= 60%
+     of the run between the first and last sample on that piste. Returns [[names in order], ...]. */
+  function matchPistes(points,runs,lines){
+    const CELL=0.001, grid=new Map(), segs=[];
+    (lines||[]).forEach(l=>{
+      if(!l || !l.name || !Array.isArray(l.coords)) return;
+      for(let i=0;i+1<l.coords.length;i++){
+        const a=l.coords[i], b=l.coords[i+1], id=segs.length;
+        segs.push({a,b,name:l.name});
+        const y0=Math.floor(Math.min(a[0],b[0])/CELL)-1, y1=Math.floor(Math.max(a[0],b[0])/CELL)+1;
+        const x0=Math.floor(Math.min(a[1],b[1])/CELL)-1, x1=Math.floor(Math.max(a[1],b[1])/CELL)+1;
+        for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++){const k=y+','+x; if(!grid.has(k)) grid.set(k,[]); grid.get(k).push(id);}
+      }
+    });
+    const bearing=(p,q)=>Math.atan2((q[1]-p[1])*Math.cos(p[0]*Math.PI/180),q[0]-p[0]);
+    function nearest(p,dir){
+      const ids=grid.get(Math.floor(p[0]/CELL)+','+Math.floor(p[1]/CELL))||[];
+      const kx=Math.cos(p[0]*Math.PI/180)*111320, ky=110540;
+      let best=null;
+      for(const id of ids){
+        const s=segs[id];
+        const ax=(s.a[1]-p[1])*kx, ay=(s.a[0]-p[0])*ky, bx=(s.b[1]-p[1])*kx, by=(s.b[0]-p[0])*ky;
+        const dx=bx-ax, dy=by-ay, L2=dx*dx+dy*dy, t=L2?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L2)):0;
+        const d=Math.hypot(ax+t*dx,ay+t*dy);
+        if(d>25 || (best && d>=best.d)) continue;
+        let ang=Math.abs(dir-bearing(s.a,s.b))%(2*Math.PI); if(ang>Math.PI) ang=2*Math.PI-ang;
+        if(ang>Math.PI/2) ang=Math.PI-ang;            // pistes may be drawn either way
+        if(ang<Math.PI/3) best={d,name:s.name};
+      }
+      return best;
+    }
+    return (runs||[]).map(run=>{
+      const pts=(points||[]).filter(p=>p.t>=run.start && p.t<=run.end && Number.isFinite(p.lat) && Number.isFinite(p.lon));
+      const samples=[]; let last=null;
+      for(const p of pts){
+        if(!last){last=p;continue;}
+        const d=distance(last,p);
+        if(d<20) continue;
+        samples.push({at:[p.lat,p.lon],dir:bearing([last.lat,last.lon],[p.lat,p.lon]),d});
+        last=p;
+      }
+      const hits=samples.map(s=>{const n=nearest(s.at,s.dir);return n?n.name:null;});
+      const order=[], stat=new Map();
+      hits.forEach((n,i)=>{
+        if(!n) return;
+        if(!stat.has(n)){stat.set(n,{first:i,last:i,len:0,count:0});order.push(n);}
+        const st=stat.get(n); st.last=i; st.len+=samples[i].d; st.count++;
+      });
+      return order.filter(n=>{const st=stat.get(n);return st.len>=150 && st.count/(st.last-st.first+1)>=0.6;});
+    });
+  }
+  window.FCTrack={analyse,distance,acceptPoint,thin,matchPistes};
 }());

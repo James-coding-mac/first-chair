@@ -466,7 +466,7 @@ function setRunsNote(){
    MAP  (Leaflet: OSM tiles + OpenSnowMap overlay online;
          resorts with R.mapData also get bundled piste/lift vectors that work offline)
    ========================================================= */
-let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0;
+let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0, skiedGroup;
 const EATS_MIN_ZOOM = 15;   // restaurant dots only when zoomed in, to keep the map readable
 const MAPNOTE_ONLINE  = "Live pistes & lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom. Needs a data signal — the other tabs work offline.";
 const MAPNOTE_OFFLINE = "Pistes, lifts and restaurants are drawn from bundled OpenStreetMap data and work with no signal. The background map needs signal (areas you've viewed are cached). Tap a line for its name. Unverified: check the official piste map.";
@@ -611,16 +611,40 @@ function syncEatLayer(){
   if(show && !eatGroup.getLayers().length) eatMarkers.forEach(m=>eatGroup.addLayer(m));
   if(!show) eatGroup.clearLayers();
 }
+/* pistes skied (from tracked runs matched to the offline piste lines) */
+function baseRunName(n){ return String(n).replace(/\s*(\([^)]*\))?\s*(#\d+)?\s*$/, ""); }
+function skiedNames(resort){
+  const out = new Set();
+  daylog.forEach(e=>{ if(e.resort===resort && Array.isArray(e.track?.runs)) e.track.runs.forEach(r=>(Array.isArray(r.pistes)?r.pistes:[]).forEach(n=>out.add(String(n)))); });
+  return out;
+}
+function pisteLines(resort){
+  const fc = vecData[resort];
+  return fc ? fc.features.filter(f=>f.properties.k==="piste" && f.properties.n && f.geometry.type==="LineString")
+    .map(f=>({ name:f.properties.n, coords:f.geometry.coordinates.map(c=>[c[1],c[0]]) })) : [];
+}
+function drawSkied(data){
+  if(!skiedGroup) return;
+  skiedGroup.clearLayers();
+  const names = skiedNames(resortId);
+  if(!names.size) return;
+  L.geoJSON({ type:"FeatureCollection", features:data.features.filter(f=>f.properties.k==="piste" && names.has(f.properties.n)) },
+    { style:()=>({ color:"#E0A93C", weight:7, opacity:.55 }), interactive:false }).addTo(skiedGroup);
+}
+
 function showVectors(){
   document.getElementById("mapnote").textContent = R.mapData ? MAPNOTE_OFFLINE : MAPNOTE_ONLINE;
   if(!mapReady) return;
   const gen = ++vecGen;   // a newer call wins; stops a slow fetch drawing twice after quick resort switches
   vecGroup.clearLayers(); eatGroup.clearLayers(); eatMarkers = [];
   // the layers menu only offers the offline layers on resorts that have them
-  layersCtl.removeLayer(vecGroup); layersCtl.removeLayer(eatGroup);
+  if(!skiedGroup) skiedGroup = L.layerGroup().addTo(map);
+  skiedGroup.clearLayers();
+  layersCtl.removeLayer(vecGroup); layersCtl.removeLayer(eatGroup); layersCtl.removeLayer(skiedGroup);
   if(!R.mapData) return;
   layersCtl.addOverlay(vecGroup, "Pistes & lifts (offline)");
   layersCtl.addOverlay(eatGroup, "Restaurants (zoom in)");
+  layersCtl.addOverlay(skiedGroup, "Pistes I've skied");
   const forId = resortId;
   const draw = data => {
     if(gen!==vecGen) return;
@@ -632,6 +656,7 @@ function showVectors(){
     if(R.base) L.circleMarker(R.base.at, { radius:8, color:"#fff", weight:2, fillColor:"#16283C", fillOpacity:1 })
       .bindPopup(`<strong>Base: ${esc(R.base.name)}</strong>`).addTo(vecGroup);
     syncEatLayer();
+    drawSkied(data);
   };
   if(vecData[forId]) return draw(vecData[forId]);
   fetch(R.mapData).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
@@ -1063,7 +1088,9 @@ function finishTracking(){
   document.getElementById('trksavebtn').addEventListener('click',()=>{
     const a=trackingAnalysis();
     // Stable id makes retry safe if writing the log succeeds but clearing recovery fails.
-    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),track:{totals:a.totals,runs:a.runs}};
+    const lines=pisteLines(trkResort), matched=lines.length?FCTrack.matchPistes(track,a.runs,lines):[];
+    const runs=a.runs.map((r,i)=>matched[i]&&matched[i].length?{...r,pistes:matched[i]}:r);
+    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),track:{totals:a.totals,runs}};
     const next=[...daylog.filter(e=>e.id!==entry.id),entry];
     try { store.set('fc_log',next); }
     catch(e){ document.getElementById('trkmessage').textContent='Could not save the log. Free device storage and try again; the session is still here.'; return; }
@@ -1112,9 +1139,11 @@ function renderRuns(){
   const q = document.getElementById("runsearch").value.toLowerCase();
   const el = document.getElementById("runlist");
   el.innerHTML = "";
+  const skied = skiedNames(resortId);
   R.runs.forEach(r=>{
     if(fMtn==="fav" && !favs[resortId].includes(r.name)) return;
-    if(fMtn!=="all" && fMtn!=="fav" && r.mtn!==fMtn) return;
+    if(fMtn==="skied" && !skied.has(baseRunName(r.name))) return;
+    if(fMtn!=="all" && fMtn!=="fav" && fMtn!=="skied" && r.mtn!==fMtn) return;
     if(fDiff!=="all" && r.diff!==fDiff) return;
     if(q && !(r.name+r.zone+r.lift).toLowerCase().includes(q)) return;
     const row = document.createElement("div");
@@ -1122,7 +1151,7 @@ function renderRuns(){
     row.innerHTML =
       `<div class="rowhead">
         <span class="diff ${r.diff}">${diffSym(r.diff)}</span>
-        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}${runStatusTag(r.name)}</div></span>
+        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}${runStatusTag(r.name)}${skied.has(baseRunName(r.name))?'<span class="stag open">✓ skied</span>':''}</div></span>
         <button type="button" aria-label="Favourite ${esc(r.name)}" aria-pressed="${favs[resortId].includes(r.name)}" class="fav ${favs[resortId].includes(r.name)?"on":""}">★</button>
       </div>
       <div class="rowbody">
@@ -1281,7 +1310,10 @@ function renderSeasonStats(){
     cell(s.days,"Days")+cell(s.trackedDays ? s.runs : "—","Runs")+cell(s.trackedDays ? Math.round(s.vertical).toLocaleString("en-GB")+" m" : "—","Vertical")+
     cell(s.trackedDays ? (s.distance/1000).toFixed(0)+" km" : "—","Skied")+cell(s.trackedDays ? Math.round(s.topSpeed)+" km/h" : "—","Top speed")+
     cell(s.bestDay ? Math.round(s.bestDay.vertical).toLocaleString("en-GB")+" m" : "—","Best day")+`</div>`+
-    (s.trackedDays ? "" : `<p class="muted" style="margin-top:8px">Use Track day on the Map tab to add runs and vertical.</p>`);
+    (s.trackedDays ? "" : `<p class="muted" style="margin-top:8px">Use Track day on the Map tab to add runs and vertical.</p>`)+
+    (()=>{ const r = statsFilter || resortId, R2 = RESORTS[r]; if(!R2 || !R2.mapData) return "";
+      const names = skiedNames(r), total = new Set(R2.runs.map(x=>baseRunName(x.name))), done = [...total].filter(n=>names.has(n)).length;
+      return done ? `<p class="muted" style="margin-top:8px">Pistes skied in ${esc(R2.name)}: <strong>${done} / ${total.size}</strong></p>` : ""; })();
   el.querySelectorAll(".chip").forEach(b=>b.addEventListener("click", ()=>{ statsFilter = b.dataset.v; renderSeasonStats(); }));
 }
 async function shareDayCard(entry){
@@ -1323,7 +1355,7 @@ function renderLog(){
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
       ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
-      ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h`)}</p>`).join(''):''}
+      ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h${Array.isArray(run.pistes)&&run.pistes.length?' · '+run.pistes.join(', '):''}`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
     const share = card.querySelector(".sharebtn");
     if(share) share.addEventListener("click", ()=>shareDayCard(entry));
@@ -1416,6 +1448,7 @@ function buildMtnChips(){
   let h = `<button class="chip on" data-v="all">All</button>`;
   R.mountains.forEach(m=> h += `<button class="chip" data-v="${m.id}">${esc(m.name)}</button>`);
   h += `<button class="chip" data-v="fav">★ Favourites</button>`;
+  if(R.mapData) h += `<button class="chip" data-v="skied">✓ Skied</button>`;
   document.getElementById("mtnchips").innerHTML = h;
   bindChipGroup("mtnchips", v=>{ fMtn=v; renderRuns(); });
 }
