@@ -264,7 +264,7 @@ def main():
             unnamed += 1
             continue
         segs[(sid, name)].append({
-            "id": e["id"], "pts": pts, "grade": grade, "area": is_area,
+            "id": e["id"], "pts": pts, "grade": grade, "area": is_area, "nodes": e.get("nodes", []),
             "len": 0 if is_area else path_len(pts),
             "groomed": t.get("piste:grooming") in ("classic", "mogul", "classic+skating"),
             "moguls": t.get("piste:grooming") == "mogul",
@@ -314,6 +314,7 @@ def main():
                 "name": name, "mtn": sid, "diff": main, "zone": zone_of(mid), "lift": "",
                 "note": "From OpenStreetMap: " + "; ".join(bits) + ".",
                 "at": r5(mid), "osm": sorted(s["id"] for s in cl),
+                "_nodes": [n for s in cl for n in s["nodes"]],
                 "source": "osm", "verified": False,
             })
 
@@ -390,6 +391,28 @@ def main():
             "osm": "%s/%d" % (e["type"], e["id"]), "source": "osm", "verified": False,
         })
     # one place mapped twice (e.g. a node and a building a few metres apart): keep the richer record
+    # --- services (ski rental, pharmacy, ATM, toilets, doctor, defibrillator) near the slopes ---
+    def service_kind(t):
+        if t.get("shop") in ("ski", "sports"):
+            return "Ski / sports shop"
+        if t.get("emergency") == "defibrillator":
+            return "Defibrillator"
+        return {"pharmacy": "Pharmacy", "atm": "ATM / cash", "toilets": "Toilets",
+                "doctors": "Doctor", "clinic": "Medical centre"}.get(t.get("amenity"))
+    services = []
+    for e in els:
+        t = tags(e)
+        kind = service_kind(t)
+        if not kind:
+            continue
+        p = centroid(geom(e))
+        sid = sector_of([p])
+        if not sid or not ski_pts.nearest(p, 500)[0]:
+            continue
+        services.append({"type": kind, "name": t.get("name") or "", "at": r5(p), "mtn": sid,
+                         "osm": "%s/%d" % (e["type"], e["id"]), "source": "osm", "verified": False})
+    services.sort(key=lambda x: (x["type"], x["name"], x["osm"]))
+
     eats.sort(key=lambda x: -len(x["desc"]))
     merged = []
     for x in eats:
@@ -415,8 +438,14 @@ def main():
         "mountains": [{"id": "LP", "name": "La Plagne"}, {"id": "LA", "name": "Les Arcs / Peisey"}],
         "dataNote": "Generated from OpenStreetMap (© OSM contributors, ODbL). NOT yet checked against "
                     "the official 2026–27 piste map: names and grades may be wrong or missing.",
-        "runs": runs, "lifts": lifts, "eats": eats,
+        "runs": runs, "lifts": lifts, "eats": eats, "services": services,
     }
+    # vertical drop per run: highest minus lowest known elevation (DEM) of its junction/end nodes
+    drop_elev = json.load(open(ELEVATIONS, encoding="utf-8")) if os.path.exists(ELEVATIONS) else {}
+    for r in runs:
+        el = [drop_elev[str(n)] for n in r.pop("_nodes", []) if str(n) in drop_elev]
+        if len(el) >= 2 and max(el) - min(el) >= 10:
+            r["drop"] = round(max(el) - min(el))
     if os.path.exists(ELEVATIONS):
         elevations = json.load(open(ELEVATIONS, encoding="utf-8"))
         elevations = {k: v for k, v in elevations.items()

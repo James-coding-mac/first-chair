@@ -261,10 +261,11 @@ class Lumiplan(unittest.TestCase):
         first = next(d for d in dyn['items'] if str(d['id']) == lift_ids[0])
         first['openingTimesReal'] = [{'beginTime': '08:45', 'endTime': '16:05'}]
         first['message'] = 'Vent fort'
+        first['waitingTime'] = 7
         p = s.parse_lumi(json.dumps(static), json.dumps(dyn))
         recs = p['LP']['lifts'] + p['LA']['lifts']
         self.assertEqual(sum(r['state'] == 'open' for r in recs), 10)
-        self.assertTrue(any(r['closes'] == '16:05' and r['message'] == 'Vent fort' for r in recs))
+        self.assertTrue(any(r['closes'] == '16:05' and r['message'] == 'Vent fort' and r['wait'] == 7 for r in recs))
         self.assertIn(True, (p['LP']['season'], p['LA']['season']))
 
     def test_collect_prefers_lumiplan_and_matches_most_lifts(self):

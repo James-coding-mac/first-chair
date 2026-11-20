@@ -1,6 +1,6 @@
 #!/bin/bash
-# Download Paradiski pistes, lifts, food/drink places, village names, ski-area outlines and anything
-# named Bellecôte from OpenStreetMap (Overpass API) into data/raw/. Then run tools/build_paradiski.py.
+# Download Paradiski pistes, lifts, food/drink places, services (ski shops, pharmacies, ATMs, toilets,
+# doctors, defibrillators), village names, ski-area outlines and anything named Bellecôte from OpenStreetMap (Overpass API) into data/raw/. Then run tools/build_paradiski.py.
 # Data © OpenStreetMap contributors, ODbL. Public Overpass servers are often busy: tries each server,
 # three rounds, with a pause between rounds.
 cd "$(dirname "$0")/.." && mkdir -p data/raw
@@ -12,6 +12,9 @@ nwr[\"amenity\"~\"restaurant|cafe|bar|fast_food\"]($B);
 node[\"place\"~\"village|hamlet|town|suburb|neighbourhood|locality\"]($B);
 way[\"landuse\"=\"winter_sports\"]($B);
 nwr[\"name\"~\"Bellec[oô]te\",i]($B);
+nwr[\"shop\"~\"^(ski|sports)$\"]($B);
+nwr[\"amenity\"~\"^(pharmacy|atm|toilets|doctors|clinic)$\"]($B);
+node[\"emergency\"=\"defibrillator\"]($B);
 );out geom;"
 OUT=data/raw/paradiski-overpass.json
 for round in 1 2 3; do

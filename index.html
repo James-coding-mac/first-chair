@@ -115,6 +115,9 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 #season-stats .ss-k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .sharebtn{margin-top:8px}
 .sun-lit{color:#B7791F;font-weight:600}
+.rlinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.rlinks a{display:block;padding:10px 12px;border-radius:12px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:13.5px}
+.rlinks a small{display:block;color:var(--ink-2);font-size:11.5px}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -179,6 +182,11 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <div id="route-chips" class="chips" aria-label="Maximum route difficulty"></div>
   </div>
   <div id="status-card" class="card" hidden></div>
+  <div id="replay-card" class="card" hidden>
+    <div class="st-head"><span class="label">Day replay (120×)</span><span class="muted" id="replay-label"></span></div>
+    <div class="sos-row"><button class="secondary" id="replay-pause">⏸ Pause</button><button class="secondary" id="replay-stop">Close</button></div>
+  </div>
+  <div id="links-card" class="card" hidden></div>
   <div id="sun-card" class="card" hidden>
     <div class="st-head"><span class="label">☀ Sun on slopes</span><span class="muted" id="sun-times"></span></div>
     <input type="range" id="sun-time" min="0" max="1439" step="5" aria-label="Time of day" style="width:100%;margin:8px 0">
@@ -205,6 +213,9 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
   <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="text" id="runsearch" aria-label="Search runs" placeholder="Search runs…"></div>
   <div class="chips" id="mtnchips"></div>
   <div class="chips" id="diffchips"></div>
+  <div class="chips" id="sortchips" hidden>
+    <button class="chip on" data-v="name">A–Z</button><button class="chip" data-v="drop">Biggest drop</button>
+  </div>
   <div id="runlist"></div>
   <p class="muted" id="runsnote" style="margin-top:12px"></p>
 </section>
@@ -476,7 +487,7 @@ function setRunsNote(){
    MAP  (Leaflet: OSM tiles + OpenSnowMap overlay online;
          resorts with R.mapData also get bundled piste/lift vectors that work offline)
    ========================================================= */
-let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0, skiedGroup;
+let map, mapReady = false, vecGroup, eatGroup, eatMarkers = [], layersCtl, vecGen = 0, skiedGroup, svcGroup, svcMarkers = [];
 const EATS_MIN_ZOOM = 15;   // restaurant dots only when zoomed in, to keep the map readable
 const MAPNOTE_ONLINE  = "Live pistes & lifts via OpenSnowMap over OpenStreetMap. Pan and pinch to zoom. Needs a data signal — the other tabs work offline.";
 const MAPNOTE_OFFLINE = "Pistes, lifts and restaurants are drawn from bundled OpenStreetMap data and work with no signal. The background map needs signal (areas you've viewed are cached). Tap a line for its name. Unverified: check the official piste map.";
@@ -531,7 +542,8 @@ function ageText(ms){
 function statusLine(st, info){
   if(!statusLive() || st==="unknown") return "";
   const label = st==="open" ? "Open" : st==="scheduled" ? "Opening later" : "Closed";
-  const closes = info.closes && st==="open" ? ` · closes ${esc(info.closes)}` : "";
+  const closes = (info.closes && st==="open" ? ` · closes ${esc(info.closes)}` : "")+
+    (Number.isFinite(info.wait) && st==="open" ? ` · queue ~${Number(info.wait)} min` : "");
   const msg = info.message ? `<br><em>${esc(info.message)}</em>` : "";
   return `<br><strong>${label}</strong>${closes}${msg}`;
 }
@@ -620,6 +632,10 @@ function syncEatLayer(){
   const show = map.getZoom() >= EATS_MIN_ZOOM;
   if(show && !eatGroup.getLayers().length) eatMarkers.forEach(m=>eatGroup.addLayer(m));
   if(!show) eatGroup.clearLayers();
+  if(svcGroup){
+    if(show && !svcGroup.getLayers().length) svcMarkers.forEach(m=>svcGroup.addLayer(m));
+    if(!show) svcGroup.clearLayers();
+  }
 }
 /* pistes skied (from tracked runs matched to the offline piste lines) */
 function baseRunName(n){ return String(n).replace(/\s*(\([^)]*\))?\s*(#\d+)?\s*$/, ""); }
@@ -640,6 +656,79 @@ function drawSkied(data){
   if(!names.size) return;
   L.geoJSON({ type:"FeatureCollection", features:data.features.filter(f=>f.properties.k==="piste" && names.has(f.properties.n)) },
     { style:()=>({ color:"#E0A93C", weight:7, opacity:.55 }), interactive:false }).addTo(skiedGroup);
+}
+
+/* ---------- day replay: saved path animated on the map ---------- */
+// [[lat,lon,alt|null,secondsFromStart],...] with points >= 15 m apart: small enough to keep a season in localStorage
+function compactPath(points){
+  const out = []; let last = null; const t0 = points.length ? points[0].t : 0;
+  for(const p of points){
+    if(!Number.isFinite(p.lat) || !Number.isFinite(p.lon)) continue;
+    if(last && FCTrack.distance(last, p) < 15) continue;
+    out.push([+p.lat.toFixed(5), +p.lon.toFixed(5), Number.isFinite(p.alt) ? Math.round(p.alt) : null, Math.round((p.t - t0)/1000)]);
+    last = p;
+  }
+  return out;
+}
+let replay = null;
+function stopReplay(){
+  if(!replay) return;
+  cancelAnimationFrame(replay.raf); if(mapReady) map.removeLayer(replay.layer);
+  document.getElementById("replay-card").hidden = true; replay = null;
+}
+function replayDay(entry){
+  stopReplay();
+  if(entry.resort && entry.resort!==resortId && RESORTS[entry.resort]){ document.getElementById("resortsel").value = entry.resort; switchResort(entry.resort); }
+  document.querySelector('nav button[data-t="map"]').click();
+  if(!mapReady) return;
+  const path = entry.track.path.filter(p=>Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Number.isFinite(p[3]));
+  if(path.length < 2) return;
+  const layer = L.layerGroup().addTo(map), ll = path.map(p=>[p[0],p[1]]);
+  L.polyline(ll, { color:"#16283C", weight:3, opacity:.25 }).addTo(layer);
+  const trail = L.polyline([], { color:"#C0392B", weight:4, opacity:.9 }).addTo(layer);
+  const dot = L.circleMarker(ll[0], { radius:7, color:"#fff", weight:2, fillColor:"#C0392B", fillOpacity:1 }).addTo(layer);
+  map.fitBounds(ll, { padding:[24,24] });
+  const card = document.getElementById("replay-card"), label = document.getElementById("replay-label");
+  card.hidden = false;
+  const speed = 120, total = path[path.length-1][3], start = new Date(entry.id || Date.parse(entry.date+"T09:00"));
+  let i = 0, t = 0, prev = performance.now();
+  replay = { layer, raf:0, paused:false };
+  const step = now=>{
+    if(!replay) return;
+    if(!replay.paused) t += (now - prev) / 1000 * speed;
+    prev = now;
+    while(i < path.length-1 && path[i+1][3] <= t){ i++; trail.addLatLng(ll[i]); }
+    dot.setLatLng(ll[i]);
+    const clock = new Date(start.valueOf() + path[i][3]*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    label.textContent = `${clock} · ${Math.round(100*Math.min(t,total)/(total||1))}%${path[i][2]!==null ? ` · ${path[i][2]} m` : ""}`;
+    if(t < total) replay.raf = requestAnimationFrame(step);
+  };
+  replay.raf = requestAnimationFrame(step);
+  document.getElementById("replay-pause").onclick = e=>{ if(!replay) return; replay.paused = !replay.paused; e.target.textContent = replay.paused ? "▶ Play" : "⏸ Pause"; };
+  document.getElementById("replay-stop").onclick = stopReplay;
+}
+
+/* ---------- official resort links (verified 20 Nov 2026; open in the browser, need signal) ---------- */
+const RESORT_LINKS = {
+  pdk: [
+    ["Webcams", "Les Arcs", "https://www.lesarcs.com/en/livecams-and-webcams"],
+    ["Webcams", "La Plagne", "https://en.la-plagne.com/discover/ski-area/webcams"],
+    ["Live info", "Les Arcs", "https://en.lesarcs.com/en/live-les-arcs"],
+    ["Interactive map", "Paradiski (Lumiplan)", "https://lumiplay.link/interactive-map/Paradiski/fr"],
+    ["Shuttles", "Les Arcs", "https://www.lesarcs.com/en/getting-around-les-arcs"],
+    ["Shuttles", "La Plagne (FR)", "https://www.la-plagne.com/decouvrir-la-plagne/pratique/navettes-liaisons"],
+    ["Events", "Les Arcs", "https://en.lesarcs.com/en/what-do-les-arcs/all-events"],
+    ["Road conditions", "La Plagne (FR)", "https://www.la-plagne.com/decouvrir-la-plagne/pratique/conditions-de-circulation"],
+    ["Avalanche bulletin", "Météo-France BERA", "https://meteofrance.com/meteo-montagne/alpes-du-nord"],
+  ],
+};
+function renderLinks(){
+  const el = document.getElementById("links-card"), list = RESORT_LINKS[resortId];
+  el.hidden = !list;
+  if(!list) return;
+  el.innerHTML = `<div class="label">Resort info</div><div class="rlinks">`+
+    list.map(([t,sub,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}<small>${esc(sub)}</small></a>`).join("")+
+    `</div><p class="muted" style="margin-top:8px;font-size:11.5px">Official resort pages: need a signal.</p>`;
 }
 
 /* ---------- sun on slopes ---------- */
@@ -721,11 +810,14 @@ function showVectors(){
   // the layers menu only offers the offline layers on resorts that have them
   if(!skiedGroup) skiedGroup = L.layerGroup().addTo(map);
   skiedGroup.clearLayers();
-  layersCtl.removeLayer(vecGroup); layersCtl.removeLayer(eatGroup); layersCtl.removeLayer(skiedGroup);
+  if(!svcGroup) svcGroup = L.layerGroup();
+  svcGroup.clearLayers(); svcMarkers = [];
+  layersCtl.removeLayer(vecGroup); layersCtl.removeLayer(eatGroup); layersCtl.removeLayer(skiedGroup); layersCtl.removeLayer(svcGroup);
   if(!R.mapData) return;
   layersCtl.addOverlay(vecGroup, "Pistes & lifts (offline)");
   layersCtl.addOverlay(eatGroup, "Restaurants (zoom in)");
   layersCtl.addOverlay(skiedGroup, "Pistes I've skied");
+  if(R.services && R.services.length) layersCtl.addOverlay(svcGroup, "Services: shops, pharmacy, ATM, WC (zoom in)");
   const forId = resortId;
   const draw = data => {
     if(gen!==vecGen) return;
@@ -736,6 +828,10 @@ function showVectors(){
         .bindPopup(`<strong>${esc(e.name)}</strong><br>${esc(e.area)}`));
     if(R.base) L.circleMarker(R.base.at, { radius:8, color:"#fff", weight:2, fillColor:"#16283C", fillOpacity:1 })
       .bindPopup(`<strong>Base: ${esc(R.base.name)}</strong>`).addTo(vecGroup);
+    const SVC_COLOUR = { "Pharmacy":"#2E7D4F", "Doctor":"#2E7D4F", "Medical centre":"#2E7D4F", "Defibrillator":"#C0392B", "ATM / cash":"#B7791F" };
+    svcMarkers = (R.services||[]).filter(x=>Array.isArray(x.at)).map(x=>
+      L.circleMarker(x.at, { radius:4.5, color:"#fff", weight:1.5, fillColor:SVC_COLOUR[x.type] || "#3D7FB8", fillOpacity:1 })
+        .bindPopup(`<strong>${esc(x.type)}</strong>${x.name?`<br>${esc(x.name)}`:""}<br><small>OpenStreetMap · unverified</small>`));
     syncEatLayer();
     drawSkied(data);
   };
@@ -898,7 +994,9 @@ let wxCache = store.get("fc_weather", {});   // { resortId: { data, at } }
 function paintConditionChip(data, at){
   const chip=document.getElementById('condition-chip');
   const temp=wxNumber(data?.current?.temperature_2m);
-  const snow=wxNumber(data?.daily?.snowfall_sum?.[0]);
+  // today's index: the altitude forecast includes 7 past days first
+  const ti=Array.isArray(data?.daily?.time) && typeof data?.current?.time==='string' ? Math.max(0,data.daily.time.indexOf(data.current.time.slice(0,10))) : 0;
+  const snow=wxNumber(data?.daily?.snowfall_sum?.[ti]);
   chip.hidden=!Number.isFinite(temp) || !Number.isFinite(snow);
   chip.textContent='';
   if(chip.hidden) return;
@@ -964,7 +1062,7 @@ function renderAltitudeWeather(){
     const url = "https://api.open-meteo.com/v1/forecast?latitude="+Number(lat)+"&longitude="+Number(lon)+
       (Number.isFinite(elevation) ? "&elevation="+elevation : "")+
       "&current=temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m"+
-      "&hourly=freezing_level_height&daily=weather_code,temperature_2m_max,snowfall_sum"+
+      "&hourly=freezing_level_height,snow_depth&daily=weather_code,temperature_2m_max,snowfall_sum&past_days=7"+
       "&forecast_days=3&timezone=auto&wind_speed_unit=kmh";
     return fetch(url).then(response=>{
       if(!response.ok) throw new Error("weather request failed");
@@ -992,9 +1090,15 @@ function paintAltitudeWeather(points, cached, state){
     const hour = typeof cur.time==="string" ? cur.time.slice(0,13)+":00" : "";
     const hourIndex = data.hourly.time.indexOf(hour);
     const freezing = hourIndex<0 ? "—" : wxRounded(data.hourly.freezing_level_height[hourIndex]);
-    const days = daily.time.slice(0,3).map((time,i)=>{
+    // past_days=7 puts last week first: start the forecast row at today (older caches start at 0)
+    const today = typeof cur.time==="string" ? daily.time.indexOf(cur.time.slice(0,10)) : -1, t0 = Math.max(0, today);
+    const depthM = hourIndex<0 || !data.hourly.snow_depth ? NaN : wxNumber(data.hourly.snow_depth[hourIndex]);
+    const week = today>0 && Array.isArray(daily.snowfall_sum) ? daily.snowfall_sum.slice(Math.max(0,today-7), today).reduce((a,v)=>a+(Number.isFinite(wxNumber(v))?wxNumber(v):0),0) : NaN;
+    const snowLine = (Number.isFinite(depthM) ? `<span class="weather-detail">❄ Snow depth ~${esc(String(Math.round(depthM*100)))} cm</span>` : "")+
+      (Number.isFinite(week) ? `<span class="weather-detail">⤓ Last 7 days ${esc(String(Math.round(week)))} cm</span>` : "");
+    const days = daily.time.slice(t0,t0+3).map((time,j)=>{ const i = t0 + j;
       const date = typeof time==="string" && /^\d{4}-\d{2}-\d{2}$/.test(time) ? new Date(time+"T12:00") : null;
-      const dow = i===0 ? "Today" : date && Number.isFinite(date.getTime()) ? date.toLocaleDateString("en-GB",{weekday:"short"}) : "—";
+      const dow = j===0 ? "Today" : date && Number.isFinite(date.getTime()) ? date.toLocaleDateString("en-GB",{weekday:"short"}) : "—";
       const snow = wxNumber(daily.snowfall_sum?.[i]);
       const snowText = Number.isFinite(snow) ? (snow<1 ? snow.toFixed(1) : String(Math.round(snow)))+"cm" : "—";
       return `<div class="d"><div class="dow">${esc(dow)}</div><div class="de">${esc(wmo(wxNumber(daily.weather_code?.[i]))[1])}</div>`+
@@ -1003,7 +1107,7 @@ function paintAltitudeWeather(points, cached, state){
     return `<div class="alt-point"><div class="alt-label">${esc(point.label)}</div>`+
       `<div class="now"><span class="emoji">${esc(emoji)}</span><span class="temp">${esc(wxRounded(cur.temperature_2m))}°</span></div>`+
       `<div class="desc">${esc(condition)}<span class="weather-detail">↗ Wind ${esc(wxRounded(cur.wind_speed_10m))} km/h ${esc(compass)}</span>`+
-      `<span class="weather-detail">≋ Gusts ${esc(wxRounded(cur.wind_gusts_10m))} km/h</span><span class="weather-detail">⌁ Freezing ${esc(freezing)} m</span></div>`+
+      `<span class="weather-detail">≋ Gusts ${esc(wxRounded(cur.wind_gusts_10m))} km/h</span><span class="weather-detail">⌁ Freezing ${esc(freezing)} m</span>${snowLine}</div>`+
       `<div class="fc">${days}</div></div>`;
   }).join("");
   const ageMinutes = Math.max(0, Math.floor((Date.now()-Number(cached.at))/60000));
@@ -1171,7 +1275,7 @@ function finishTracking(){
     // Stable id makes retry safe if writing the log succeeds but clearing recovery fails.
     const lines=pisteLines(trkResort), matched=lines.length?FCTrack.matchPistes(track,a.runs,lines):[];
     const runs=a.runs.map((r,i)=>matched[i]&&matched[i].length?{...r,pistes:matched[i]}:r);
-    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),track:{totals:a.totals,runs}};
+    const entry={id:trkStart,date:localDay(trkStart),resort:trkResort,cond:'',notes:trackingSummary(a),track:{totals:a.totals,runs,path:compactPath(track)}};
     const next=[...daylog.filter(e=>e.id!==entry.id),entry];
     try { store.set('fc_log',next); }
     catch(e){ document.getElementById('trkmessage').textContent='Could not save the log. Free device storage and try again; the session is still here.'; return; }
@@ -1221,7 +1325,8 @@ function renderRuns(){
   const el = document.getElementById("runlist");
   el.innerHTML = "";
   const skied = skiedNames(resortId);
-  R.runs.forEach(r=>{
+  const runs = runSort==="drop" ? [...R.runs].sort((a,b)=>(b.drop||0)-(a.drop||0)) : R.runs;
+  runs.forEach(r=>{
     if(fMtn==="fav" && !favs[resortId].includes(r.name)) return;
     if(fMtn==="skied" && !skied.has(baseRunName(r.name))) return;
     if(fMtn!=="all" && fMtn!=="fav" && fMtn!=="skied" && r.mtn!==fMtn) return;
@@ -1232,7 +1337,7 @@ function renderRuns(){
     row.innerHTML =
       `<div class="rowhead">
         <span class="diff ${r.diff}">${diffSym(r.diff)}</span>
-        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}${runStatusTag(r.name)}${skied.has(baseRunName(r.name))?'<span class="stag open">✓ skied</span>':''}</div></span>
+        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${r.drop?` · ↓${Number(r.drop)} m`:""}${unvTag(r)}${runStatusTag(r.name)}${skied.has(baseRunName(r.name))?'<span class="stag open">✓ skied</span>':''}</div></span>
         <button type="button" aria-label="Favourite ${esc(r.name)}" aria-pressed="${favs[resortId].includes(r.name)}" class="fav ${favs[resortId].includes(r.name)?"on":""}">★</button>
       </div>
       <div class="rowbody">
@@ -1436,10 +1541,13 @@ function renderLog(){
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
       ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
+      ${Array.isArray(entry.track?.path)&&entry.track.path.length>1?`<button class="secondary sharebtn replaybtn">▶ Replay day on map</button>`:''}
       ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h${Array.isArray(run.pistes)&&run.pistes.length?' · '+run.pistes.join(', '):''}`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
     const share = card.querySelector(".sharebtn");
     if(share) share.addEventListener("click", ()=>shareDayCard(entry));
+    const rep = card.querySelector(".replaybtn");
+    if(rep) rep.addEventListener("click", ()=>replayDay(entry));
     card.querySelector(".del").addEventListener("click", ()=>{
       if(!confirm("Delete this day?")) return;
       daylog = daylog.filter(x=>x.id!==entry.id);
@@ -1525,6 +1633,15 @@ function bindChipGroup(id, cb){
     });
   });
 }
+let runSort = "name";
+function buildSortChips(){
+  const el = document.getElementById("sortchips");
+  el.hidden = !R.runs.some(r=>r.drop);
+  if(el.hidden) runSort = "name";
+  el.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on", c.dataset.v===runSort));
+}
+bindChipGroup("sortchips", v=>{ runSort=v; renderRuns(); });
+
 function buildMtnChips(){
   let h = `<button class="chip on" data-v="all">All</button>`;
   R.mountains.forEach(m=> h += `<button class="chip" data-v="${m.id}">${esc(m.name)}</button>`);
@@ -1558,9 +1675,9 @@ function switchResort(id){
   fMtn="all"; fDiff="all";
   document.getElementById("runsearch").value = "";
   setRunsNote();
-  buildMtnChips(); buildDiffChips();
+  buildMtnChips(); buildDiffChips(); buildSortChips();
   renderRuns(); renderEats(); renderLog();
-  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun();
+  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks();
 }
 
 /* =========================================================
@@ -1588,12 +1705,14 @@ initMap();
 setupRouting();
 buildMtnChips();
 buildDiffChips();
+buildSortChips();
 renderRuns();
 renderEats();
 renderLog();
 renderWeather();
 loadStatus();
 setupSun();
+renderLinks();
 restoreTracking();
 
 /* register the service worker so the app shell works offline */

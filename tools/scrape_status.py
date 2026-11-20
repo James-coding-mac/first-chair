@@ -217,7 +217,11 @@ def parse_lumi(static_raw, dynamic_raw):
                'dep': item.get('departureAltitude'), 'arr': item.get('arrivalAltitude'),
                'level': str(item.get('trailLevel') or '').lower() or None,
                'grooming': d.get('groomingStatus') if isinstance(d.get('groomingStatus'), str) else None,
-               'message': d.get('message') if isinstance(d.get('message'), str) else None}
+               'message': d.get('message') if isinstance(d.get('message'), str) else None,
+               # queue time: the map config says waits are shown in MINUTES, but the field only appears
+               # in season, so take the first numeric field whose name mentions "wait"
+               'wait': next((round(v) for k, v in sorted(d.items()) if 'wait' in k.lower()
+                             and isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v < 240), None)}
         out[sid][kind].append(rec)
         raw_states[sid].append(raw)
     for sid, p in out.items():
@@ -484,7 +488,7 @@ def collect(catalog, previous, fetch, now, graph=None):
             r = found.get((item['mtn'], item['name']))
             key = item['mtn'] + '|' + item['name'] if kind == 'lifts' else item['name']
             out[kind][key] = r['state'] if r else 'unknown'
-            extra = {k: r.get(k) for k in ('closes', 'grooming', 'message') if r and r.get(k)}
+            extra = {k: r.get(k) for k in ('closes', 'grooming', 'message', 'wait') if r and r.get(k) is not None}
             if extra:
                 info[key] = extra
     for kind in ('lifts', 'pistes'):
