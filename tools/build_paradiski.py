@@ -409,6 +409,7 @@ def main():
         "diffSystem": "eu_off",
         "map": {"center": r5(base_pt), "zoom": 13},
         "mapData": "data/build/paradiski-map.geojson",
+        "graphData": "data/build/paradiski-graph.json",
         "base": {"name": BASE_NAME, "at": r5(base_pt), "osm": "%s/%d" % (base[0]["type"], base[0]["id"])},
         "mountains": [{"id": "LP", "name": "La Plagne"}, {"id": "LA", "name": "Les Arcs / Peisey"}],
         "dataNote": "Generated from OpenStreetMap (© OSM contributors, ODbL). NOT yet checked against "

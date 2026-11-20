@@ -1,7 +1,7 @@
 # Status
 
 **Updated:** 20 Nov 2026
-**Current step:** Steps 1–3 live. Step 4 (tracking) implemented locally, awaiting Claude review and iPhone field testing. Step 5a (route graph) in progress with Codex; then 5b (routing UI), 5c (UI polish). Step 6 needs James's decision.
+**Current step:** Steps 1–3 live. Step 4 (tracking) implemented locally, awaiting Claude review and iPhone field testing. Step 5a (route graph) implemented. Step 5b (routing UI) implemented locally, awaiting Claude review and iPhone offline testing; then 5c (UI polish). Step 6 needs James's decision.
 
 - Live at https://james-coding-mac.github.io/first-chair/. James still to check on the iPhone: Paradiski, offline map in airplane mode, altitude weather.
 - **Paradiski** is in the resort switcher: 293 runs (La Plagne + Les Arcs/Peisey), 211 restaurants (47 on the mountain, 164 village), 152 lifts in the data (drawn on the map; no lift list screen). Every record shows an UNVERIFIED tag.
@@ -17,3 +17,6 @@
 
 - Tracking (Step 4, local/uncommitted): `track.js` analyses a foreground Track day session into runs/lifts, smooths altitude, rejects poor fixes/jumps, and uses loaded lift geometry for confidence/no-altitude fallback. Live totals, `fc_track_live` recovery (Resume / Save / Discard), day summaries and optional per-run log details are implemented. Existing log entries remain compatible. SW shell is now `v5`, including `track.js`.
 - Step 4 verification: 12 synthetic analysis cases plus in-memory UI/storage lifecycle checks pass (`node tools/test_tracking.mjs`); syntax checks pass for track.js, sw.js and the main inline script. Three noisy cycles yield 3 runs / 3 lifts / 1,167 m vertical. No real iPhone/GPS/offline-install test yet. Downhill driving at 110 km/h counts as skiing: stop tracking before driving. See `docs/sessions/2026-11-20-step4-tracking.md` for assumptions and remaining checks.
+
+- Step 5b (local/uncommitted): `route.js` provides heap-based Dijkstra, excluding off-piste and allowing unknown grades under every filter. Paradiski has searchable lift-top/mountain-restaurant destinations, Eat Route buttons, Home, GPS/base start selection, remembered `fc_route_pref`, map overlays and collapsed directions. Graph loads lazily and is precached with route.js in SW `v6`. Other resorts have no routing controls.
+- Step 5b checks: `node tools/test_route_js.mjs` matches Python for the same 10 destinations under all/red/blue/green (8/7/6/0 reachable), with times within 1%; routing UI logic and tracking regression checks pass. Builder prints no WARNING and generated data is identical except `graphData`. Syntax checks pass. Existing OSM disconnections remain; browser visual and iPhone offline tests pending. See `docs/sessions/2026-11-20-step5b-routing-ui.md`.

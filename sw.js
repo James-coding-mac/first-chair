@@ -1,15 +1,15 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v5";
+const VERSION = "v6";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
 const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
 const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)
 const TILE_MAX = 500;                      // cap so the tile cache can't grow forever
 
 const SHELL_FILES = [
-  "./", "./index.html", "./manifest.json", "./track.js",
+  "./", "./index.html", "./manifest.json", "./track.js", "./route.js",
   "./icon.png", "./icon-192.png", "./icon-512.png",
-  "./data/build/paradiski.js", "./data/build/paradiski-map.geojson"
+  "./data/build/paradiski.js", "./data/build/paradiski-map.geojson", "./data/build/paradiski-graph.json"
 ];
 // Map library from the CDN, saved at install so the map works in airplane mode. Best effort:
 // if the CDN is down the install still succeeds and these get cached on first normal use.

@@ -162,6 +162,13 @@ nav button.on{color:var(--ink)}
 nav button.on .ic{color:var(--glacier)}
 .formrow{margin-bottom:9px}
 label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+/* Offline route controls */
+#route-targets{max-height:220px;overflow:auto;display:grid;gap:6px}
+#route-targets:empty{display:none}
+#route-targets button{text-align:left;white-space:normal}
+#route-result li{margin:10px 0;overflow-wrap:anywhere}
+#routing[hidden],#route-result[hidden]{display:none}
+.eat-route{margin:8px 12px}
 </style>
 </head>
 <body>
@@ -176,7 +183,18 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 <!-- ============ MAP ============ -->
 <section id="tab-map" class="active">
   <div id="weather" class="wx loading">Loading weather…</div>
+  <div id="routing" class="card" hidden>
+    <label for="route-search">Route to…</label>
+    <input id="route-search" type="search" placeholder="Search lift tops and mountain restaurants…" autocomplete="off">
+    <div id="route-targets"></div>
+    <button id="route-home" class="secondary">Home · base</button>
+    <div id="route-chips" class="chips" aria-label="Maximum route difficulty"></div>
+  </div>
   <div id="map"></div>
+  <div id="route-result" class="card" hidden>
+    <div id="route-details" role="status" aria-live="polite"></div>
+    <button id="route-clear" class="secondary">Clear route</button>
+  </div>
   <p class="muted" id="mapnote" style="margin-top:8px"></p>
   <div class="card" id="tracker">
     <div class="trkbtns">
@@ -247,6 +265,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 <!-- Paradiski runs/lifts/restaurants, generated from OpenStreetMap by tools/build_paradiski.py -->
 <script src="data/build/paradiski.js"></script>
 <script src="track.js"></script>
+<script src="route.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -545,6 +564,117 @@ function showVectors(){
       "Couldn't load the offline piste layer. Open the app once with signal so it can be saved."; });
 }
 
+/* Routing is transient; only the difficulty preference is persisted. */
+let routePref=store.get('fc_route_pref','all');
+if(!['all','red','blue','green'].includes(routePref)) routePref='all';
+let routeGeneration=0, routeLayer=null, routeDestination=null, latestPosition=null;
+const routeCache=new Map();
+function clearRoute(){
+  routeGeneration++;
+  routeDestination=null;
+  if(routeLayer){routeLayer.remove();routeLayer=null;}
+  document.getElementById('route-result').hidden=true;
+}
+function setupRouting(){
+  clearRoute();
+  document.getElementById('routing').hidden=!R.graphData;
+  document.getElementById('route-search').value='';
+  document.getElementById('route-targets').replaceChildren();
+  if(!R.graphData) return;
+  const chips=document.getElementById('route-chips');
+  chips.innerHTML=[['all','All (incl. black)'],['red','Max red'],['blue','Max blue'],['green','Max green']]
+    .map(([v,label])=>`<button class="chip ${v===routePref?'on':''}" data-v="${v}" aria-pressed="${v===routePref}">${label}</button>`).join('');
+  chips.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    routePref=b.dataset.v;
+    try{store.set('fc_route_pref',routePref);}catch(e){ /* Routing still works without storage. */ }
+    chips.querySelectorAll('button').forEach(c=>{c.classList.toggle('on',c===b);c.setAttribute('aria-pressed',String(c===b));});
+    if(routeDestination) takeRoute(routeDestination);
+  });
+}
+function searchRoutes(){
+  const el=document.getElementById('route-targets'); el.replaceChildren();
+  const query=document.getElementById('route-search').value.trim().toLocaleLowerCase();
+  if(!R.graphData || !query) return;
+  const targets=[...(R.lifts||[]).map(l=>({name:l.name,at:l.top,label:`${l.name} · lift top · ${mtnName(l.mtn)}`})),
+    ...R.eats.filter(e=>e.loc==='mtn').map(e=>({...e,label:`${e.name} · restaurant · ${e.area}`}))];
+  targets.filter(t=>t.label.toLocaleLowerCase().includes(query)).forEach(t=>{
+    const b=document.createElement('button');b.className='secondary';b.innerHTML=esc(t.label);
+    b.onclick=()=>{el.replaceChildren();document.getElementById('route-search').value=t.name;takeRoute(t);};el.appendChild(b);
+  });
+  if(!el.children.length) el.textContent='No matching destinations.';
+}
+function loadRouteGraph(url){
+  if(!routeCache.has(url)) routeCache.set(url,fetch(url).then(r=>{
+    if(!r.ok) throw new Error('Graph unavailable');return r.json();
+  }).then(graph=>({graph,router:FCRoute.load(graph)})).catch(e=>{routeCache.delete(url);throw e;}));
+  return routeCache.get(url);
+}
+async function takeRoute(destination){
+  if(!R.graphData) return;
+  clearRoute(); routeDestination=destination;
+  const gen=routeGeneration, resort=R;
+  document.querySelector('nav button[data-t="map"]').click();
+  const card=document.getElementById('route-result'), body=document.getElementById('route-details');
+  card.hidden=false;body.textContent='Loading offline routing…';
+  try{
+    const {graph,router}=await loadRouteGraph(resort.graphData);
+    if(gen!==routeGeneration) return;
+    let start=router.nearestNode(...resort.base.at,300), origin=`From ${resort.base.name}`;
+    const pos=latestPosition, age=pos?Date.now()-pos.timestamp:Infinity;
+    if(pos && age>=0 && age<=60000 && Number.isFinite(pos.coords.accuracy) && pos.coords.accuracy>=0 && pos.coords.accuracy<=100){
+      const snap=router.nearestNode(pos.coords.latitude,pos.coords.longitude,300);
+      if(snap!==null){start=snap;origin='From your position';}
+    }
+    const end=destination.at?router.nearestNode(...destination.at,300):null;
+    const heading=`<h2>${esc(destination.name)}</h2><p>${esc(origin)}</p>`;
+    if(start===null || end===null){body.innerHTML=heading+`<p>${start===null?'Base':'Destination'} has no graph node within 300 m.</p>`;return;}
+    const result=router.route(start,end,{maxGrade:routePref});
+    if(!result){
+      const harder=routePref!=='all' && router.route(start,end,{});
+      body.innerHTML=heading+`<p>${harder?'No route with this filter — try a harder filter':'Not connected in the OSM data'}</p>`;return;
+    }
+    const groups=[], bounds=[];
+    if(mapReady){
+      if(!map.getPane('routes')){map.createPane('routes');map.getPane('routes').style.zIndex=450;}
+      routeLayer=L.layerGroup().addTo(map);
+    }
+    for(const id of result.edges){
+      const e=graph.edges[id], kind=graph.kinds[e[2]], name=graph.names[e[4]], grade=graph.grades[e[3]];
+      let group=groups[groups.length-1];
+      if(!group || group.kind!==kind || group.name!==name){group={kind,name,grades:new Set(),time:0,length:0};groups.push(group);}
+      if(kind==='piste') group.grades.add(grade);
+      group.time+=e[6];group.length+=e[5];
+      const line=[];
+      for(let i=0;i<e[7].length;i+=2) line.push([e[7][i],e[7][i+1]]);
+      if(!line.length) line.push(graph.nodes[e[0]].slice(0,2),graph.nodes[e[1]].slice(0,2));
+      bounds.push(...line);
+      if(mapReady) L.polyline(line,{pane:'routes',color:kind==='lift'?'#16283C':'#3D7FB8',weight:6,opacity:.95,
+        dashArray:kind==='lift'?'10 7':null}).addTo(routeLayer);
+    }
+    if(mapReady){
+      [start,end].forEach((n,i)=>{
+        const at=graph.nodes[n].slice(0,2);bounds.push(at);
+        L.circleMarker(at,{pane:'routes',radius:i?9:6,color:'#fff',weight:2,fillColor:i?'#C0392B':'#16283C',fillOpacity:1})
+          .bindPopup(esc(i?destination.name:origin)).addTo(routeLayer);
+      });
+      map.invalidateSize();map.fitBounds(bounds,{padding:[24,24],maxZoom:16});
+    }
+    const minutes=s=>`${Math.max(1,Math.round(s/60))} min`;
+    body.innerHTML=heading+`<p><strong>${result.time?minutes(result.time):'0 min'} estimated total</strong></p>`+
+      (groups.length?'<ol>'+groups.map(g=>{
+        const grades=[...g.grades].sort((a,b)=>graph.grades.indexOf(a)-graph.grades.indexOf(b));
+        const label=g.kind==='walk'?`Walk ${Math.round(g.length)} m`:g.kind==='lift'?`▲ ${g.name||'Unnamed lift'}`:
+          `${diffSym(grades[grades.length-1])} ${g.name||'Unnamed piste'} (${grades.join('/')})`;
+        return `<li>${esc(label)}${g.kind==='walk'?'':` · ${minutes(g.time)}`}</li>`;
+      }).join('')+'</ol>':'<p>Start and destination snap to the same graph node.</p>')+
+      '<p class="muted">Unverified OSM route; unknown grades are allowed with every filter. Times exclude distances to snapped nodes and do not reflect current closures.</p>'+
+      (mapReady?'':'<p class="muted">Map unavailable; route steps are available above.</p>');
+  }catch(e){if(gen===routeGeneration) body.textContent="Couldn't load offline routing. Open the app once with signal to save the graph, then try again.";}
+}
+document.getElementById('route-search').addEventListener('input',searchRoutes);
+document.getElementById('route-home').onclick=()=>takeRoute(R.base);
+document.getElementById('route-clear').onclick=clearRoute;
+
 /* =========================================================
    WEATHER  (Open-Meteo — free, no key; cached for offline)
    ========================================================= */
@@ -753,6 +883,7 @@ function onGeoErr(e){
   document.getElementById('trkmessage').textContent=message;
 }
 function onPos(pos){
+  latestPosition=pos;
   const c=pos.coords, here=[c.latitude, c.longitude];
   if(mapReady){
     if(!locMarker){
@@ -924,6 +1055,10 @@ function renderEats(){
         <label>My notes</label>
         <textarea placeholder="What to order, when to go…">${esc(eatnotes[resortId][e.name]||"")}</textarea>
       </div>`;
+    if(R.graphData){
+      const button=document.createElement('button');button.className='secondary eat-route';button.textContent='Route';
+      button.onclick=()=>takeRoute(e);row.insertBefore(button,row.querySelector('.rowbody'));
+    }
     row.querySelector(".rowhead").addEventListener("click", ev=>{
       if(ev.target.dataset.n) return;
       row.classList.toggle("open");
@@ -1080,7 +1215,7 @@ function switchResort(id){
   setRunsNote();
   buildMtnChips(); buildDiffChips();
   renderRuns(); renderEats(); renderLog();
-  recenterMap(); renderWeather();
+  setupRouting(); recenterMap(); renderWeather();
 }
 
 /* =========================================================
@@ -1105,6 +1240,7 @@ document.getElementById("logdate").value = new Date().toISOString().slice(0,10);
 setRunsNote();
 buildResortSelect();
 initMap();
+setupRouting();
 buildMtnChips();
 buildDiffChips();
 renderRuns();
