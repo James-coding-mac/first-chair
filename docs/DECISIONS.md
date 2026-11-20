@@ -29,5 +29,12 @@
 ## Delegation (James, 20 Nov 2026)
 - Push build work to Codex/Qwen to save Claude usage; Claude writes briefs (`docs/sessions/briefs/`), reviews, tests and commits.
 
+## Workarounds approved (James, 20 Nov 2026)
+- **Pass wallet + photo log**: pass-shop links; pass number/photo/insurance stored on-device only; geotagged photos in IndexedDB; OSM viewpoints.
+- **Friends without a server**: "Send my spot" link (position in the URL fragment, never sent to a server); import friends' stats files for a leaderboard. Live location → Apple Find My.
+- **Avalanche level** via the scheduled GitHub job (Météo-France; any key only as a GitHub secret, never in the app).
+- **3D terrain view**: MapLibre GL JS (open source, from the allowed CDN) + AWS Terrain Tiles (open data, no key) as a new allowed host; optional offline pack for Paradiski.
+- Later: native Apple Watch companion; accounts/live leaderboards (Supabase/Firebase) after the trip.
+
 ## Pending: needs James
 - (none)

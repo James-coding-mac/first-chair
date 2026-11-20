@@ -397,6 +397,8 @@ def main():
             return "Ski / sports shop"
         if t.get("emergency") == "defibrillator":
             return "Defibrillator"
+        if t.get("tourism") == "viewpoint":
+            return "Viewpoint"
         return {"pharmacy": "Pharmacy", "atm": "ATM / cash", "toilets": "Toilets",
                 "doctors": "Doctor", "clinic": "Medical centre"}.get(t.get("amenity"))
     services = []

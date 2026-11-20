@@ -78,7 +78,7 @@ function app(storage=new Map()){
   const nodes=new Map(), listeners={};
   function node(id){
     if(!nodes.has(id)) nodes.set(id,{hidden:false,disabled:false,textContent:'',innerHTML:'',children:[],classList:{toggle(){},remove(){}},
-      addEventListener(type,fn){this[type]=fn;},appendChild(n){this.children.push(n);},querySelector(){return node(id+' child');}});
+      addEventListener(type,fn){this[type]=fn;},appendChild(n){this.children.push(n);},querySelector(){return node(id+' child');},querySelectorAll(){return [];}});
     return nodes.get(id);
   }
   const sandbox={window:{addEventListener(){}},FCTrack:context.window.FCTrack,Date,Number,Math,String,Array,
@@ -89,7 +89,7 @@ function app(storage=new Map()){
     vecData:{},RESORTS:{test:{name:'Test resort'}},resortId:'test',mapReady:false,daylog:[],
     esc:s=>String(s).replace(/[&<>"']/g,'_'),confirm:()=>true,
     // defined outside the sliced sections; tested in test_stats.mjs
-    renderSeasonStats(){},shareDayCard(){},renderSOS(){},pisteLines:()=>[],compactPath:()=>[]};
+    renderSeasonStats(){},shareDayCard(){},renderSOS(){},pisteLines:()=>[],compactPath:()=>[],photoThumbs:()=>''};
   vm.createContext(sandbox);vm.runInContext(gps+'\n'+log,sandbox);
   return {sandbox,node,listeners,run:source=>vm.runInContext(source,sandbox),storage};
 }

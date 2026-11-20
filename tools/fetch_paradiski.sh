@@ -15,6 +15,7 @@ nwr[\"name\"~\"Bellec[oô]te\",i]($B);
 nwr[\"shop\"~\"^(ski|sports)$\"]($B);
 nwr[\"amenity\"~\"^(pharmacy|atm|toilets|doctors|clinic)$\"]($B);
 node[\"emergency\"=\"defibrillator\"]($B);
+node[\"tourism\"=\"viewpoint\"]($B);
 );out geom;"
 OUT=data/raw/paradiski-overpass.json
 for round in 1 2 3; do

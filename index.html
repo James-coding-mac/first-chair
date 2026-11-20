@@ -53,7 +53,7 @@ h2{font:var(--title);text-transform:uppercase;letter-spacing:.04em;margin:var(--
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;min-height:44px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--card);color:var(--ink-2);padding:var(--space-2) var(--space-4);font:600 15px/1.2 var(--font-heading);letter-spacing:.04em;text-transform:uppercase}
 .chip.on,button.secondary.on{background:var(--selected);border-color:var(--selected);color:var(--on-selected)}
-input[type=text],input[type=search],input[type=date],textarea,select{width:100%;min-width:0;min-height:44px;font:var(--body);font-size:16px;color:var(--ink);background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-control);padding:var(--space-3)}
+input[type=text],input[type=tel],input[type=search],input[type=date],textarea,select{width:100%;min-width:0;min-height:44px;font:var(--body);font-size:16px;color:var(--ink);background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-control);padding:var(--space-3)}
 input::placeholder,textarea::placeholder{color:var(--ink-2);opacity:1}
 textarea{resize:vertical;min-height:88px}
 .search-field{position:relative}.search-field svg{position:absolute;left:var(--space-3);top:14px;width:20px;height:20px;color:var(--ink-2);pointer-events:none}.search-field input{padding-left:44px;min-height:48px}
@@ -118,6 +118,9 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 .rlinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .rlinks a{display:block;padding:10px 12px;border-radius:12px;background:var(--card-2);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:13.5px}
 .rlinks a small{display:block;color:var(--ink-2);font-size:11.5px}
+.trkbtns .photobtn{flex:0 0 52px!important;width:52px;padding-left:0;padding-right:0}
+.logphotos{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.logphotos img{width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer}
+#photoview img,#w-passimg img{max-width:100%;border-radius:12px;display:block}
 .warn{background:var(--warn);border-left:3px solid var(--gold);padding:var(--space-2);border-radius:var(--radius-control)}
 .fav{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:22px;color:transparent;-webkit-text-stroke:1.5px var(--ink-2);cursor:pointer;flex-shrink:0;background:none;border:0}.fav.on{color:var(--gold);-webkit-text-stroke:0}
 .rowbody{max-height:0;opacity:0;visibility:hidden;overflow:hidden;padding:0 var(--space-4);transition:max-height 180ms ease,opacity 180ms ease,visibility 180ms,padding 180ms}
@@ -170,6 +173,8 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
       <button class="secondary" id="locbtn">⌖ Locate me</button>
       <button class="secondary" id="trackbtn">▶ Track day</button>
       <button class="secondary sosbtn" id="sosbtn" aria-label="Emergency: where am I">SOS</button>
+      <button class="secondary photobtn" id="photobtn" aria-label="Take a photo">📷</button>
+      <input type="file" id="photofile" accept="image/*" capture="environment" hidden>
     </div>
   </div>
   <div id="sos-card" class="card sos" hidden></div>
@@ -245,12 +250,24 @@ nav .ic{display:block;height:24px;margin-bottom:var(--space-1)}nav svg{width:24p
     <button class="primary" id="logadd">Log the day</button>
   </div>
   <div id="season-stats" class="card" hidden></div>
+  <div class="card" id="wallet">
+    <div class="label">Wallet <span class="muted" style="font-size:11px;text-transform:none;letter-spacing:0">· stored only on this phone</span></div>
+    <div id="passlinks" class="rlinks"></div>
+    <div class="formrow"><label for="w-pass">Lift pass number</label><input type="text" id="w-pass" autocomplete="off"></div>
+    <div class="formrow"><label>Pass photo</label><div id="w-passimg"></div>
+      <button class="secondary" id="w-passbtn" style="margin-top:6px">Add / replace pass photo</button><input type="file" id="w-passfile" accept="image/*" hidden></div>
+    <div class="formrow"><label for="w-ins">Insurance company</label><input type="text" id="w-ins" autocomplete="off"></div>
+    <div class="formrow"><label for="w-pol">Policy number</label><input type="text" id="w-pol" autocomplete="off"></div>
+    <div class="formrow"><label for="w-ass">Insurance assistance phone</label><input type="tel" id="w-ass" autocomplete="off"></div>
+    <div class="formrow"><label for="w-ice">Emergency contact (name &amp; phone)</label><input type="text" id="w-ice" autocomplete="off"></div>
+  </div>
+  <div id="photoview" class="card" hidden></div>
   <h2>Past days</h2>
   <div id="loglist"></div>
 
   <h2>Backup</h2>
   <div class="card">
-    <p class="muted" style="margin-bottom:10px">Your favourites, notes, ratings and day log live only on this device. Export a backup now and then — it saves a file you can keep in Files/iCloud and restore later or on a new phone.</p>
+    <p class="muted" style="margin-bottom:10px">Your favourites, notes, ratings and day log live only on this device. Export a backup now and then — it saves a file you can keep in Files/iCloud and restore later or on a new phone. It includes your Wallet details, so keep the file private. Photos aren't included (they stay in the phone's app storage).</p>
     <button class="primary" id="exportbtn">Export backup</button>
     <button class="secondary" id="importbtn" style="margin-top:8px">Restore from backup…</button>
     <input type="file" id="importfile" accept="application/json,.json" hidden>
@@ -658,6 +675,109 @@ function drawSkied(data){
     { style:()=>({ color:"#E0A93C", weight:7, opacity:.55 }), interactive:false }).addTo(skiedGroup);
 }
 
+/* ---------- on-device files: photos + pass photo (IndexedDB; not in the JSON backup) ---------- */
+const FilesDB = {
+  _db: null,
+  open(){
+    if(this._db) return this._db;
+    return this._db = new Promise((res, rej)=>{
+      const r = indexedDB.open("first-chair", 1);
+      r.onupgradeneeded = ()=>{ r.result.createObjectStore("photos", { keyPath:"id" }); r.result.createObjectStore("files", { keyPath:"key" }); };
+      r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error);
+    });
+  },
+  async tx(store, mode, fn){
+    const db = await this.open();
+    return new Promise((res, rej)=>{ const t = db.transaction(store, mode), out = fn(t.objectStore(store));
+      t.oncomplete = ()=>res(out && "result" in out ? out.result : undefined); t.onerror = ()=>rej(t.error); });
+  },
+  put(store, v){ return this.tx(store, "readwrite", s=>s.put(v)); },
+  get(store, k){ return this.tx(store, "readonly", s=>s.get(k)); },
+  all(store){ return this.tx(store, "readonly", s=>s.getAll()); },
+  del(store, k){ return this.tx(store, "readwrite", s=>s.delete(k)); },
+};
+async function shrinkImage(file, max){
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width*k); c.height = Math.round(bmp.height*k);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  return { blob: await new Promise(r=>c.toBlob(r, "image/jpeg", 0.82)), dataURL: c.toDataURL("image/jpeg", 0.7) };
+}
+
+/* photo log */
+let photos = [];          // metadata (no full image) for map + log
+let photoGroup = null;
+async function loadPhotos(){
+  try{ photos = (await FilesDB.all("photos")).map(({ blob, ...m })=>m); }catch(e){ photos = []; }
+  drawPhotos(); renderLog();
+}
+function photoThumbs(entry){
+  const list = photos.filter(p=>p.date===entry.date && p.resort===entry.resort);
+  return list.length ? `<div class="logphotos">${list.map(p=>`<img src="${esc(p.thumb)}" data-id="${Number(p.id)}" alt="${esc(p.piste||"photo")}">`).join("")}</div>` : "";
+}
+function drawPhotos(){
+  if(!mapReady) return;
+  if(!photoGroup){ photoGroup = L.layerGroup().addTo(map); layersCtl.addOverlay(photoGroup, "My photos"); }
+  photoGroup.clearLayers();
+  photos.filter(p=>p.resort===resortId && Number.isFinite(p.lat)).forEach(p=>{
+    const m = L.circleMarker([p.lat, p.lon], { radius:6, color:"#fff", weight:2, fillColor:"#7B4FB8", fillOpacity:1 }).addTo(photoGroup);
+    m.bindPopup(`<img src="${esc(p.thumb)}" style="width:160px;border-radius:8px;display:block"><small>${esc(new Date(p.ts).toLocaleString("en-GB"))}${p.piste?" · "+esc(p.piste):""}</small>`);
+  });
+}
+async function openPhoto(id){
+  const rec = await FilesDB.get("photos", id);
+  if(!rec) return;
+  const el = document.getElementById("photoview"), url = URL.createObjectURL(rec.blob);
+  el.hidden = false;
+  el.innerHTML = `<img src="${url}" alt=""><p class="muted">${esc(new Date(rec.ts).toLocaleString("en-GB"))}${rec.piste?" · "+esc(rec.piste):""}${Number.isFinite(rec.lat)?` · ${rec.lat.toFixed(5)}, ${rec.lon.toFixed(5)}`:""}</p>`+
+    `<div class="sos-row"><button class="secondary" id="pv-close">Close</button><button class="secondary" id="pv-del" style="color:#C0392B">Delete photo</button></div>`;
+  el.scrollIntoView({ behavior:"smooth", block:"start" });
+  document.getElementById("pv-close").onclick = ()=>{ el.hidden = true; URL.revokeObjectURL(url); };
+  document.getElementById("pv-del").onclick = async ()=>{
+    if(!confirm("Delete this photo from the phone?")) return;
+    await FilesDB.del("photos", id); el.hidden = true; URL.revokeObjectURL(url); loadPhotos();
+  };
+}
+document.getElementById("photobtn").addEventListener("click", ()=>{ ensureWatch(); document.getElementById("photofile").click(); });
+document.getElementById("photofile").addEventListener("change", async e=>{
+  const file = e.target.files && e.target.files[0]; e.target.value = "";
+  if(!file) return;
+  try{
+    const full = await shrinkImage(file, 1600), thumb = await shrinkImage(file, 240);
+    const pos = latestPosition && Date.now() - latestPosition.timestamp < 120000 ? latestPosition.coords : null;
+    const near = pos ? nearestFeature(pos.latitude, pos.longitude, "piste") : null;
+    const now = new Date(), id = now.valueOf();
+    await FilesDB.put("photos", { id, ts:id, date:localDay(id), resort:resortId, lat:pos?pos.latitude:null, lon:pos?pos.longitude:null,
+      piste: near && near.d < 150 ? near.p.n : "", thumb: thumb.dataURL, blob: full.blob });
+    maybeStopWatch(); loadPhotos();
+  }catch(err){ alert("Couldn't save that photo (storage full or unsupported image)."); }
+});
+
+/* wallet: typed details in localStorage (fc_wallet), pass photo in IndexedDB */
+const PASS_SHOPS = { pdk: [["Lift passes", "Les Arcs / Peisey-Vallandry", "https://www.lesarcs-peiseyvallandry.com/en/forfaits_offre"],
+                           ["Lift passes", "La Plagne", "https://www.skipass-laplagne.com/en/"]] };
+const WALLET_FIELDS = { "w-pass":"pass", "w-ins":"insurer", "w-pol":"policy", "w-ass":"assistTel", "w-ice":"contact" };
+function renderWallet(){
+  const w = store.get("fc_wallet", {}) || {};
+  Object.entries(WALLET_FIELDS).forEach(([id,k])=>{ document.getElementById(id).value = typeof w[k]==="string" ? w[k] : ""; });
+  const shops = PASS_SHOPS[resortId] || [];
+  document.getElementById("passlinks").innerHTML = shops.map(([t,sub,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}<small>${esc(sub)}</small></a>`).join("");
+  FilesDB.get("files", "pass").then(rec=>{
+    const box = document.getElementById("w-passimg");
+    box.innerHTML = rec ? `<img src="${esc(rec.dataURL)}" alt="Lift pass">` : `<p class="muted">No photo yet.</p>`;
+  }).catch(()=>{});
+}
+Object.entries(WALLET_FIELDS).forEach(([id,k])=>document.getElementById(id).addEventListener("input", e=>{
+  const w = store.get("fc_wallet", {}) || {}; w[k] = e.target.value.slice(0, 200); store.set("fc_wallet", w);
+}));
+document.getElementById("w-passbtn").addEventListener("click", ()=>document.getElementById("w-passfile").click());
+document.getElementById("w-passfile").addEventListener("change", async e=>{
+  const file = e.target.files && e.target.files[0]; e.target.value = "";
+  if(!file) return;
+  try{ const img = await shrinkImage(file, 1200); await FilesDB.put("files", { key:"pass", dataURL: img.dataURL }); renderWallet(); }
+  catch(err){ alert("Couldn't save that photo."); }
+});
+
 /* ---------- day replay: saved path animated on the map ---------- */
 // [[lat,lon,alt|null,secondsFromStart],...] with points >= 15 m apart: small enough to keep a season in localStorage
 function compactPath(points){
@@ -817,7 +937,7 @@ function showVectors(){
   layersCtl.addOverlay(vecGroup, "Pistes & lifts (offline)");
   layersCtl.addOverlay(eatGroup, "Restaurants (zoom in)");
   layersCtl.addOverlay(skiedGroup, "Pistes I've skied");
-  if(R.services && R.services.length) layersCtl.addOverlay(svcGroup, "Services: shops, pharmacy, ATM, WC (zoom in)");
+  if(R.services && R.services.length) layersCtl.addOverlay(svcGroup, "Services & viewpoints (zoom in)");
   const forId = resortId;
   const draw = data => {
     if(gen!==vecGen) return;
@@ -828,7 +948,7 @@ function showVectors(){
         .bindPopup(`<strong>${esc(e.name)}</strong><br>${esc(e.area)}`));
     if(R.base) L.circleMarker(R.base.at, { radius:8, color:"#fff", weight:2, fillColor:"#16283C", fillOpacity:1 })
       .bindPopup(`<strong>Base: ${esc(R.base.name)}</strong>`).addTo(vecGroup);
-    const SVC_COLOUR = { "Pharmacy":"#2E7D4F", "Doctor":"#2E7D4F", "Medical centre":"#2E7D4F", "Defibrillator":"#C0392B", "ATM / cash":"#B7791F" };
+    const SVC_COLOUR = { "Viewpoint":"#7B4FB8", "Pharmacy":"#2E7D4F", "Doctor":"#2E7D4F", "Medical centre":"#2E7D4F", "Defibrillator":"#C0392B", "ATM / cash":"#B7791F" };
     svcMarkers = (R.services||[]).filter(x=>Array.isArray(x.at)).map(x=>
       L.circleMarker(x.at, { radius:4.5, color:"#fff", weight:1.5, fillColor:SVC_COLOUR[x.type] || "#3D7FB8", fillOpacity:1 })
         .bindPopup(`<strong>${esc(x.type)}</strong>${x.name?`<br>${esc(x.name)}`:""}<br><small>OpenStreetMap · unverified</small>`));
@@ -1540,12 +1660,14 @@ function renderLog(){
     card.innerHTML = `<strong>${nice}</strong> <span class="cond">· ${esc(entry.cond)}</span>
       ${rName?`<div class="rtag">${esc(rName)}</div>`:""}
       ${entry.notes?`<p style="margin-top:6px;font-size:13.5px">${esc(entry.notes)}</p>`:""}
+      ${photoThumbs(entry)}
       ${entry.track?.totals?`<button class="secondary sharebtn">Share day card</button>`:''}
       ${Array.isArray(entry.track?.path)&&entry.track.path.length>1?`<button class="secondary sharebtn replaybtn">▶ Replay day on map</button>`:''}
       ${Array.isArray(entry.track?.runs)?entry.track.runs.map((run,i)=>`<p class="muted">${esc(`Run ${i+1}: ${run.vertical===null?'—':Math.round(Number(run.vertical))+' m'} vertical · ${(Number(run.distance)/1000).toFixed(2)} km · ${fmtDur(Number(run.duration))} · top ${Math.round(Number(run.topSpeed))} km/h · avg ${Math.round(Number(run.avgSpeed))} km/h${Array.isArray(run.pistes)&&run.pistes.length?' · '+run.pistes.join(', '):''}`)}</p>`).join(''):''}
       <span class="del" data-id="${entry.id}">delete</span>`;
     const share = card.querySelector(".sharebtn");
     if(share) share.addEventListener("click", ()=>shareDayCard(entry));
+    card.querySelectorAll(".logphotos img").forEach(img=>img.addEventListener("click", ()=>openPhoto(Number(img.dataset.id))));
     const rep = card.querySelector(".replaybtn");
     if(rep) rep.addEventListener("click", ()=>replayDay(entry));
     card.querySelector(".del").addEventListener("click", ()=>{
@@ -1677,7 +1799,7 @@ function switchResort(id){
   setRunsNote();
   buildMtnChips(); buildDiffChips(); buildSortChips();
   renderRuns(); renderEats(); renderLog();
-  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks();
+  setupRouting(); recenterMap(); renderWeather(); loadStatus(); setupSun(); renderLinks(); renderWallet(); drawPhotos();
 }
 
 /* =========================================================
@@ -1713,6 +1835,8 @@ renderWeather();
 loadStatus();
 setupSun();
 renderLinks();
+renderWallet();
+loadPhotos();
 restoreTracking();
 
 /* register the service worker so the app shell works offline */
