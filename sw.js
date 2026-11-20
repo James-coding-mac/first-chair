@@ -1,14 +1,15 @@
 /* First Chair service worker — offline app shell + opportunistic tile cache.
    Bump VERSION when the precache list or this file changes to force an update. */
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL   = "fc-shell-" + VERSION;    // core app files (same-origin)
-const RUNTIME = "fc-runtime-" + VERSION;  // fonts, Leaflet, etc. (cross-origin)
-const TILES   = "fc-tiles-" + VERSION;    // map tiles you've viewed
+const RUNTIME = "fc-runtime-v1";          // fonts, Leaflet (cross-origin; fixed name so an update can't strand the map offline)
+const TILES   = "fc-tiles-v1";            // map tiles you've viewed (fixed name: survives app updates)
 const TILE_MAX = 500;                      // cap so the tile cache can't grow forever
 
 const SHELL_FILES = [
   "./", "./index.html", "./manifest.json",
-  "./icon.png", "./icon-192.png", "./icon-512.png"
+  "./icon.png", "./icon-192.png", "./icon-512.png",
+  "./data/build/paradiski.js"
 ];
 
 self.addEventListener("install", event => {

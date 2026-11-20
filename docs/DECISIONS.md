@@ -16,6 +16,10 @@
 ## Technical (Claude; reversible)
 - Keep the single-file `index.html` + Leaflet. No framework or build step; v3 works and holds James's logged data.
 - Paradiski data comes from OpenStreetMap via Overpass → `tools/` script → bundled GeoJSON.
+- Paradiski list data ships as a generated script `data/build/paradiski.js` (sets `window.FC_PARADISKI`), not pasted into `index.html`: it can be regenerated, and works offline from the SW precache. (Step 1)
+- Sectors come from OSM's ski-area outlines (La Plagne; Les Arcs / Peisey-Vallandry), so Peisey-Vallandry is part of the Les Arcs sector, as OSM has it. (Step 1)
+- Map tile cache (`fc-tiles-v1`) and the Leaflet/fonts cache (`fc-runtime-v1`) have fixed names, so bumping the app VERSION doesn't wipe them or strand the map offline. (Step 1)
+- **Known risk:** favourites/notes/ratings are keyed on run/restaurant *names*. A rebuild after OSM edits can rename a generated name (e.g. a `(village)` or `#2` suffix) and hide notes saved on it. `build_paradiski.py` prints a WARNING listing any names that disappeared. Don't rebuild during the trip without reading it. (OSM ids aren't more stable: ways get split.) (Step 1 review)
 
 ## Pending: needs James
 - (none)

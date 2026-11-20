@@ -119,6 +119,10 @@ button.on-track{background:var(--p2p);color:#fff;border-color:var(--p2p)}
 .diff{font-size:13px;width:30px;flex-shrink:0;text-align:center;font-weight:600}
 .diff.green{color:var(--green)} .diff.blue{color:var(--blue)} .diff.red{color:var(--red)}
 .diff.black,.diff.dblack{color:var(--black)}
+.diff.offpiste{color:var(--gold)}
+.unv{display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--gold);border-radius:4px;
+  font-size:10px;font-weight:600;letter-spacing:.04em;color:#8a6417;vertical-align:1px}
+.warn{background:#FFF6E0;border-left:3px solid var(--gold);padding:7px 9px;border-radius:6px}
 .rowhead .nm{font-weight:600;flex:1}
 .rowhead .meta{font-size:12px;color:var(--ink2)}
 .fav{font-size:18px;color:var(--line);cursor:pointer;flex-shrink:0}
@@ -196,6 +200,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
     <button class="chip" data-v="vil">Village / Base</button>
   </div>
   <div id="eatlist"></div>
+  <p class="muted" id="eatsnote" style="margin-top:12px"></p>
 </section>
 
 <!-- ============ LOG ============ -->
@@ -233,6 +238,8 @@ label{display:block;font-size:12px;font-weight:600;color:var(--ink2);text-transf
 </nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Paradiski runs/lifts/restaurants, generated from OpenStreetMap by tools/build_paradiski.py -->
+<script src="data/build/paradiski.js"></script>
 <script>
 /* =========================================================
    DATA — edit these lists freely. This is YOUR guide.
@@ -364,6 +371,9 @@ const RESORTS = {
 
 };
 
+/* Paradiski is generated from OpenStreetMap (data/build/paradiski.js), not typed in here */
+if(window.FC_PARADISKI) RESORTS.pdk = window.FC_PARADISKI;
+
 /* difficulty grade tables per system (order = easy → hard) */
 const DIFF = {
   na: [
@@ -379,6 +389,9 @@ const DIFF = {
     {v:"black", sym:"◆◆", label:"Black"},
   ],
 };
+/* Alps + OSM off-piste routes (freeride/backcountry): listed, clearly labelled, never routed */
+DIFF.eu_off = [...DIFF.eu, {v:"offpiste", sym:"⚠", label:"Off-piste"}];
+const BERA_URL = "https://meteofrance.com/meteo-montagne/alpes-du-nord";
 
 /* =========================================================
    STORAGE  (per-resort, keyed by resort id)
@@ -429,6 +442,13 @@ ensureStores();
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function diffSym(v){ const d = DIFF[R.diffSystem].find(x=>x.v===v); return d ? d.sym : "●"; }
 function mtnName(id){ const m = R.mountains.find(x=>x.id===id); return m ? m.name : id; }
+function unvTag(rec){ return rec.verified===false ? `<span class="unv" title="Not yet checked against the official piste map">UNVERIFIED</span>` : ""; }
+const MEMORY_NOTE = "Starter data written from memory — check names against the official trail map and edit the run list at the top of index.html.";
+const OSM_CREDIT = `Restaurant data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL), not yet checked against the resort.`;
+function setRunsNote(){
+  document.getElementById("runsnote").textContent = R.dataNote || MEMORY_NOTE;
+  document.getElementById("eatsnote").innerHTML = R.dataNote ? OSM_CREDIT : "";   // fixed text, no OSM strings
+}
 
 /* =========================================================
    MAP  (Leaflet + OpenSnowMap pistes overlay)
@@ -652,11 +672,12 @@ function renderRuns(){
     row.innerHTML =
       `<div class="rowhead">
         <span class="diff ${r.diff}">${diffSym(r.diff)}</span>
-        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))} · ${esc(r.zone)}</div></span>
+        <span class="nm">${esc(r.name)}<div class="meta">${esc(mtnName(r.mtn))}${r.zone?" · "+esc(r.zone):""}${unvTag(r)}</div></span>
         <span class="fav ${favs[resortId].includes(r.name)?"on":""}">★</span>
       </div>
       <div class="rowbody">
-        <p><strong>Lift:</strong> ${esc(r.lift)}</p>
+        ${r.diff==="offpiste" ? `<p class="warn"><strong>Off-piste route.</strong> Not groomed, patrolled or made safe. Check the avalanche bulletin first: <a href="${BERA_URL}" target="_blank" rel="noopener">Météo-France BERA</a> (choose your massif).</p>` : ""}
+        ${r.lift ? `<p><strong>Lift:</strong> ${esc(r.lift)}</p>` : ""}
         <p>${esc(r.note)}</p>
         <label>My notes</label>
         <textarea placeholder="Conditions, lines, reminders…">${esc(notes[resortId][r.name]||"")}</textarea>
@@ -692,7 +713,7 @@ function renderEats(){
     row.className = "row";
     row.innerHTML =
       `<div class="rowhead">
-        <span class="nm">${esc(e.name)}<div class="meta">${esc(e.area)}</div></span>
+        <span class="nm">${esc(e.name)}<div class="meta">${esc(e.area)}${unvTag(e)}</div></span>
         <span class="stars">${[1,2,3,4,5].map(n=>`<span data-n="${n}" class="${n<=rt?"lit":""}">★</span>`).join("")}</span>
       </div>
       <div class="rowbody">
@@ -852,8 +873,7 @@ function switchResort(id){
   ensureStores();
   fMtn="all"; fDiff="all";
   document.getElementById("runsearch").value = "";
-  document.getElementById("runsnote").textContent =
-    "Starter data written from memory — check names against the official trail map and edit the run list at the top of index.html.";
+  setRunsNote();
   buildMtnChips(); buildDiffChips();
   renderRuns(); renderEats(); renderLog();
   recenterMap(); renderWeather();
@@ -878,8 +898,7 @@ document.querySelectorAll("nav button").forEach(b=>{
    BOOT
    ========================================================= */
 document.getElementById("logdate").value = new Date().toISOString().slice(0,10);
-document.getElementById("runsnote").textContent =
-  "Starter data written from memory — check names against the official trail map and edit the run list at the top of index.html.";
+setRunsNote();
 buildResortSelect();
 initMap();
 buildMtnChips();
