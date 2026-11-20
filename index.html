@@ -69,12 +69,12 @@ button.secondary{background:var(--card-2);color:var(--ink);border:1px solid var(
 .leaflet-bar a{min-width:44px;min-height:44px;line-height:44px;border-color:var(--border)}
 .leaflet-control-attribution{background:var(--card)!important;color:var(--ink-2)!important;font-size:10px}.leaflet-control-attribution a,.leaflet-container a.leaflet-popup-close-button{color:var(--accent-text)}
 .leaflet-popup-content-wrapper{border-radius:var(--radius-card)}
-/* rotation: keep popups upright inside the rotated map */
+/* rotation: keep popups and piste/lift names upright inside the rotated map (lift arrows keep turning) */
 .fc-rotor .leaflet-popup-content-wrapper{transform:rotate(var(--fc-bearing,0deg));transform-origin:50% 100%}
 .fc-compass{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card);font:700 11px 'Barlow Condensed',sans-serif}
 .fc-compass svg{transition:transform .15s}
 .map-label{width:0!important;height:0!important;margin:0!important;pointer-events:none;background:none;border:0}
-.map-label span{position:absolute;transform:translate(-50%,-50%);font:600 11px Inter,sans-serif;white-space:nowrap;color:inherit;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+.map-label span{position:absolute;transform:translate(-50%,-50%) rotate(var(--fc-bearing,0deg));font:600 11px Inter,sans-serif;white-space:nowrap;color:inherit;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
 .map-label{color:#16283C}
 .map-label.lift{font-style:italic;color:#16283C}.map-label.g-green{color:#1f5c39}.map-label.g-blue{color:#1d4f86}.map-label.g-red{color:#9b2a1f}.map-label.g-offpiste{color:#8a6417}
 .lift-arrow span{display:block;font-size:12px;line-height:16px;text-align:center;color:#16283C;text-shadow:0 0 2px #fff}
